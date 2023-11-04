@@ -14,6 +14,7 @@ int main() {
     int* hostArray = new int[n];
     int* deviceArrays[2];
     int numGPUs = 2;
+    printf("Here\n");
 
     // Allocate memory on each GPU for the corresponding half of the array
     for (int i = 0; i < numGPUs; ++i) {
