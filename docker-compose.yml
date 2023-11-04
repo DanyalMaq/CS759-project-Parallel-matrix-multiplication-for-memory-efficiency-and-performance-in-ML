@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  fly-service:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: fly:latest
+    
+    volumes:
+      - .:/fly
+    working_dir: /fly
+    # Jupyter does NOT work without sudo
+    command: bash
+
+    stdin_open: true
+    tty: true 
+    # gpu config 
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
+    ipc: host
+    shm_size: '1g'
+    container_name: '759'
+    # ports:
+    #   - "5050:5050"
+      
