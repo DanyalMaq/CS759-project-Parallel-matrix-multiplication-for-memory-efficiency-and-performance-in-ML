@@ -11,15 +11,7 @@
 // cudaDeviceSynchronize for timing purposes.
 
 // Use template to formulate your answer
-__host__ void matmul_1(const int *A, const int *B, int *C, unsigned int n,
-                       unsigned int block_dim);
-__host__ void matmul_2(const float *A, const float *B, float *C, unsigned int n,
-                       unsigned int block_dim);
-__host__ void matmul_3(const double *A, const double *B, double *C,
+__host__ void matmul(const double *A, const double *B, double *C,
                        unsigned int n, unsigned int block_dim);
-template <typename T>
-__global__ void matmul_kernel(const T *A, const T *B, T *C, unsigned int n,
-                   unsigned int block_dim);
 
-__global__ void GPU_fill_rand_int(float* A, const int n, float min, float max);
 #endif

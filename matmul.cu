@@ -1,134 +1,82 @@
-#include<cuda.h>
+#include "matmul.cuh"
+#include <cuda.h>
+#include <stdio.h>
+#include <iostream>
 #include <cstdio>
-#include <curand.h>
-#include <curand_kernel.h>
-#include <cmath>
-using namespace std;
+#include <cstdlib>
+#include <random>
 
-void kernel_err_check(){
-    cudaError_t err = cudaGetLastError();
-    if (err != cudaSuccess) 
-        printf("Error: %s\n", cudaGetErrorString(err));
-}
-
-
-// Fill an array with random integers in [min, max]
-__global__ void GPU_fill_rand_int(float* A, const int n, float min, float max) {
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    if (idx >= n) return;
-    // Initialize the random state for the current thread
-    curandState state;
-    unsigned long long seed = 759;
-    curand_init(seed, idx, 0, &state);
-    
-    // Generate a random float and convert it to an integer
-    float rnd = curand_uniform(&state); // (0.0, 1.0]
-    A[idx] = static_cast<int>( rnd * (max - min) + min );
-}
-
-// You should implement Tiled Matrix Multiplication discussed in class
-// Computes the matrix product C = AB by making 'one' call to 'matmul_kernel'.
-// A, B, and C are row-major representations of nxn matrices in managed memory.
-// Configures the kernel call using a 2D configuration with blocks of dimensions
-// block_dim x block_dim. The function should end in a call to
-// cudaDeviceSynchronize for timing purposes.
+// Source(s) used for this file:
+// https://stackoverflow.com/questions/27570552/templated-cuda-kernel-with-dynamic-shared-memory
+// Lecture 11 from the course
+// Me 50% Stackoverflow 20% Lecture 30% 
 template <typename T>
-__global__ void matmul_kernel(const T *A, const T *B, T *C, unsigned int n, unsigned int block_dim) 
+__device__ T* shared_memory_proxy()
 {
-        
-    extern __shared__ unsigned char shared_mem[];
-    alignas(alignof(T)) T *As = reinterpret_cast<T *>(shared_mem);    // 1d array of block_dim * block_dim
-    alignas(alignof(T)) T *Bs = reinterpret_cast<T *>(shared_mem + block_dim * block_dim * sizeof(T));    // 1d array of block_dim * block_dim
-    // block index
-    int bx = blockIdx.x;
-    int by = blockIdx.y;
-    // thread index
-    int tx = threadIdx.x;
-    int ty = threadIdx.y;
+    extern __shared__ unsigned char memory[];
+    return reinterpret_cast<T*>(memory);
+}
 
-    int aBegin = n * block_dim * by;
-    int aEnd = aBegin + n - 1;
-    int aStep = block_dim;
+template <typename T>
+__global__ void matmul_kernel(const T* A, const T* B, T* C, unsigned int numRowsA, unsigned int numColsA, unsigned int numColsB)
+{
+    int xblock = blockDim.x;
+    int yblock = blockDim.y;
 
-    int bBegin = block_dim * bx;
-    int bStep = block_dim * n;
-    T Csub = 0; // sum
+    auto shared_memory = shared_memory_proxy<T>();
+    T* As = shared_memory;
+    T* Bs = As + (xblock * yblock);
 
-    int c = n * block_dim * by + block_dim * bx; // subblock index
-    // check in bound 
-    if (c + n * ty + tx >= n * n) 
-        return;
+    int bx = blockIdx.x; 
+    int by = blockIdx.y; 
 
-    // loop over subblocks; each thread computes one element
-    for (int a = aBegin, b = bBegin; a <= aEnd; a += aStep, b += bStep) 
-    {
-        // check if operand in bound
-        if (a + n * ty + tx >= n * n || b + n * ty + tx >= n * n) 
-            continue;
-        // load subblock into shared memory
-        As[ty * block_dim + tx] = A[a + n * ty + tx];
-        Bs[ty * block_dim + tx] = B[b + n * ty + tx];
+    int tx = threadIdx.x; 
+    int ty = threadIdx.y; 
 
-        __syncthreads();
+    int aBegin = numColsA * yblock * by;
+    int aEnd = aBegin + numColsA - 1; 
+    int aStep = xblock; 
 
-        // compute subblock
-        for (int k = 0; k < block_dim; ++k) 
-        {
-            Csub += As[ty * block_dim + k] * Bs[k * block_dim + tx];
+    int bBegin = yblock * bx;
+    int bStep = yblock * numColsB;
+
+    T Csub = 0;
+
+    for (int a = aBegin, b = bBegin; a <= aEnd; a += aStep, b += bStep) {
+        for (int k = 0; k < xblock; ++k) {
+            int A_row_index = a / numColsA + ty;
+            int A_col_index = a % numColsA + k;
+            int B_row_index = (b + k) / numColsB;
+            int B_col_index = (b + k) % numColsB + tx;
+
+            As[ty * xblock + tx] = (A_row_index < numRowsA && A_col_index < numColsA) ? A[A_row_index * numColsA + A_col_index] : 0;
+            Bs[ty * xblock + tx] = (B_row_index < numColsA && B_col_index < numColsB) ? B[B_row_index * numColsB + B_col_index] : 0;
+
+            __syncthreads();
+
+            for (int i = 0; i < xblock; ++i) {
+                Csub += As[ty * xblock + i] * Bs[i * xblock + tx];
+            }
+
+            __syncthreads();
         }
-        __syncthreads();
     }
-    
-    // write subblock to global memory
-    C[c + n * ty + tx] = Csub;
+
+    int C_row_index = yblock * by + ty;
+    int C_col_index = xblock * bx + tx;
+
+    if (C_row_index < numRowsA && C_col_index < numColsB) {
+        C[C_row_index * numColsB + C_col_index] = Csub;
+    }
 }
 
 
-// Use template to formulate your answer
-__host__ void matmul_1(const int *A, const int *B, int *C, unsigned int n,
-                       unsigned int block_dim)
+__host__ void matmul(const double *A, const double *B, double *C, unsigned int n, unsigned int block_dim)
 {
-    // config block
+    unsigned int blocks = (n + block_dim -1)/block_dim;
     dim3 dimBlock(block_dim, block_dim);
-    dim3 dimGrid((n + block_dim - 1) / block_dim, (n + block_dim - 1) / block_dim);
-    unsigned int shared_mem_size = 2 * sizeof(int) * block_dim * block_dim;
-    matmul_kernel<<< dimGrid, dimBlock, shared_mem_size >>>(A, B, C, n, block_dim);
-    
-    kernel_err_check();
-}
-
-__host__ void matmul_2(const float *A, const float *B, float *C, unsigned int n,
-                       unsigned int block_dim)
-{
-    // config block
-    dim3 dimBlock(block_dim, block_dim);
-    // round dims
-    dim3 dimGrid((n + block_dim - 1) / block_dim, (n + block_dim - 1) / block_dim);
-    unsigned int shared_mem_size = 2 * sizeof(float) * block_dim * block_dim;
-    matmul_kernel<<< dimGrid, dimBlock, shared_mem_size >>>(A, B, C, n, block_dim);
-    
-    kernel_err_check();
-
-}
-__host__ void matmul_3(const double *A, const double *B, double *C,
-                       unsigned int n, unsigned int block_dim)
-{
-    // config block
-    dim3 dimBlock(block_dim, block_dim);
-    dim3 dimGrid((n + block_dim - 1) / block_dim, (n + block_dim - 1) / block_dim);
-    unsigned int shared_mem_size = 2 * sizeof(double) * block_dim * block_dim;
-    matmul_kernel<<< dimGrid, dimBlock, shared_mem_size >>>(A, B, C, n, block_dim);
-    kernel_err_check();
-}
-
-template <typename T>
-__host__ void matmul_univ(const T *A, const T *B, T *C, unsigned int n,
-                       unsigned int block_dim)
-{
-    // config block
-    dim3 dimBlock(block_dim, block_dim);
-    dim3 dimGrid((n + block_dim - 1) / block_dim, (n + block_dim - 1) / block_dim);
-    unsigned int shared_mem_size = 2 * sizeof(T) * block_dim * block_dim;
-    matmul_kernel<<< dimGrid, dimBlock, shared_mem_size >>>(A, B, C, n, block_dim);
-    kernel_err_check();
+    dim3 dimGrid(blocks , blocks);
+    unsigned int sharedMem = (2 * block_dim * block_dim) * sizeof(double);
+    matmul_kernel<double><<<dimGrid, dimBlock, sharedMem>>>(A, B, C, n);
+    cudaDeviceSynchronize();
 }
