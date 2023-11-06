@@ -6,6 +6,8 @@
 #include <cstdlib>
 #include <random>
 
+const unsigned int TILE_WIDTH = 32;
+
 // Source(s) used for this file:
 // https://stackoverflow.com/questions/27570552/templated-cuda-kernel-with-dynamic-shared-memory
 // Lecture 11 from the course
@@ -70,13 +72,66 @@ __global__ void matmul_kernel(const T* A, const T* B, T* C, unsigned int numRows
     }
 }
 
+//Second Attempt
+__global__ void matrixMultiplyShared(double *A, double *B, double *C,
+                                     int numARows, int numAColumns,
+                                     int numBRows, int numBColumns,
+                                     int numCRows, int numCColumns) {
+    __shared__ double sA[TILE_WIDTH][TILE_WIDTH];   // Tile size of 32x32
+    __shared__ double sB[TILE_WIDTH][TILE_WIDTH];
 
-__host__ void matmul(const double *A, const double *B, double *C, unsigned int n, unsigned int block_dim)
+    int Row = blockDim.y * blockIdx.y + threadIdx.y;
+    int Col = blockDim.x * blockIdx.x + threadIdx.x;
+    double Cvalue = 0.0;
+    sA[threadIdx.y][threadIdx.x] = 0.0;
+    sB[threadIdx.y][threadIdx.x] = 0.0;
+
+    for (int ph = 0; ph < (((numAColumns - 1) / TILE_WIDTH) + 1); ph++) {
+        if ((Row < numARows) && (threadIdx.x + (ph * TILE_WIDTH)) < numAColumns) {
+            sA[threadIdx.y][threadIdx.x] = A[(Row * numAColumns) + threadIdx.x + (ph * TILE_WIDTH)];
+        } else {
+            sA[threadIdx.y][threadIdx.x] = 0.0;
+        }
+        if (Col < numBColumns && (threadIdx.y + ph * TILE_WIDTH) < numBRows) {
+            sB[threadIdx.y][threadIdx.x] = B[(threadIdx.y + ph * TILE_WIDTH) * numBColumns + Col];
+        } else {
+            sB[threadIdx.y][threadIdx.x] = 0.0;
+        }
+        __syncthreads();
+
+        for (int j = 0; j < TILE_WIDTH; ++j) {
+            Cvalue += sA[threadIdx.y][j] * sB[j][threadIdx.x];
+        }
+    }
+    if (Row < numCRows && Col < numCColumns) {
+        C[Row * numCColumns + Col] = Cvalue;
+    }
+}
+
+__host__ void matmul(const double *A, const double *B, double *C, unsigned int numRowsA, unsigned int numColsA, unsigned int numColsB, unsigned int block_dim)
 {
-    unsigned int blocks = (n + block_dim -1)/block_dim;
+    unsigned int blocksX = (numColsB + block_dim - 1) / block_dim;
+    unsigned int blocksY = (numRowsA + block_dim - 1) / block_dim;
     dim3 dimBlock(block_dim, block_dim);
-    dim3 dimGrid(blocks , blocks);
+    dim3 dimGrid(blocksX, blocksY);
     unsigned int sharedMem = (2 * block_dim * block_dim) * sizeof(double);
-    matmul_kernel<double><<<dimGrid, dimBlock, sharedMem>>>(A, B, C, n);
+    matmul_kernel<double><<<dimGrid, dimBlock, sharedMem>>>(A, B, C, numRowsA, numColsA, numColsB);
     cudaDeviceSynchronize();
+}
+
+//Second attempt
+__host__ void matmul2(double *A, double *B, double *C,
+                                     int numARows, int numAColumns,
+                                     int numBRows, int numBColumns,
+                                     int numCRows, int numCColumns)
+{
+    dim3 dimBlock(TILE_WIDTH, TILE_WIDTH, 1);
+    dim3 dimGrid((numCColumns / TILE_WIDTH) + 1, (numCRows / TILE_WIDTH) + 1, 1);
+
+    matrixMultiplyShared <<<dimGrid, dimBlock>>>
+                                       (A, B, C, numARows, numAColumns, numBRows, numBColumns, numCRows, numCColumns);
+
+    cudaError_t err1 = cudaPeekAtLastError();
+    cudaDeviceSynchronize();
+    printf("Got CUDA error ... %s \n", cudaGetErrorString(err1));
 }

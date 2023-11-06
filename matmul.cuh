@@ -11,7 +11,14 @@
 // cudaDeviceSynchronize for timing purposes.
 
 // Use template to formulate your answer
-__host__ void matmul(const double *A, const double *B, double *C,
-                       unsigned int n, unsigned int block_dim);
+__host__ void matmul(const double *A, const double *B, double *C, 
+    unsigned int numRowsA, unsigned int numColsA, unsigned int numColsB, 
+        unsigned int block_dim);
+
+
+__host__ void matmul2(double *A, double *B, double *C,
+                                     int numARows, int numAColumns,
+                                     int numBRows, int numBColumns,
+                                     int numCRows, int numCColumns);
 
 #endif
