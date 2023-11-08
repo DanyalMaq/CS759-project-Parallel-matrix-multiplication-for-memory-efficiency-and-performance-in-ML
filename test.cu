@@ -118,8 +118,8 @@ int main(int argc, char** argv){
             cudaMemcpyPeerAsync(deviceArraysB[i], i, (hostArrayB + start), 0, chunk_size * sizeof(float), 0);
         }
         // call matmul on device i for the chunk
-        unsigned int shared_mem_size = 2 * sizeof(float) * (blocks_per_dim / numGPUs) * (blocks_per_dim / numGPUs);
-        matmul_kernel<<<blocksPerGrid, threadsPerBlock, shared_mem_size>>>(deviceArraysA[i], deviceArraysB[i], deviceArraysC[i], chunk_size, blocks_per_dim / numGPUs);
+        // unsigned int shared_mem_size = 2 * sizeof(float) * (blocks_per_dim / numGPUs) * (blocks_per_dim / numGPUs);
+        matmul2(deviceArraysA[i], deviceArraysB[i], deviceArraysC[i], n, n, n);
         cudaMemcpyPeerAsync(hostArrayC + start, 0, deviceArraysC[i], i, chunk_size * sizeof(float), 0);
     }
  

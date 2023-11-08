@@ -5,6 +5,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <random>
+#include <curand.h>
+#include <curand_kernel.h>
 
 const unsigned int TILE_WIDTH = 32;
 
@@ -73,16 +75,15 @@ __global__ void matmul_kernel(const T* A, const T* B, T* C, unsigned int numRows
 }
 
 //Second Attempt
-__global__ void matrixMultiplyShared(double *A, double *B, double *C,
-                                     int numARows, int numAColumns,
-                                     int numBRows, int numBColumns,
-                                     int numCRows, int numCColumns) {
-    __shared__ double sA[TILE_WIDTH][TILE_WIDTH];   // Tile size of 32x32
-    __shared__ double sB[TILE_WIDTH][TILE_WIDTH];
+__global__ void matrixMultiplyShared(float *A, float *B, float *C,
+                                     int numARows, int numAColumns, int numBColumns
+                                     ) {
+    __shared__ float sA[TILE_WIDTH][TILE_WIDTH];   // Tile size of 32x32
+    __shared__ float sB[TILE_WIDTH][TILE_WIDTH];
 
     int Row = blockDim.y * blockIdx.y + threadIdx.y;
     int Col = blockDim.x * blockIdx.x + threadIdx.x;
-    double Cvalue = 0.0;
+    float Cvalue = 0.0;
     sA[threadIdx.y][threadIdx.x] = 0.0;
     sB[threadIdx.y][threadIdx.x] = 0.0;
 
@@ -92,7 +93,7 @@ __global__ void matrixMultiplyShared(double *A, double *B, double *C,
         } else {
             sA[threadIdx.y][threadIdx.x] = 0.0;
         }
-        if (Col < numBColumns && (threadIdx.y + ph * TILE_WIDTH) < numBRows) {
+        if (Col < numBColumns && (threadIdx.y + ph * TILE_WIDTH) < numAColumns) {
             sB[threadIdx.y][threadIdx.x] = B[(threadIdx.y + ph * TILE_WIDTH) * numBColumns + Col];
         } else {
             sB[threadIdx.y][threadIdx.x] = 0.0;
@@ -103,35 +104,47 @@ __global__ void matrixMultiplyShared(double *A, double *B, double *C,
             Cvalue += sA[threadIdx.y][j] * sB[j][threadIdx.x];
         }
     }
-    if (Row < numCRows && Col < numCColumns) {
-        C[Row * numCColumns + Col] = Cvalue;
+    if (Row < numARows && Col < numBColumns) {
+        C[Row * numBColumns + Col] = Cvalue;
     }
 }
 
-__host__ void matmul(const double *A, const double *B, double *C, unsigned int numRowsA, unsigned int numColsA, unsigned int numColsB, unsigned int block_dim)
+__host__ void matmul(const float *A, const float *B, float *C, unsigned int numRowsA, unsigned int numColsA, unsigned int numColsB, unsigned int block_dim)
 {
     unsigned int blocksX = (numColsB + block_dim - 1) / block_dim;
     unsigned int blocksY = (numRowsA + block_dim - 1) / block_dim;
     dim3 dimBlock(block_dim, block_dim);
     dim3 dimGrid(blocksX, blocksY);
-    unsigned int sharedMem = (2 * block_dim * block_dim) * sizeof(double);
-    matmul_kernel<double><<<dimGrid, dimBlock, sharedMem>>>(A, B, C, numRowsA, numColsA, numColsB);
+    unsigned int sharedMem = (2 * block_dim * block_dim) * sizeof(float);
+    matmul_kernel<float><<<dimGrid, dimBlock, sharedMem>>>(A, B, C, numRowsA, numColsA, numColsB);
     cudaDeviceSynchronize();
 }
 
 //Second attempt
-__host__ void matmul2(double *A, double *B, double *C,
-                                     int numARows, int numAColumns,
-                                     int numBRows, int numBColumns,
-                                     int numCRows, int numCColumns)
+__host__ void matmul2(float *A, float *B, float *C,
+                                     int numARows, int numAColumns, int numBColumns)
 {
     dim3 dimBlock(TILE_WIDTH, TILE_WIDTH, 1);
-    dim3 dimGrid((numCColumns / TILE_WIDTH) + 1, (numCRows / TILE_WIDTH) + 1, 1);
+    dim3 dimGrid((numBColumns / TILE_WIDTH) + 1, (numARows / TILE_WIDTH) + 1, 1);
 
     matrixMultiplyShared <<<dimGrid, dimBlock>>>
-                                       (A, B, C, numARows, numAColumns, numBRows, numBColumns, numCRows, numCColumns);
+                                       (A, B, C, numARows, numAColumns, numBColumns);
 
     cudaError_t err1 = cudaPeekAtLastError();
     cudaDeviceSynchronize();
     printf("Got CUDA error ... %s \n", cudaGetErrorString(err1));
+}
+
+// Fill an array with random integers in [min, max]
+__global__ void GPU_fill_rand_int(float* A, const int n, float min, float max) {
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    if (idx >= n) return;
+    // Initialize the random state for the current thread
+    curandState state;
+    unsigned long long seed = 759;
+    curand_init(seed, idx, 0, &state);
+    
+    // Generate a random float and convert it to an integer
+    float rnd = curand_uniform(&state); // (0.0, 1.0]
+    A[idx] = static_cast<int>( rnd * (max - min) + min );
 }
