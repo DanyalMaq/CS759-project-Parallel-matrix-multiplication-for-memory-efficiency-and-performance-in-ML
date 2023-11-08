@@ -20,25 +20,19 @@ __global__ void addOneToElements(int* array, int n) {
     }
 }
 
-// __host__ void printMatrix(float* array, int n)
-// {
-//     for (int i = 0; i < n; i++)
-//     {
-//         for (int j = 0; j < n; j++)
-//         {
-//             printf("%f ", array[i*n + j]);
-//         }
-//         printf("\n");
-//     }
-// }
+__host__ void printMatrix(float* array, int n)
+{
+    printf("Matrix:\n");
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            printf("%f ", array[i*n + j]);
+        }
+        printf("\n");
+    }
+}
 
-// __host__ void printArray(float* array, int n)
-// {
-//     for (int i = 0; i < n; i++)
-//     {
-//         printf("%f ", array[i]);
-//     }
-// }
 
 #define CHECK_CUDA_ERROR(val) check((val), #val, __FILE__, __LINE__)
 template <typename T>
@@ -71,14 +65,18 @@ int main(int argc, char** argv){
         printf("For now, only supports n divisible by numGPUs");
         return 0;    
     }
-
-    int matrix_size = 2 * n * n;
+    /////////////////// hardcode params for testing ///////////////////
+    printf("Hardcoding params for testing\n");
+    numGPUs = 2;
+    int nRowsA = n, nColsA = n, nColsB = n;
+    int matrix_size = numGPUs * nRowsA * nColsA; // test square matrices for now
     int chunk_size = (matrix_size / numGPUs);
-    
+
     // grid and block sizes
     dim3 threadsPerBlock(threads_per_block);
     int blocks_per_dim = (chunk_size + threadsPerBlock.x - 1) / threadsPerBlock.x;
     dim3 blocksPerGrid(blocks_per_dim);
+    /////////////////// hardcode params for testing ///////////////////
     
     // Set up operands and result on device 0 
     float* hostArrayA;
@@ -105,21 +103,30 @@ int main(int argc, char** argv){
         cudaMallocAsync((void**)&deviceArraysC[i], (matrix_size + n - 1) / numGPUs  * sizeof(float), 0);
     }
 
+
+    // enable access from device 0 to all others
+    cudaSetDevice(0);
+    for (int i = 0; i < numGPUs; ++i) {
+        int start = i * chunk_size;
+        if (i != 0){ // funny but...self-to-self access will fail
+            int canAccess = 0;
+            CHECK_CUDA_ERROR(cudaDeviceEnablePeerAccess(i, 0));
+            cudaMemcpyPeerAsync(deviceArraysA[i], i, (hostArrayA + start), 0, chunk_size * sizeof(float), 0);
+            cudaMemcpyPeerAsync(deviceArraysB[i], i, (hostArrayB + start), 0, chunk_size * sizeof(float), 0);
+        }
+    }
+
     // Launch kernel on each GPU with appropriate configurations
     for (int i = 0; i < numGPUs; ++i) {  
         cudaSetDevice(i);
         int start = i * chunk_size;
         int end = start + chunk_size;
-        
-        // 
-        if (i != 0){
-            cudaDeviceEnablePeerAccess(i, 0);
-            cudaMemcpyPeerAsync(deviceArraysA[i], i, (hostArrayA + start), 0, chunk_size * sizeof(float), 0);
-            cudaMemcpyPeerAsync(deviceArraysB[i], i, (hostArrayB + start), 0, chunk_size * sizeof(float), 0);
-        }
+    
         // call matmul on device i for the chunk
         // unsigned int shared_mem_size = 2 * sizeof(float) * (blocks_per_dim / numGPUs) * (blocks_per_dim / numGPUs);
-        matmul2(deviceArraysA[i], deviceArraysB[i], deviceArraysC[i], n, n, n);
+        matmul2(deviceArraysA[i], deviceArraysB[i], deviceArraysC[i], nRowsA, nColsA, nColsB);
+        
+        cudaSetDevice(0); // ensure correct copying to default device
         cudaMemcpyPeerAsync(hostArrayC + start, 0, deviceArraysC[i], i, chunk_size * sizeof(float), 0);
     }
  
@@ -130,7 +137,7 @@ int main(int argc, char** argv){
     }
     
     //Print the result
-    // printMatrix(hostArrayC, n);
+    printMatrix(hostArrayC, n);
     // printf("%f\n%f", hostArrayC[0], hostArrayC[n]);
     
     // Free allocated memory
