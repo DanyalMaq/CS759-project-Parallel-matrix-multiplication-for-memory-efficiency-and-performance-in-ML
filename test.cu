@@ -124,7 +124,7 @@ int main(int argc, char** argv){
     
         // call matmul on device i for the chunk
         // unsigned int shared_mem_size = 2 * sizeof(float) * (blocks_per_dim / numGPUs) * (blocks_per_dim / numGPUs);
-        matmul2(deviceArraysA[i], deviceArraysB[i], deviceArraysC[i], nRowsA, nColsA, nColsB);
+        matmul(deviceArraysA[i], deviceArraysB[i], deviceArraysC[i], nRowsA, nColsA, nColsB);
         
         cudaSetDevice(0); // ensure correct copying to default device
         cudaMemcpyPeerAsync(hostArrayC + start, 0, deviceArraysC[i], i, chunk_size * sizeof(float), 0);
