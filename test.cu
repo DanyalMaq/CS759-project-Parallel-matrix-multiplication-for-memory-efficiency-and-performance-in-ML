@@ -92,30 +92,31 @@ int main(int argc, char** argv){
     cudaDeviceSynchronize();
     printf("First value input: %f\nLast value input: %f\n", hostArrayA[0], hostArrayA[matrix_size-1]);
     
-    cudaStream_t streams[numGPUs]; // Create a stream for each GPU for overlapping
-    float* deviceArraysA[numGPUs];
-    float* deviceArraysB[numGPUs];
-    float* deviceArraysC[numGPUs];
+    cudaStream_t streams[numGPUs - 1]; // Create a stream for each GPU for overlapping
+    float* deviceArraysA[numGPUs - 1];
+    float* deviceArraysB[numGPUs - 1];
+    float* deviceArraysC[numGPUs - 1];
 
     // Allocate chunk on each GPU
     for (int i = 1; i < numGPUs; ++i) {
         cudaSetDevice(i);
-        cudaMallocAsync((void**)&deviceArraysA[i], chunk_size * sizeof(float), 0);
-        cudaMallocAsync((void**)&deviceArraysB[i], chunk_size * sizeof(float), 0);
-        cudaMallocAsync((void**)&deviceArraysC[i], chunk_size * sizeof(float), 0);
+        cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), 0);
+        cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), 0);
+        cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), 0);
     }
 
 
     // enable access from device 0 to all others
+    // TODO: malloc only one chunk on device 0; use as buffer for all others
     cudaSetDevice(0);
     for (int i = 1; i < numGPUs; ++i) {
         int start = i * chunk_size;
-        if (i != 0){ // funny but...self-to-self access will fail
-            int canAccess = 0;
-            CHECK_CUDA_ERROR(cudaDeviceEnablePeerAccess(i, 0));
-            cudaMemcpyPeerAsync(deviceArraysA[i], i, (hostArrayA + start), 0, chunk_size * sizeof(float), 0);
-            cudaMemcpyPeerAsync(deviceArraysB[i], i, (hostArrayB + start), 0, chunk_size * sizeof(float), 0);
-        }
+        CHECK_CUDA_ERROR(cudaDeviceEnablePeerAccess(i, 0));
+        // cudaMemcpyPeerAsync(deviceArraysA[i], i, (hostArrayA + start), 0, chunk_size * sizeof(float));
+        // cudaMemcpyPeerAsync(deviceArraysB[i], i, (hostArrayB + start), 0, chunk_size * sizeof(float));
+
+        cudaMemcpy(deviceArraysA[i - 1], hostArrayA, chunk_size * sizeof(float), cudaMemcpyDefault);  
+        cudaMemcpy(deviceArraysB[i - 1], hostArrayB, chunk_size * sizeof(float), cudaMemcpyDefault);
     }
 
     // Launch kernel on each GPU with appropriate configurations
@@ -132,9 +133,10 @@ int main(int argc, char** argv){
         {
             // call matmul on device i for the chunk
             // unsigned int shared_mem_size = 2 * sizeof(float) * (blocks_per_dim / numGPUs) * (blocks_per_dim / numGPUs);
-            matmul(deviceArraysA[i], deviceArraysB[i], deviceArraysC[i], nRowsA, nColsA, nColsB);
+            matmul(deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1], nRowsA, nColsA, nColsB);
             cudaSetDevice(0); // ensure correct copying to default device
-            cudaMemcpyPeerAsync(hostArrayC + start, 0, deviceArraysC[i], i, chunk_size * sizeof(float), 0);
+            cudaMemcpyPeerAsync(hostArrayC + start, 0, deviceArraysC[i - 1], i, chunk_size * sizeof(float), 0);
+            // cudaMemcpy(deviceArraysA[i], hostArrayA, chunk_size * sizeof(float), cudaMemcpyHostToDevice);
         }
     }
  
@@ -149,10 +151,10 @@ int main(int argc, char** argv){
     printf("First value output: %f\nLast value output: %f\n", hostArrayC[0], hostArrayC[matrix_size-1]);
     
     // Free allocated memory
-    delete[] hostArrayA;
-    delete[] hostArrayB;
-    delete[] hostArrayC;
-    for (int i = 0; i < numGPUs; ++i) {
+    cudaFree(hostArrayA);
+    cudaFree(hostArrayB);
+    cudaFree(hostArrayC);
+    for (int i = 1; i < numGPUs; ++i) {
         cudaSetDevice(i);
         cudaFree(deviceArraysA[i]);
         cudaFree(deviceArraysB[i]);
