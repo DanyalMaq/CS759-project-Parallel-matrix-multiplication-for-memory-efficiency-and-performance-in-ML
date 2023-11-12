@@ -82,10 +82,12 @@ int main(int argc, char** argv){
     float* hostArrayA;
     float* hostArrayB;
     float* hostArrayC;
+    float* hostArrayD;
     // Use managed for async memcpy
     CHECK_CUDA_ERROR(cudaMallocManaged((void**)&hostArrayA, matrix_size  * sizeof(float))); 
     CHECK_CUDA_ERROR(cudaMallocManaged((void**)&hostArrayB, matrix_size  * sizeof(float))); 
     CHECK_CUDA_ERROR(cudaMallocManaged((void**)&hostArrayC, matrix_size  * sizeof(float))); 
+    CHECK_CUDA_ERROR(cudaMallocManaged((void**)&hostArrayD, matrix_size  * sizeof(float))); 
 
     // randomly init and rescale the array on GPU
     GPU_fill_rand_int<<<blocksPerGrid, threadsPerBlock>>>(hostArrayA, matrix_size, 1.0f, 1.0f);
@@ -103,13 +105,15 @@ int main(int argc, char** argv){
 
     // Allocate chunk on each GPU
     for (int i = 1; i < numGPUs; ++i) {
-        cudaSetDevice(i);
+        // cudaSetDevice(i);
         // cudaStreamCreate(&streams[i]);
-        cudaEventCreate(&mem_events[i - 1]);
-        cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), 0);
-        cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), 0);
-        cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), 0);
-        cudaEventRecord(mem_events[i - 1]); // record event in the default stream
+        // cudaEventCreate(&mem_events[i - 1]);
+
+        // cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), 0);
+        // cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), 0);
+        // cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), 0);
+        // cudaEvent
+
     }
 
 
@@ -121,9 +125,9 @@ int main(int argc, char** argv){
         CHECK_CUDA_ERROR(cudaDeviceEnablePeerAccess(i, 0));
         // CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i], i, (hostArrayA + start), 0, chunk_size * sizeof(float), 0));
         // CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i], i, (hostArrayB + start), 0, chunk_size * sizeof(float), 0));
-        cudaStreamWaitEvent(0, mem_events[i - 1], 0);
-        CHECK_CUDA_ERROR(cudaMemcpy(deviceArraysA[i - 1], hostArrayA, chunk_size * sizeof(float), cudaMemcpyDeviceToDevice));  
-        CHECK_CUDA_ERROR(cudaMemcpy(deviceArraysB[i - 1], hostArrayB, chunk_size * sizeof(float), cudaMemcpyDeviceToDevice));
+
+        // CHECK_CUDA_ERROR(cudaMemcpy(deviceArraysA[i - 1], hostArrayA, chunk_size * sizeof(float), cudaMemcpyDeviceToDevice));  
+        // CHECK_CUDA_ERROR(cudaMemcpy(deviceArraysB[i - 1], hostArrayB, chunk_size * sizeof(float), cudaMemcpyDeviceToDevice));
     }
 
     // Launch kernel on each GPU with appropriate configurations
@@ -140,10 +144,11 @@ int main(int argc, char** argv){
         {
             // call matmul on device i for the chunk
             // unsigned int shared_mem_size = 2 * sizeof(float) * (blocks_per_dim / numGPUs) * (blocks_per_dim / numGPUs);
-            matmul(deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1], nRowsA, nColsA, nColsB);
-            cudaSetDevice(0); // ensure correct copying to default device
-            CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(hostArrayC + start, 0, deviceArraysC[i - 1], i, chunk_size * sizeof(float), 0));
+            // matmul(deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1], nRowsA, nColsA, nColsB);
+            // cudaSetDevice(0); // ensure correct copying to default device
+            // CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(hostArrayC + start, 0, deviceArraysC[i - 1], i, chunk_size * sizeof(float), 0));
             // cudaMemcpy(deviceArraysA[i], hostArrayA, chunk_size * sizeof(float), cudaMemcpyHostToDevice);
+            matmul((hostArrayA + start), (hostArrayB + start), (hostArrayC + start), nRowsA, nColsA, nColsB);
         }
     }
  
@@ -155,8 +160,9 @@ int main(int argc, char** argv){
     
     //Print the result
     // printMatrix(hostArrayC, n);
-    printf("First value output: %f\nLast value output: %f\n", hostArrayC[0], hostArrayC[matrix_size-1]);
-    
+    printf("First value output: %f\nMiddle value output: %f\n", hostArrayC[0], hostArrayC[matrix_size/2-1]);
+    printf("Last value output: %f\n", hostArrayC[matrix_size - 1]);
+     
     // Free allocated memory
     cudaFree(hostArrayA);
     cudaFree(hostArrayB);

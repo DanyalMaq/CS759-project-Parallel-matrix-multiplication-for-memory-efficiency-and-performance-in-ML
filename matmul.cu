@@ -8,6 +8,13 @@
 #include <curand.h>
 #include <curand_kernel.h>
 
+void kernel_err_check(){
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) 
+        printf("Error: %s\n", cudaGetErrorString(err));
+}
+
+
 const unsigned int TILE_WIDTH = 32; // Tile size of shared memory
 
 __global__ void matrixMultiplyShared(float *A, float *B, float *C,
@@ -61,11 +68,12 @@ __host__ void matmul(float *A, float *B, float *C,
     dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1, 1);
 
     matrixMultiplyShared<<<dimGrid, dimBlock>>>(A, B, C, nRowsA, nColsA, nColsB);
+    kernel_err_check();
     cudaDeviceSynchronize();
 }
 
 // Fill an array with random integers in [min, max]
-__global__ void GPU_fill_rand_int(float* A, const int n, float min, float max) {
+__global__ void  GPU_fill_rand_int(float* A, const int n, float min, float max) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx >= n) return;
     // Initialize the random state for the current thread
@@ -77,3 +85,4 @@ __global__ void GPU_fill_rand_int(float* A, const int n, float min, float max) {
     float rnd = curand_uniform(&state); // (0.0, 1.0]
     A[idx] = static_cast<int>( rnd * (max - min) + min );
 }
+
