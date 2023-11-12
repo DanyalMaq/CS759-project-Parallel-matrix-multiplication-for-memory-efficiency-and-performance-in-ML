@@ -68,9 +68,9 @@ int main(int argc, char** argv){
     /////////////////// hardcode params for testing ///////////////////
     printf("Hardcoding params for testing\n");
     numGPUs = 2;
-    int nRowsA = n, nColsA = n, nColsB = n;
-    int matrix_size = numGPUs * nRowsA * nColsA; // test square matrices for now
-    int chunk_size = (matrix_size / numGPUs);
+    int nRowsA = n, nColsA = n, nColsB = n; // test square matrices for now
+    int matrix_size = numGPUs * nRowsA * nColsA; // Total size of matrix
+    int chunk_size = matrix_size + n - 1 / numGPUs; // Chunk going on each GPU
 
     // grid and block sizes
     dim3 threadsPerBlock(threads_per_block);
@@ -89,6 +89,8 @@ int main(int argc, char** argv){
     // randomly init and rescale the array on GPU
     GPU_fill_rand_int<<<blocksPerGrid, threadsPerBlock>>>(hostArrayA, matrix_size, 1.0f, 1.0f);
     GPU_fill_rand_int<<<blocksPerGrid, threadsPerBlock>>>(hostArrayB, matrix_size, 1.0f, 1.0f);
+    cudaDeviceSynchronize();
+    printf("First value input: %f\nLast value input: %f\n", hostArrayA[0], hostArrayA[matrix_size-1]);
     
     cudaStream_t streams[numGPUs]; // Create a stream for each GPU for overlapping
     float* deviceArraysA[numGPUs];
@@ -96,17 +98,17 @@ int main(int argc, char** argv){
     float* deviceArraysC[numGPUs];
 
     // Allocate chunk on each GPU
-    for (int i = 0; i < numGPUs; ++i) {
+    for (int i = 1; i < numGPUs; ++i) {
         cudaSetDevice(i);
-        cudaMallocAsync((void**)&deviceArraysA[i], (matrix_size + n - 1) / numGPUs  * sizeof(float), 0);
-        cudaMallocAsync((void**)&deviceArraysB[i], (matrix_size + n - 1) / numGPUs  * sizeof(float), 0);
-        cudaMallocAsync((void**)&deviceArraysC[i], (matrix_size + n - 1) / numGPUs  * sizeof(float), 0);
+        cudaMallocAsync((void**)&deviceArraysA[i], chunk_size * sizeof(float), 0);
+        cudaMallocAsync((void**)&deviceArraysB[i], chunk_size * sizeof(float), 0);
+        cudaMallocAsync((void**)&deviceArraysC[i], chunk_size * sizeof(float), 0);
     }
 
 
     // enable access from device 0 to all others
     cudaSetDevice(0);
-    for (int i = 0; i < numGPUs; ++i) {
+    for (int i = 1; i < numGPUs; ++i) {
         int start = i * chunk_size;
         if (i != 0){ // funny but...self-to-self access will fail
             int canAccess = 0;
@@ -122,12 +124,18 @@ int main(int argc, char** argv){
         int start = i * chunk_size;
         int end = start + chunk_size;
     
-        // call matmul on device i for the chunk
-        // unsigned int shared_mem_size = 2 * sizeof(float) * (blocks_per_dim / numGPUs) * (blocks_per_dim / numGPUs);
-        matmul(deviceArraysA[i], deviceArraysB[i], deviceArraysC[i], nRowsA, nColsA, nColsB);
-        
-        cudaSetDevice(0); // ensure correct copying to default device
-        cudaMemcpyPeerAsync(hostArrayC + start, 0, deviceArraysC[i], i, chunk_size * sizeof(float), 0);
+        if (i == 0)
+        {
+            matmul(hostArrayA, hostArrayB, hostArrayC, nRowsA, nColsA, nColsB);
+        }
+        else
+        {
+            // call matmul on device i for the chunk
+            // unsigned int shared_mem_size = 2 * sizeof(float) * (blocks_per_dim / numGPUs) * (blocks_per_dim / numGPUs);
+            matmul(deviceArraysA[i], deviceArraysB[i], deviceArraysC[i], nRowsA, nColsA, nColsB);
+            cudaSetDevice(0); // ensure correct copying to default device
+            cudaMemcpyPeerAsync(hostArrayC + start, 0, deviceArraysC[i], i, chunk_size * sizeof(float), 0);
+        }
     }
  
     // wait for results
@@ -137,8 +145,8 @@ int main(int argc, char** argv){
     }
     
     //Print the result
-    printMatrix(hostArrayC, n);
-    // printf("%f\n%f", hostArrayC[0], hostArrayC[n]);
+    // printMatrix(hostArrayC, n);
+    printf("First value output: %f\nLast value output: %f\n", hostArrayC[0], hostArrayC[matrix_size-1]);
     
     // Free allocated memory
     delete[] hostArrayA;

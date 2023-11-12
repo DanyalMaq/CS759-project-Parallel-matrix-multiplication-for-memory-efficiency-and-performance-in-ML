@@ -11,4 +11,4 @@
 
 module load nvidia/cuda/11.8.0
 nvcc test.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std c++17 -lcurand -o  t
-./t
+./t 128 2

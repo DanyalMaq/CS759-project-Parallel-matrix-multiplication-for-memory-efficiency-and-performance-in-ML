@@ -8,7 +8,7 @@
 #include <curand.h>
 #include <curand_kernel.h>
 
-const unsigned int TILE_WIDTH = 32;
+const unsigned int TILE_WIDTH = 32; // Tile size of shared memory
 
 __global__ void matrixMultiplyShared(float *A, float *B, float *C,
                                      int nRowsA, int nColsA, int nColsB
@@ -42,6 +42,15 @@ __global__ void matrixMultiplyShared(float *A, float *B, float *C,
     if (Row < nRowsA && Col < nColsB) {
         C[Row * nColsB + Col] = Cvalue;
     }
+
+    if (Row == (nRowsA-1) && Col == (nColsB-1))
+    {
+        printf("GPU Last value output array C: %f\n", Cvalue);
+    }
+    if (Row == 0 && Col == 0)
+    {
+        printf("GPU First value input array A: %f\n", A[0]);
+    }
 }
 
 
@@ -51,12 +60,8 @@ __host__ void matmul(float *A, float *B, float *C,
     dim3 dimBlock(TILE_WIDTH, TILE_WIDTH, 1);
     dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1, 1);
 
-    matrixMultiplyShared <<<dimGrid, dimBlock>>>(A, B, C, nRowsA, nColsA, nColsB);
-
-    cudaError_t err1 = cudaPeekAtLastError();
+    matrixMultiplyShared<<<dimGrid, dimBlock>>>(A, B, C, nRowsA, nColsA, nColsB);
     cudaDeviceSynchronize();
-    std::cout << "Error is..." << err1 << "\n";
-    // kernel_err_check();
 }
 
 // Fill an array with random integers in [min, max]
