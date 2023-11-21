@@ -86,3 +86,25 @@ __global__ void  GPU_fill_rand_int(float* A, const int n, float min, float max) 
     A[idx] = static_cast<int>( rnd * (max - min) + min );
 }
 
+
+
+////////////////// helper functions //////////////////////
+__global__ void addOneToElements(int* array, int n) {
+    int index = blockIdx.x * blockDim.x + threadIdx.x;
+    if (index < n) {
+        array[index] += 1;
+    }
+}
+
+__host__ void printMatrix(float* array, int n)
+{
+    printf("Matrix:\n");
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            printf("%f ", array[i*n + j]);
+        }
+       printf("\n");
+    }
+}

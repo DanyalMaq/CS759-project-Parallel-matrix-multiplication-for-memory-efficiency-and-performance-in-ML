@@ -10,5 +10,8 @@
 #SBATCH --error=test.err
 
 module load nvidia/cuda/11.8.0
-nvcc test.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std c++17 -lcurand -o  t
+nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std c++17 -lcurand -o  t
+nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std c++17 -lcurand -o  t2
+
 ./t 128 2
+./t2 128 2
