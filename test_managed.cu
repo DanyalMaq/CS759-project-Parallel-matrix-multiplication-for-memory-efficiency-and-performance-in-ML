@@ -51,7 +51,7 @@ int main(int argc, char** argv){
     numGPUs = 2;
     int nRowsA = n, nColsA = n, nColsB = n; // test square matrices for now
     int matrix_size = numGPUs * nRowsA * nColsA; // Total size of matrix
-    int chunk_size = matrix_size + n - 1 / numGPUs; // Chunk going on each GPU
+    int chunk_size = matrix_size / numGPUs; // Chunk going on each GPU
 
     // grid and block sizes
     dim3 threadsPerBlock(threads_per_block);
@@ -70,9 +70,12 @@ int main(int argc, char** argv){
     CHECK_CUDA_ERROR(cudaMallocManaged((void**)&defaultArrC, matrix_size  * sizeof(float))); 
     CHECK_CUDA_ERROR(cudaMallocManaged((void**)&hostArrayD, matrix_size  * sizeof(float))); 
 
-    // randomly init and rescale the array on GPU
-    GPU_fill_rand_int<<<blocksPerGrid, threadsPerBlock>>>(defaultArrA, matrix_size, 1.0f, 1.0f);
-    GPU_fill_rand_int<<<blocksPerGrid, threadsPerBlock>>>(defaultArrB, matrix_size, 1.0f, 1.0f);
+    // randomly init and rescale the array on GPU. Make a separate dim for memory allocation
+    dim3 threadsPerBlockAlloc(threads_per_block);
+    int blocks_per_dim_alloc = (matrix_size + threadsPerBlockAlloc.x - 1) / threadsPerBlockAlloc.x;
+    dim3 blocksPerGridAlloc(blocks_per_dim_alloc);
+    GPU_fill_rand_int<<<blocksPerGridAlloc, threadsPerBlockAlloc>>>(defaultArrA, matrix_size, 1.0f, 1.0f);
+    GPU_fill_rand_int<<<blocksPerGridAlloc, threadsPerBlockAlloc>>>(defaultArrB, matrix_size, 1.0f, 1.0f);
     kernel_err_check();
     cudaDeviceSynchronize();
     printf("First value input: %f\nLast value input: %f\n", defaultArrA[0], defaultArrA[matrix_size-1]);
@@ -84,32 +87,6 @@ int main(int argc, char** argv){
     float* deviceArraysB[numGPUs - 1];
     float* deviceArraysC[numGPUs - 1];
 
-    // Allocate chunk on each GPU
-    for (int i = 1; i < numGPUs; ++i) {
-        // cudaSetDevice(i);
-        // cudaStreamCreate(&streams[i]);
-        // cudaEventCreate(&mem_events[i - 1]);
-
-        // cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), 0);
-        // cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), 0);
-        // cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), 0);
-        // cudaEvent
-
-    }
-
-
-    // enable access from device 0 to all others
-    // TODO: malloc only one chunk on device 0; use as buffer for all others
-    cudaSetDevice(0);
-    for (int i = 1; i < numGPUs; ++i) {
-        int start = i * chunk_size;
-        CHECK_CUDA_ERROR(cudaDeviceEnablePeerAccess(i, 0));
-        // CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i], i, (defaultArrA + start), 0, chunk_size * sizeof(float), 0));
-        // CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i], i, (defaultArrB + start), 0, chunk_size * sizeof(float), 0));
-
-        // CHECK_CUDA_ERROR(cudaMemcpy(deviceArraysA[i - 1], defaultArrA, chunk_size * sizeof(float), cudaMemcpyDeviceToDevice));  
-        // CHECK_CUDA_ERROR(cudaMemcpy(deviceArraysB[i - 1], defaultArrB, chunk_size * sizeof(float), cudaMemcpyDeviceToDevice));
-    }
 
     // Launch kernel on each GPU with appropriate configurations
     for (int i = 0; i < numGPUs; ++i) {  
@@ -123,13 +100,7 @@ int main(int argc, char** argv){
         }
         else
         {
-            // call matmul on device i for the chunk
-            // unsigned int shared_mem_size = 2 * sizeof(float) * (blocks_per_dim / numGPUs) * (blocks_per_dim / numGPUs);
-            // matmul(deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1], nRowsA, nColsA, nColsB);
-            // cudaSetDevice(0); // ensure correct copying to default device
-            // CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(defaultArrC + start, 0, deviceArraysC[i - 1], i, chunk_size * sizeof(float), 0));
-            // cudaMemcpy(deviceArraysA[i], defaultArrA, chunk_size * sizeof(float), cudaMemcpyHostToDevice);
-            matmul((defaultArrA + start), (defaultArrB + start), (defaultArrC + start), nRowsA, nColsA, nColsB);
+            matmul((defaultArrA+start), (defaultArrB+start), (defaultArrC+start), nRowsA, nColsA, nColsB);
         }
     }
  

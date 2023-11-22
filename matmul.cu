@@ -46,17 +46,18 @@ __global__ void matrixMultiplyShared(float *A, float *B, float *C,
             Cvalue += sA[threadIdx.y][j] * sB[j][threadIdx.x];
         }
     }
-    if (Row < nRowsA && Col < nColsB) {
-        C[Row * nColsB + Col] = Cvalue;
-    }
 
     if (Row == (nRowsA-1) && Col == (nColsB-1))
     {
-        printf("GPU Last value output array C: %f\n", Cvalue);
+        printf("GPU Last value output array C variable: %f\n", Cvalue);
+    }
+    if (Row < nRowsA && Col < nColsB) {
+        C[Row * nColsB + Col] = Cvalue;
     }
     if (Row == 0 && Col == 0)
     {
         printf("GPU First value input array A: %f\n", A[0]);
+        printf("GPU First value output array C: %f\n", C[0]);
     }
 }
 
