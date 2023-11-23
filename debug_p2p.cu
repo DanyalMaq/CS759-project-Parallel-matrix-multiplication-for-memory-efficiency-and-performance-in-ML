@@ -4,99 +4,84 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include "matmul.cuh"
 
 using namespace std;
 
-#define CHECK_CUDA_ERROR(val) check((val), #val, __FILE__, __LINE__)
-template <typename T>
-void check(T err, const char* const func, const char* const file,
-           const int line)
-{
-    if (err != cudaSuccess)
-    {
-        std::cerr << "CUDA Runtime Error at: " << file << ":" << line
-                  << std::endl;
-        std::cerr << cudaGetErrorString(err) << " " << func << std::endl;
-        std::exit(EXIT_FAILURE);
+void __global__ check_matrix(float* A, int matrix_size){
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx == 0){
+        printf("First value input: %f\nLast value input: %f\n", A[0], A[matrix_size-1]);
     }
 }
 
-
 int main(int argc, char** argv){
-    printf("Distributed matmul with async overlapping\n");
-    if (argc != 3){
-        printf("Usage: ./t <matrix size> <numGPUs>\n");
-        return 0;    
-    }
-
-    int n = std::stoi(argv[1]);
-    // int threads_per_block = stoi(argv[2]);
-    int threads_per_block = 1024;
-    int numGPUs = stoi(argv[2]);
-    
-    // check n is divisible by numGPUs
-    if (! (n % numGPUs == 0) ){
-        printf("For now, only supports n divisible by numGPUs");
-        return 0;    
-    }
+    // check n is divisible by num_gpus
     /////////////////// hardcode params for testing ///////////////////
-    printf("Hardcoding params for testing\n");
-    printf("n=%d, numGPUs=%d\n", n, numGPUs);
-    numGPUs = 2;
+    int num_gpus = 3, n = 32;
+    int th_per_block = 1024;
     int nRowsA = n, nColsA = n, nColsB = n; // test square matrices for now
-    int matrix_size = numGPUs * nRowsA * nColsA; // Total size of matrix
-    int chunk_size = matrix_size + n - 1 / numGPUs; // Chunk going on each GPU
+    int matrix_size = num_gpus * nRowsA * nColsA; // Total size of matrix
+    int chunk_size = matrix_size / num_gpus; // Chunk going on each GPU
+
+    printf("Hardcoding params for testing\n");
+    printf("n = %d, num_gpus = %d\n", n, num_gpus);
+    printf("Chunk size: %d\n", chunk_size);
 
     // grid and block sizes
-    dim3 threadsPerBlock(threads_per_block);
+    dim3 threadsPerBlock(th_per_block);
     int blocks_per_dim = (chunk_size + threadsPerBlock.x - 1) / threadsPerBlock.x;
     dim3 blocksPerGrid(blocks_per_dim);
-    /////////////////// hardcode params for testing ///////////////////
     
     // Set up operands and result on device 0 
     float* defaultArrA;
     float* defaultArrB;
     float* defaultArrC;
     // Use managed for async memcpy
-    CHECK_CUDA_ERROR(cudaMalloc((void**)&defaultArrA, matrix_size  * sizeof(float))); 
-    CHECK_CUDA_ERROR(cudaMalloc((void**)&defaultArrB, matrix_size  * sizeof(float))); 
-    CHECK_CUDA_ERROR(cudaMalloc((void**)&defaultArrC, matrix_size  * sizeof(float))); 
+    cudaSetDevice(0);
+    CHECK_CUDA_ERROR(cudaMallocManaged((void**)&defaultArrA, matrix_size  * sizeof(float))); 
+    CHECK_CUDA_ERROR(cudaMallocManaged((void**)&defaultArrB, matrix_size  * sizeof(float))); 
+    CHECK_CUDA_ERROR(cudaMallocManaged((void**)&defaultArrC, matrix_size  * sizeof(float))); 
+
+    for (int i = 0; i < matrix_size; ++i) {
+        defaultArrA[i] = 1.0f;
+        defaultArrB[i] = 1.0f;
+        defaultArrC[i] = 0.0f;
+    }
+    // enable bi-directional peer access
+    set_p2p_access(num_gpus);
 
     // randomly init and rescale the array on GPU
-    // GPU_fill_rand_int<<<blocksPerGrid, threadsPerBlock>>>(defaultArrA, matrix_size, 1.0f, 1.0f);
-    // GPU_fill_rand_int<<<blocksPerGrid, threadsPerBlock>>>(defaultArrB, matrix_size, 1.0f, 1.0f);
     cudaDeviceSynchronize();
     // printf("First value input: %f\nLast value input: %f\n", defaultArrA[0], defaultArrA[matrix_size-1]);
     
-    cudaStream_t streams[numGPUs]; // Create a stream for each GPU for overlapping
-    cudaStreamCreate(&streams[0]); // Create default device stream
-    cudaEvent_t mem_events[numGPUs - 1]; // For malloc
-    float* deviceArraysA[numGPUs - 1];
-    float* deviceArraysB[numGPUs - 1];
-    float* deviceArraysC[numGPUs - 1];
+    cudaStream_t streams[num_gpus]; // Create a stream for each GPU for overlapping
+    cudaEvent_t mem_events[num_gpus]; // For malloc
+    float* deviceArraysA[num_gpus - 1];
+    float* deviceArraysB[num_gpus - 1];
+    float* deviceArraysC[num_gpus - 1];
 
     // Allocate chunk on each GPU
-    for (int i = 1; i < numGPUs; ++i) {
+    for (int i = 1; i < num_gpus; ++i) {
         cudaSetDevice(i);
-        // cudaStreamCreate(&streams[i]);
-        cudaEventCreate(&mem_events[i - 1]);
-        cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), 0);
-        cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), 0);
-        cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), 0);
-        cudaEventRecord(mem_events[i - 1]); // record event in the default stream
+        // Set up synchronization points
+        cudaStreamCreate(&streams[i]);        
+        // async malloc for overlapping computation
+        cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), streams[i]);
+        cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), streams[i]);
+        cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), streams[i]);        
     }
-
 
     // enable access from device 0 to all others
     // TODO: malloc only one chunk on device 0; use as buffer for all others
-    cudaSetDevice(0);
-    for (int i = 1; i < numGPUs; ++i) {
+    // cudaSetDevice(0);
+    for (int i = 1; i < num_gpus; ++i) {
         int start = i * chunk_size;
-        CHECK_CUDA_ERROR(cudaDeviceEnablePeerAccess(i, 0));
-        // CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i], i, (defaultArrA + start), 0, chunk_size * sizeof(float), 0));
-        // CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i], i, (defaultArrB + start), 0, chunk_size * sizeof(float), 0));
-        cudaStreamWaitEvent(0, mem_events[i - 1], 0);
-        CHECK_CUDA_ERROR(cudaMemcpy(deviceArraysA[i - 1], defaultArrA, chunk_size * sizeof(float), cudaMemcpyDeviceToDevice));  
-        CHECK_CUDA_ERROR(cudaMemcpy(deviceArraysB[i - 1], defaultArrB, chunk_size * sizeof(float), cudaMemcpyDeviceToDevice));
+        cudaSetDevice(i); // must switch to memcpy target device
+        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + 0), 0, chunk_size * sizeof(float), streams[i]));
+        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + 0), 0, chunk_size * sizeof(float), streams[i]));
+        check_matrix<<<1, 1, 0, streams[i]>>>(deviceArraysA[i - 1], chunk_size);
+        cudaStreamSynchronize(streams[i]);
     }
+
 }

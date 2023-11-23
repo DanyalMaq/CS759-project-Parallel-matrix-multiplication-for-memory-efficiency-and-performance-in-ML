@@ -15,8 +15,6 @@ void kernel_err_check(){
 }
 
 
-const unsigned int TILE_WIDTH = 32; // Tile size of shared memory
-
 __global__ void matrixMultiplyShared(float *A, float *B, float *C,
                                      int nRowsA, int nColsA, int nColsB
                                      ) {
@@ -63,20 +61,20 @@ __global__ void matrixMultiplyShared(float *A, float *B, float *C,
 
 
 __host__ void matmul(float *A, float *B, float *C,
-                                     int nRowsA, int nColsA, int nColsB)
+                    int nRowsA, int nColsA, int nColsB)
 {
-    dim3 dimBlock(TILE_WIDTH, TILE_WIDTH, 1);
-    dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1, 1);
+    dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);
+    dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);
 
     matrixMultiplyShared<<<dimGrid, dimBlock>>>(A, B, C, nRowsA, nColsA, nColsB);
     kernel_err_check();
-    cudaDeviceSynchronize();
 }
 
 // Fill an array with random integers in [min, max]
 __global__ void  GPU_fill_rand_int(float* A, const int n, float min, float max) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx >= n) return;
+    
     // Initialize the random state for the current thread
     curandState state;
     unsigned long long seed = 759;
@@ -108,4 +106,19 @@ __host__ void printMatrix(float* array, int n)
         }
        printf("\n");
     }
+}
+
+// enable bidirectional p2p access between all GPUs
+__host__ void set_p2p_access(int num_gpus, bool enable){
+    for (int i = 0; i < num_gpus; i++){
+        cudaSetDevice(i);
+
+        for (int j = 0; j < num_gpus; j++)
+            if (i != j)
+                if (enable)
+                    CHECK_CUDA_ERROR(cudaDeviceEnablePeerAccess(j, 0));
+                else
+                    CHECK_CUDA_ERROR(cudaDeviceDisablePeerAccess(j));
+    }
+
 }
