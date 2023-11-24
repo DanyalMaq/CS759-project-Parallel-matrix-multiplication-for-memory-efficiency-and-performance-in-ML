@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string>
 #include "matmul.cuh"
-
+#include "utils.cuh"
 using namespace std;
 
 int main(int argc, char** argv){
@@ -70,16 +70,16 @@ int main(int argc, char** argv){
     // Allocate chunk on each GPU
     for (int i = 1; i < num_gpus; ++i) {
         cudaSetDevice(i);
-        // Set up synchronization points
-        cudaStreamCreate(&streams[i]);
+        // Set up synchronization points (use default stream for now)
+        // cudaStreamCreate(&streams[i]);
         cudaEventCreate(&mem_events[i]);
         
         // async malloc for overlapping computation
-        cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), streams[i]);
-        cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), streams[i]);
-        cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), streams[i]);
+        cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), 0);
+        cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), 0);
+        cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), 0);
         // sync barrier
-        cudaEventRecord(mem_events[i], streams[i]); 
+        cudaEventRecord(mem_events[i], 0); 
     }
 
     // enable access from device 0 to all others
@@ -87,8 +87,8 @@ int main(int argc, char** argv){
     for (int i = 1; i < num_gpus; ++i) {
         int start = i * chunk_size;
         cudaSetDevice(i); // must switch to memcpy target device
-        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + start), 0, chunk_size * sizeof(float), streams[i]));
-        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + start), 0, chunk_size * sizeof(float), streams[i]));
+        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + start), 0, chunk_size * sizeof(float), 0));
+        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + start), 0, chunk_size * sizeof(float), 0));
     }
 
     // Launch kernel on each GPU with appropriate configurations
@@ -98,11 +98,11 @@ int main(int argc, char** argv){
         cudaSetDevice(i);
         int start = i * chunk_size;
         if (i == 0)
-            matrixMultiplyShared<<<matmulBlock, matmulGrid, 0, streams[i]>>>(
+            matrixMultiplyShared<<<matmulBlock, matmulGrid, 0, 0>>>(
                 defaultArrA, defaultArrB, defaultArrC, nRowsA, nColsA, nColsB
             );
         else
-            matrixMultiplyShared<<<matmulBlock, matmulGrid, 0, streams[i]>>>(
+            matrixMultiplyShared<<<matmulBlock, matmulGrid, 0, 0>>>(
                 deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1], nRowsA, nColsA, nColsB
             );
         
@@ -114,7 +114,7 @@ int main(int argc, char** argv){
     // wait for results
     for (int i = 0; i < num_gpus; ++i) {
         cudaSetDevice(i);
-        cudaStreamSynchronize(streams[i]);
+        cudaStreamSynchronize(0);
     }
     
     //Print the result

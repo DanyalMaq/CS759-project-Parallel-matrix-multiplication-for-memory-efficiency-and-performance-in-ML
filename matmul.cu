@@ -4,9 +4,6 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
-#include <random>
-#include <curand.h>
-#include <curand_kernel.h>
 
 void kernel_err_check(){
     cudaError_t err = cudaGetLastError();
@@ -14,6 +11,10 @@ void kernel_err_check(){
         printf("Error: %s\n", cudaGetErrorString(err));
 }
 
+enum class MatrixLayout {
+	RowMajor = 0,
+	ColumnMajor = 1,
+};
 
 __global__ void matrixMultiplyShared(float *A, float *B, float *C,
                                      int nRowsA, int nColsA, int nColsB
@@ -70,55 +71,22 @@ __host__ void matmul(float *A, float *B, float *C,
     kernel_err_check();
 }
 
-// Fill an array with random integers in [min, max]
-__global__ void  GPU_fill_rand_int(float* A, const int n, float min, float max) {
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    if (idx >= n) return;
-    
-    // Initialize the random state for the current thread
-    curandState state;
-    unsigned long long seed = 759;
-    curand_init(seed, idx, 0, &state);
-    
-    // Generate a random float and convert it to an integer
-    float rnd = curand_uniform(&state); // (0.0, 1.0]
-    A[idx] = static_cast<int>( rnd * (max - min) + min );
+
+///////////////////// Activations //////////////////////
+template <typename T>
+__host__ __device__ T relu(T val) {
+	return (T)max((float)val, 0.0f);
 }
 
+// TODO: change to parallel reduction
+template <uint32_t N>
+__host__ __device__ inline float softmax(const float vals[N], uint32_t idx) {
+	float total = 0;
 
+	#pragma unroll
+	for (uint32_t i = 0; i < N; ++i) {
+		total += expf(vals[i]);
+	}
 
-////////////////// helper functions //////////////////////
-__global__ void addOneToElements(int* array, int n) {
-    int index = blockIdx.x * blockDim.x + threadIdx.x;
-    if (index < n) {
-        array[index] += 1;
-    }
-}
-
-__host__ void printMatrix(float* array, int n)
-{
-    printf("Matrix:\n");
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            printf("%f ", array[i*n + j]);
-        }
-       printf("\n");
-    }
-}
-
-// enable bidirectional p2p access between all GPUs
-__host__ void set_p2p_access(int num_gpus, bool enable){
-    for (int i = 0; i < num_gpus; i++){
-        cudaSetDevice(i);
-
-        for (int j = 0; j < num_gpus; j++)
-            if (i != j)
-                if (enable)
-                    CHECK_CUDA_ERROR(cudaDeviceEnablePeerAccess(j, 0));
-                else
-                    CHECK_CUDA_ERROR(cudaDeviceDisablePeerAccess(j));
-    }
-
+	return expf(vals[idx]) / total;
 }

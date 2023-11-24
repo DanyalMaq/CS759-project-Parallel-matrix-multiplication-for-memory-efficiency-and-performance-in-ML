@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "matmul.cuh"
+#include "utils.cuh"
 #include <string>
 using namespace std;
 

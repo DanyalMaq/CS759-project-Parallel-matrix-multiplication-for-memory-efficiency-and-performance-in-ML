@@ -1,20 +1,23 @@
 // Author: Nic Olsen, Jason Zhou
 
-#ifndef MATMUL_CUH
-#define MATMUL_CUH
+# pragma once
 #include <iostream>
 const unsigned int TILE_WIDTH = 32; // Tile size of shared memory
 
 __host__ void matmul(float *A, float *B, float *C,
                                      int numARows, int numAColumns, int numBColumns);
-__global__ void GPU_fill_rand_int(float* A, const int n, float min, float max);
+
 void kernel_err_check();
-__host__ void printMatrix(float* array, int n);
-__global__ void addOneToElements(int* array, int n);
-__host__ void set_p2p_access(int num_gpus, bool enable = true);
+
 __global__ void matrixMultiplyShared(float *A, float *B, float *C,
                                         int nRowsA, int nColsA, int nColsB);
+template <typename T>
+__host__ __device__ T relu(T val);
 
+template <uint32_t N>
+__host__ __device__ inline float softmax(const float vals[N], uint32_t idx);
+
+// header-only
 #define CHECK_CUDA_ERROR(val) check((val), #val, __FILE__, __LINE__)
 template <typename T>
 void check(T err, const char* const func, const char* const file,
@@ -29,4 +32,3 @@ void check(T err, const char* const func, const char* const file,
     }
 }
 
-#endif

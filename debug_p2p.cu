@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string>
 #include "matmul.cuh"
-
+#include "utils.cuh"
 using namespace std;
 
 void __global__ check_matrix(float* A, int matrix_size){
@@ -65,11 +65,11 @@ int main(int argc, char** argv){
     for (int i = 1; i < num_gpus; ++i) {
         cudaSetDevice(i);
         // Set up synchronization points
-        cudaStreamCreate(&streams[i]);        
+        // cudaStreamCreate(&streams[i]);        
         // async malloc for overlapping computation
-        cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), streams[i]);
-        cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), streams[i]);
-        cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), streams[i]);        
+        cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), 0);
+        cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), 0);
+        cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), 0);
     }
 
     // enable access from device 0 to all others
@@ -78,10 +78,10 @@ int main(int argc, char** argv){
     for (int i = 1; i < num_gpus; ++i) {
         int start = i * chunk_size;
         cudaSetDevice(i); // must switch to memcpy target device
-        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + 0), 0, chunk_size * sizeof(float), streams[i]));
-        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + 0), 0, chunk_size * sizeof(float), streams[i]));
-        check_matrix<<<1, 1, 0, streams[i]>>>(deviceArraysA[i - 1], chunk_size);
-        cudaStreamSynchronize(streams[i]);
+        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + 0), 0, chunk_size * sizeof(float), 0));
+        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + 0), 0, chunk_size * sizeof(float), 0));
+        check_matrix<<<1, 1, 0, 0>>>(deviceArraysA[i - 1], chunk_size);
+        cudaStreamSynchronize(0);
     }
 
 }
