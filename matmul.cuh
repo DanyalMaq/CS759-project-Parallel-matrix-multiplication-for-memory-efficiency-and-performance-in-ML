@@ -18,6 +18,13 @@ template <uint32_t N>
 __host__ __device__ inline float softmax(const float vals[N], uint32_t idx);
 
 // header-only
+enum class MatrixLayout {
+	RowMajor = 0,
+	ColumnMajor = 1,
+};
+static constexpr MatrixLayout RM = MatrixLayout::RowMajor;
+static constexpr MatrixLayout CM = MatrixLayout::ColumnMajor;
+
 #define CHECK_CUDA_ERROR(val) check((val), #val, __FILE__, __LINE__)
 template <typename T>
 void check(T err, const char* const func, const char* const file,

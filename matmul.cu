@@ -11,9 +11,20 @@ void kernel_err_check(){
         printf("Error: %s\n", cudaGetErrorString(err));
 }
 
-enum class MatrixLayout {
-	RowMajor = 0,
-	ColumnMajor = 1,
+class Matrix{
+    public:
+        uint32_t nRows;
+        uint32_t nCols;
+        float *data;
+        MatrixLayout layout;
+
+    Matrix(uint32_t nRows, uint32_t nCols, MatrixLayout layout=RM){
+        this->nRows = nRows;
+        this->nCols = nCols;
+        this->layout = layout;
+        this->data = data;
+    }
+    // TODO: override indexing operator
 };
 
 __global__ void matrixMultiplyShared(float *A, float *B, float *C,
@@ -77,6 +88,7 @@ template <typename T>
 __host__ __device__ T relu(T val) {
 	return (T)max((float)val, 0.0f);
 }
+
 
 // TODO: change to parallel reduction
 template <uint32_t N>
