@@ -14,21 +14,21 @@
 #include <string>
 #include <cublas_v2.h>
 
-void transpose(float *output, const float *input, int rows, int columns, int start_col, int end_col) {
-    cublasHandle_t handle;
-    cublasCreate(&handle);
+// void transpose(float *output, const float *input, int nRows, int nCols, int start_col, int end_col) {
+//     cublasHandle_t handle;
+//     cublasCreate(&handle);
 
-    // Calculate the number of columns to extract
-    int num_cols_to_extract = end_col - start_col;
+//     // Calculate the number of nCols to extract
+//     int num_cols_to_extract = end_col - start_col;
 
-    // Use cublasSgeam to extract the specified range of columns
-    const float alpha = 1.0f;
-    const float beta = 0.0f;
-    cublasSgeam(handle, CUBLAS_OP_N, CUBLAS_OP_N, rows, num_cols_to_extract, &alpha,
-                input + start_col * rows, rows, &beta, nullptr, rows,
-                output, rows);
-    cudaDeviceSynchronize();
-}
+//     // Use cublasSgeam to extract the specified range of nCols
+//     const float alpha = 1.0f;
+//     const float beta = 0.0f;
+//     cublasSgeam(handle, CUBLAS_OP_N, CUBLAS_OP_N, nRows, num_cols_to_extract, &alpha,
+//                 input + start_col * nRows, nRows, &beta, nullptr, nRows,
+//                 output, nRows);
+//     cudaDeviceSynchronize();
+// }
 
 int main(int argc, char** argv)
 {
@@ -65,24 +65,19 @@ int main(int argc, char** argv)
     // Set up operands and result on device 0 
     float* defaultArrA;
     float* defaultArrB;
-    float* defaultArrC;
-    float* hostArrayD;
+
     // Use managed for async memcpy
     CHECK_CUDA_ERROR(cudaMallocManaged((void**)&defaultArrA, matrix_size  * sizeof(float))); 
     CHECK_CUDA_ERROR(cudaMallocManaged((void**)&defaultArrB, matrix_size  * sizeof(float))); 
-    CHECK_CUDA_ERROR(cudaMallocManaged((void**)&defaultArrC, matrix_size  * sizeof(float))); 
-    CHECK_CUDA_ERROR(cudaMallocManaged((void**)&hostArrayD, matrix_size  * sizeof(float))); 
 
-    // randomly init and rescale the array on GPU. Make a separate dim for memory allocation
-    dim3 threadsPerBlockAlloc(threads_per_block);
-    int blocks_per_dim_alloc = (matrix_size + threadsPerBlockAlloc.x - 1) / threadsPerBlockAlloc.x;
-    dim3 blocksPerGridAlloc(blocks_per_dim_alloc);
-    GPU_fill_rand_int<<<blocksPerGridAlloc, threadsPerBlockAlloc>>>(defaultArrA, matrix_size, 1.0f, 2.0f);
-    GPU_fill_rand_int<<<blocksPerGridAlloc, threadsPerBlockAlloc>>>(defaultArrB, matrix_size, 0.0f, 0.0f);
-    kernel_err_check();
+    // Init
+    for (int i = 0; i < nRowsA * nColsA; i++) {
+        defaultArrA[i] = i;
+    }
+    
     cudaDeviceSynchronize();
     printMatrix(defaultArrA, nRowsA, nColsA);
-    transpose(defaultArrB, defaultArrA, nRowsA, nColsA, 0, 8);
-    printf("Printing matrix\n");
+    transpose(defaultArrB, defaultArrA, nRowsA, nColsA);
+    printf("Transposed matrix:\n");
     printMatrix(defaultArrB, nColsA, nRowsA);
 }

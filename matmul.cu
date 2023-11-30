@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
+#include <cublas_v2.h>
 
 void kernel_err_check(){
     cudaError_t err = cudaGetLastError();
@@ -25,6 +26,7 @@ class Matrix{
         this->data = data;
     }
     // TODO: override indexing operator
+    
 };
 
 __global__ void matrixMultiplyShared(float *A, float *B, float *C,
@@ -82,6 +84,20 @@ __host__ void matmul(float *A, float *B, float *C,
     kernel_err_check();
 }
 
+
+// Transpose a given matrix
+__host__ void transpose(float *output, const float *input, int nRows, int nCols) {
+    cublasHandle_t handle;
+    cublasCreate(&handle);
+    
+    // Use cublasSgeam to extract the specified range of nCols
+    const float alpha = 1.0f;
+    const float beta = 0.0f;
+    cublasSgeam(handle, CUBLAS_OP_N, CUBLAS_OP_N, nRows, nCols, &alpha,
+                input, nRows, &beta, nullptr, nRows,
+                output, nRows);
+    cudaDeviceSynchronize();
+}
 
 ///////////////////// Activations //////////////////////
 template <typename T>

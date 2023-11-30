@@ -39,3 +39,5 @@ void check(T err, const char* const func, const char* const file,
     }
 }
 
+// Transpose a given matrix
+__host__ void transpose(float *output, const float *input, int nRows, int nCols);
