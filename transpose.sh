@@ -10,6 +10,6 @@
 #SBATCH --error=transpose.err
 
 module load nvidia/cuda/11.8.0
-nvcc column.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std c++17 -lcurand -o  t
+nvcc transpose.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std c++17 -lcurand -lcublas -o  t
 
-./t 64 2
+./t 16 2

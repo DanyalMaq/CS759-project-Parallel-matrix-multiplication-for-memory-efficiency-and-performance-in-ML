@@ -12,41 +12,25 @@
 #include "matmul.cuh"
 #include "utils.cuh"
 #include <string>
-using namespace std;
+#include <cublas_v2.h>
 
-const unsigned int TILE_SIZE = 32;
-const unsigned int BLOCK_ROWS = 8;
+void transpose(float *output, const float *input, int rows, int columns, int start_col, int end_col) {
+    cublasHandle_t handle;
+    cublasCreate(&handle);
 
-__global__ void transpose(const float *input, float *output, int rows, int columns) {
-    __shared__ float tile[TILE_SIZE][TILE_SIZE + 1];  // +1 to avoid bank conflicts
+    // Calculate the number of columns to extract
+    int num_cols_to_extract = end_col - start_col;
 
-    int x = blockIdx.x * TILE_SIZE + threadIdx.x;
-    int y = blockIdx.y * TILE_SIZE + threadIdx.y;
-
-    if (x < columns && y < rows) {
-        tile[threadIdx.y][threadIdx.x] = input[y * columns + x];
-    }
-
-    __syncthreads();
-
-    x = blockIdx.y * TILE_SIZE + threadIdx.x;
-    y = blockIdx.x * TILE_SIZE + threadIdx.y;
-
-    if (x < rows && y < columns) {
-        output[y * rows + x] = tile[threadIdx.x][threadIdx.y];
-    }
-}
-
-__host__ void transpose_host(float *input, const float *output, int rows, int columns)
-{
-    dim3 blockSize(TILE_SIZE, TILE_SIZE);
-    dim3 gridSize((columns + TILE_SIZE - 1) / TILE_SIZE, (rows + TILE_SIZE - 1) / TILE_SIZE);
-
-    transposeKernel<<<gridSize, blockSize>>>(input, output, rows, columns);
+    // Use cublasSgeam to extract the specified range of columns
+    const float alpha = 1.0f;
+    const float beta = 0.0f;
+    cublasSgeam(handle, CUBLAS_OP_N, CUBLAS_OP_N, rows, num_cols_to_extract, &alpha,
+                input + start_col * rows, rows, &beta, nullptr, rows,
+                output, rows);
     cudaDeviceSynchronize();
 }
 
-__host__ int main(int argc, char** argv)
+int main(int argc, char** argv)
 {
     printf("Distributed matmul with managed memory\n");
     if (argc != 3){
@@ -57,7 +41,7 @@ __host__ int main(int argc, char** argv)
     int n = std::stoi(argv[1]);
     // int threads_per_block = stoi(argv[2]);
     int threads_per_block = 1024;
-    int num_gpus = stoi(argv[2]);
+    int num_gpus = std::stoi(argv[2]);
     
     // check n is divisible by num_gpus
     if (! (n % num_gpus == 0) ){
@@ -97,7 +81,8 @@ __host__ int main(int argc, char** argv)
     GPU_fill_rand_int<<<blocksPerGridAlloc, threadsPerBlockAlloc>>>(defaultArrB, matrix_size, 0.0f, 0.0f);
     kernel_err_check();
     cudaDeviceSynchronize();
-    printMatrix(defaultArrA, num_gpus * nRowsA, nColsA);
-    transpose_host(defaultArrB, defaultArrA, num_gpus * nRowsA, nColsA);
-    printMatrix(defaultArrB, nColsA, num_gpus * nRowsA);
+    printMatrix(defaultArrA, nRowsA, nColsA);
+    transpose(defaultArrB, defaultArrA, nRowsA, nColsA, 0, 8);
+    printf("Printing matrix\n");
+    printMatrix(defaultArrB, nColsA, nRowsA);
 }

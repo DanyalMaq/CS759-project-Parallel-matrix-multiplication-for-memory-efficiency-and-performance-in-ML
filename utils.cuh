@@ -53,3 +53,20 @@ __host__ void set_p2p_access(int num_gpus, bool enable = true){
                     CHECK_CUDA_ERROR(cudaDeviceDisablePeerAccess(j));
     }
 }
+
+// Transpose a given matrix
+__global__ void transpose(float *output, const float *input, int rows, int columns, int start_col, int end_col) {
+    cublasHandle_t handle;
+    cublasCreate(&handle);
+
+    // Calculate the number of columns to extract
+    int num_cols_to_extract = end_col - start_col;
+
+    // Use cublasSgeam to extract the specified range of columns
+    const float alpha = 1.0f;
+    const float beta = 0.0f;
+    cublasSgeam(handle, CUBLAS_OP_N, CUBLAS_OP_N, rows, num_cols_to_extract, &alpha,
+                input + start_col * rows, rows, &beta, nullptr, rows,
+                output, rows);
+    cudaDeviceSynchronize();
+}
