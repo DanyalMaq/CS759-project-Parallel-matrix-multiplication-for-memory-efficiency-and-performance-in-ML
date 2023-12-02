@@ -93,7 +93,7 @@ __host__ void transpose(float *output, const float *input, int nRows, int nCols)
     // Use cublasSgeam to extract the specified range of nCols
     const float alpha = 1.0f;
     const float beta = 0.0f;
-    cublasSgeam(handle, CUBLAS_OP_N, CUBLAS_OP_N, nRows, nCols, &alpha,
+    cublasSgeam(handle, CUBLAS_OP_T, CUBLAS_OP_T, nRows, nCols, &alpha,
                 input, nRows, &beta, nullptr, nRows,
                 output, nRows);
     cudaDeviceSynchronize();
