@@ -3,6 +3,7 @@
         "array": "cpp",
         "iostream": "cpp",
         "random": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "*.tcc": "cpp"
     }
 }

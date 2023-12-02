@@ -14,14 +14,14 @@ void kernel_err_check(){
 
 class Matrix{
     public:
-        uint32_t nRows;
-        uint32_t nCols;
+        uint32_t nrowBeginAs;
+        uint32_t ncolBeginBs;
         float *data;
         MatrixLayout layout;
 
-    Matrix(uint32_t nRows, uint32_t nCols, MatrixLayout layout=RM){
-        this->nRows = nRows;
-        this->nCols = nCols;
+    Matrix(uint32_t nrowBeginAs, uint32_t ncolBeginBs, MatrixLayout layout=RM){
+        this->nrowBeginAs = nrowBeginAs;
+        this->ncolBeginBs = ncolBeginBs;
         this->layout = layout;
         this->data = data;
     }
@@ -32,44 +32,54 @@ class Matrix{
 __global__ void matrixMultiplyShared(float *A, float *B, float *C,
                                      int nRowsA, int nColsA, int nColsB
                                      ) {
+    // TODO: change to 1d. Why is 1d faster?                                    
     __shared__ float sA[TILE_WIDTH][TILE_WIDTH];   // Tile size of 32x32
     __shared__ float sB[TILE_WIDTH][TILE_WIDTH];
+    int bx = blockIdx.x;
+    int by = blockIdx.y;
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+    int nRowsB = nColsA;
+    int rowBeginA = by * TILE_WIDTH * nColsA;
+    int colBeginB = bx * TILE_WIDTH;
 
-    int Row = blockDim.y * blockIdx.y + threadIdx.y;
-    int Col = blockDim.x * blockIdx.x + threadIdx.x;
     float Cvalue = 0.0;
-    sA[threadIdx.y][threadIdx.x] = 0.0;
-    sB[threadIdx.y][threadIdx.x] = 0.0;
 
-    for (int ph = 0; ph < (((nColsA - 1) / TILE_WIDTH) + 1); ph++) {
-        if ((Row < nRowsA) && (threadIdx.x + (ph * TILE_WIDTH)) < nColsA) {
-            sA[threadIdx.y][threadIdx.x] = A[(Row * nColsA) + threadIdx.x + (ph * TILE_WIDTH)];
-        } else {
-            sA[threadIdx.y][threadIdx.x] = 0.0;
-        }
-        if (Col < nColsB && (threadIdx.y + ph * TILE_WIDTH) < nColsA) {
-            sB[threadIdx.y][threadIdx.x] = B[(threadIdx.y + ph * TILE_WIDTH) * nColsB + Col];
-        } else {
-            sB[threadIdx.y][threadIdx.x] = 0.0;
-        }
+    // stride over the tiles along columns of A and rows of B
+    for (int step = 0; step < nColsA; step += TILE_WIDTH) {
+        
+        // check if operands are in bounds
+        if (! (rowBeginA < nRowsA * nColsA && colBeginB < nColsB && tx + step < nColsA && ty + step < nRowsB) )
+            break;
+
+        // load A's tiles into shared memory
+        sA[ty][tx] = A[rowBeginA + tx + step];
+        // load B's tiles into shared memory
+        sB[ty][tx] = B[colBeginB + (ty + step) * nColsB];
+        // printf("sA[%d][%d] = %.1f, sB[%d][%d] = %.1f\n", ty, tx, sA[ty][tx], ty, tx, sB[ty][tx]);
         __syncthreads();
 
         for (int j = 0; j < TILE_WIDTH; ++j) {
-            Cvalue += sA[threadIdx.y][j] * sB[j][threadIdx.x];
+            // if (rowBeginA == 0 && colBeginB == 0)
+                // printf("sA[%d][%d]=%.1f,sB[%d][%d]=%.1f\n", ty, j, sA[ty][j], j, tx, sB[j][tx]);
+            // if (tx < nColsB && ty < nRowsA)
+            Cvalue += sA[ty][j] * sB[j][tx];
         }
+        __syncthreads();
     }
 
-    if (Row == (nRowsA-1) && Col == (nColsB-1))
+    if (rowBeginA == (nRowsA-1) && colBeginB == (nColsB-1))
     {
         printf("GPU Last value output array C variable: %f\n", Cvalue);
     }
-    if (Row < nRowsA && Col < nColsB) {
-        C[Row * nColsB + Col] = Cvalue;
+    if (rowBeginA < nRowsA && colBeginB < nColsB) {
+        C[rowBeginA * nColsB + colBeginB] = Cvalue;
     }
-    if (Row == 0 && Col == 0)
+    if (rowBeginA == 0 && colBeginB == 0)
     {
-        printf("GPU First value input array A: %f\n", A[0]);
-        printf("GPU First value output array C: %f\n", C[0]);
+        printf("GPU input A[0] = %.1f, A[n - 1] = %.1f\n", A[0], A[nRowsA * nColsA - 1]);
+        printf("GPU input B[0] = %.1f, B[n - 1] = %.1f\n", B[0], B[nColsA * nColsB - 1]);
+        printf("GPU output C[0] = %.1f, C[n - 1] = %.1f\n", C[0], C[nRowsA * nColsB - 1]);
     }
 }
 
@@ -85,17 +95,17 @@ __host__ void matmul(float *A, float *B, float *C,
 }
 
 
-// Transpose a given matrix
-__host__ void transpose(float *output, const float *input, int nRows, int nCols) {
+// get
+__host__ void transpose(float *output, const float *input, int nrowBeginAs, int ncolBeginBs) {
     cublasHandle_t handle;
     cublasCreate(&handle);
     
-    // Use cublasSgeam to extract the specified range of nCols
-    const float alpha = 1.0f;
+    // Use cublasSgeam to extract the specified range of ncolBeginBs
+    const float alia = 1.0f;
     const float beta = 0.0f;
-    cublasSgeam(handle, CUBLAS_OP_T, CUBLAS_OP_T, nRows, nCols, &alpha,
-                input, nRows, &beta, nullptr, nRows,
-                output, nRows);
+    cublasSgeam(handle, CUBLAS_OP_T, CUBLAS_OP_T, nrowBeginAs, ncolBeginBs, &alia,
+                input, nrowBeginAs, &beta, nullptr, nrowBeginAs,
+                output, nrowBeginAs);
     cudaDeviceSynchronize();
 }
 
@@ -112,8 +122,8 @@ __host__ __device__ inline float softmax(const float vals[N], uint32_t idx) {
 	float total = 0;
 
 	#pragma unroll
-	for (uint32_t i = 0; i < N; ++i) {
-		total += expf(vals[i]);
+	for (uint32_t step = 0; step < N; ++step) {
+		total += expf(vals[step]);
 	}
 
 	return expf(vals[idx]) / total;

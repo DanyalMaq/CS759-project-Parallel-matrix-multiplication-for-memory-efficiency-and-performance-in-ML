@@ -27,14 +27,14 @@ __global__ void addOneToElements(int* array, int n) {
     }
 }
 
-__host__ void printMatrix(float* array, int n, int m)
+__host__ void printMatrix(float* array, int n)
 {
     printf("Matrix:\n");
     for (int i = 0; i < n; i++)
     {
-        for (int j = 0; j < m; j++)
+        for (int j = 0; j < n; j++)
         {
-            printf("%f ", array[i*m + j]);
+            printf("%f ", array[i*n + j]);
         }
        printf("\n");
     }
@@ -53,4 +53,3 @@ __host__ void set_p2p_access(int num_gpus, bool enable = true){
                     CHECK_CUDA_ERROR(cudaDeviceDisablePeerAccess(j));
     }
 }
-
