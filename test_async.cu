@@ -124,7 +124,7 @@ int main(int argc, char** argv){
     
     //Print the result
     // printMatrix(defaultArrC, n);
-    // printf("Matmul First value output: %f\nLast value output: %f\n", defaultArrC[0], defaultArrC[matrix_size-1]);
+    printf("Matmul First value output: %f\nLast value output: %f\n", defaultArrC[0], defaultArrC[matrix_size-1]);
     
     // Clean up
     set_p2p_access(num_gpus, false);

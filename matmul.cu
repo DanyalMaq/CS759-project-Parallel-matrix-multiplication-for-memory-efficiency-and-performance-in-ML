@@ -12,24 +12,8 @@ void kernel_err_check(){
         printf("Error: %s\n", cudaGetErrorString(err));
 }
 
-class Matrix{
-    public:
-        uint32_t nrowBeginAs;
-        uint32_t ncolBeginBs;
-        float *data;
-        MatrixLayout layout;
 
-    Matrix(uint32_t nrowBeginAs, uint32_t ncolBeginBs, MatrixLayout layout=RM){
-        this->nrowBeginAs = nrowBeginAs;
-        this->ncolBeginBs = ncolBeginBs;
-        this->layout = layout;
-        this->data = data;
-    }
-    // TODO: override indexing operator
-    
-};
-
-// Matrix multiplication with shared memory for non-square matrices 
+// GPUMatrix multiplication with shared memory for non-square matrices 
 __global__ void matmul_rect(float *A, float *B, float *C,
                                      int nRowsA, int nColsA, int nColsB
                                     ) {
@@ -60,8 +44,8 @@ __global__ void matmul_rect(float *A, float *B, float *C,
         else
             sB[ty][tx] = 0.0;
 
-        if (sB[ty][tx] != 0.0 && sA[ty][tx] != 0.0)
-            printf("sA[%d][%d] = %.1f, sB[%d][%d] = %.1f, step = %d\n", ty, tx, sA[ty][tx], ty, tx, sB[ty][tx], step);
+        // if (sB[ty][tx] != 0.0 && sA[ty][tx] != 0.0)
+            // printf("sA[%d][%d] = %.1f, sB[%d][%d] = %.1f, step = %d\n", ty, tx, sA[ty][tx], ty, tx, sB[ty][tx], step);
         __syncthreads();
 
         for (int j = 0; j < TILE_WIDTH; ++j) {
@@ -70,16 +54,17 @@ __global__ void matmul_rect(float *A, float *B, float *C,
 
         __syncthreads();
     }
-    if (Ctile != 0.0)
-        printf("tx = %d, ty = %d, Ctile = %f\n", tx, ty, Ctile);
+    // if (Ctile != 0.0)
+        // printf("tx = %d, ty = %d, Ctile = %f\n", tx, ty, Ctile);
 
-    if (rowBeginA == nRowsA - 1 && colBeginB == nColsB - 1)
-        printf("GPU Last value output array C variable: %f\n", Ctile);
-        
+    // if (nRowsA == nRowsA - 1 && nColsB == nColsB - 1)
+        // printf("GPU Last value output array C variable: %f\n", Ctile);
+
     if (rowBeginA < nRowsA && colBeginB < nColsB) {
         C[rowBeginA * nColsB + colBeginB] = Ctile;
+        printf("C[%d][%d] = %.1f\n", nRowsA, nColsB, C[rowBeginA * nColsB + colBeginB]);
     }
-    // if (rowBeginA == 0 && colBeginB == 0)
+    // if (nRowsA == 0 && nColsB == 0)
     // {
     //     printf("GPU input A[0] = %.1f, A[n - 1] = %.1f\n", A[0], A[nRowsA * nColsA - 1]);
     //     printf("GPU input B[0] = %.1f, B[n - 1] = %.1f\n", B[0], B[nColsA * nColsB - 1]);
@@ -99,20 +84,66 @@ __host__ void matmul(float *A, float *B, float *C,
 }
 
 
-// get
-__host__ void transpose(float *output, const float *input, int nrowBeginAs, int ncolBeginBs) {
+__host__ void transpose(float *output, const float *input, int nRows, int nCols) {
     cublasHandle_t handle;
     cublasCreate(&handle);
     
-    // Use cublasSgeam to extract the specified range of ncolBeginBs
-    const float alia = 1.0f;
-    const float beta = 0.0f;
-    cublasSgeam(handle, CUBLAS_OP_T, CUBLAS_OP_T, nrowBeginAs, ncolBeginBs, &alia,
-                input, nrowBeginAs, &beta, nullptr, nrowBeginAs,
-                output, nrowBeginAs);
+    // Use cublasSgeam to extract the specified range of nCols
+    const float a = 1.0f;
+    const float b = 0.0f;
+    cublasSgeam(handle, CUBLAS_OP_T, CUBLAS_OP_T, nRows, nCols, &a,
+                input, nRows, &b, nullptr, nRows,
+                output, nRows);
     // no need to sync because it uses default stream
     // cudaStreamSynchronize(0);
 }
+
+class GPUMatrix{
+    public:
+        uint32_t nRows;
+        uint32_t nCols;
+        float *data;
+        MatrixLayout layout;
+
+    GPUMatrix(uint32_t nRows, uint32_t nCols, float* data, MatrixLayout layout=RM){
+        this->nRows = nRows;
+        this->nCols = nCols;
+        this->data = data;
+        this->layout = layout;
+    }
+
+    GPUMatrix(uint32_t nRows, uint32_t nCols, MatrixLayout layout=RM, cudaStream_t stream=nullptr){
+        this->nRows = nRows;
+        this->nCols = nCols;
+        this->layout = layout;
+        cudaMallocAsync(&data, nRows * nCols * sizeof(float), stream);
+    }
+
+    ~GPUMatrix(){
+        cudaFree(data);
+    }   
+    
+    // override indexing operatnRows
+    float& operator()(uint32_t i, uint32_t j){
+        if (i >= nRows || j >= nCols)
+            throw std::out_of_range("Index out of range");
+        return data[i * nCols + j];
+    }
+
+    const float& operator()(uint32_t i, uint32_t j) const{
+        if (i >= nRows || j >= nCols)
+            throw std::out_of_range("Index out of range");
+        return data[i * nCols + j];
+    }
+    
+    void T(){
+        transpose(data, data, nRows, nCols);
+        // swap nRows and nCols and reverse layout
+        std::swap(nRows, nCols);
+        layout = (layout == RM) ? CM : RM; 
+    }
+        
+};
 
 ///////////////////// Activations //////////////////////
 template <typename T>
