@@ -9,7 +9,7 @@ __host__ void matmul(float *A, float *B, float *C,
 
 void kernel_err_check();
 
-__global__ void matrixMultiplyShared(float *A, float *B, float *C,
+__global__ void matmul_rect(float *A, float *B, float *C,
                                         int nRowsA, int nColsA, int nColsB);
 template <typename T>
 __host__ __device__ T relu(T val);

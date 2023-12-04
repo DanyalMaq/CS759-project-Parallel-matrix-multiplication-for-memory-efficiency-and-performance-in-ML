@@ -40,8 +40,7 @@ int main(int argc, char** argv){
     int matrix_size = num_gpus * nRowsA * nColsA; // Total size of matrix
     int chunk_size = matrix_size / num_gpus; // Chunk going on each GPU
     cudaStream_t def_stream = nullptr; // device-wide default stream
-    printf("Chunk size: %d\n", chunk_size);
-
+    printf("Chunk size: %d * %d = %d\n", nRowsA, nColsA, chunk_size);
     // Set up operands and result buffers on device 0 
     float* defaultArrA;
     float* defaultArrB;
@@ -101,13 +100,13 @@ int main(int argc, char** argv){
         int start = i * chunk_size;
 
         if (i == 0){
-            matrixMultiplyShared<<<matmulGrid, matmulBlock>>>(
+            matmul_rect<<<matmulGrid, matmulBlock>>>(
                 defaultArrA, defaultArrB, defaultArrC, nRowsA, nColsA, nColsB
             );
             kernel_err_check();
         }
         else{
-            matrixMultiplyShared<<<matmulGrid, matmulBlock>>>(
+            matmul_rect<<<matmulGrid, matmulBlock>>>(
                 deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1], nRowsA, nColsA, nColsB
             );
             kernel_err_check();

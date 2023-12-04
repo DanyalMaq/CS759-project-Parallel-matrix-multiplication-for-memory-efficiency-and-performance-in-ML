@@ -29,7 +29,8 @@ class Matrix{
     
 };
 
-__global__ void matrixMultiplyShared(float *A, float *B, float *C,
+// Matrix multiplication with shared memory for non-square matrices 
+__global__ void matmul_rect(float *A, float *B, float *C,
                                      int nRowsA, int nColsA, int nColsB
                                     ) {
     // TODO: change to 1d. Why is 1d faster?                                    
@@ -92,7 +93,7 @@ __host__ void matmul(float *A, float *B, float *C,
     dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);
     dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);
     printf("dimGrid.x = %d, dimGrid.y = %d\n", dimGrid.x, dimGrid.y);
-    matrixMultiplyShared<<<dimGrid, dimBlock>>>(A, B, C, nRowsA, nColsA, nColsB);
+    matmul_rect<<<dimGrid, dimBlock>>>(A, B, C, nRowsA, nColsA, nColsB);
     kernel_err_check();
 }
 
