@@ -45,7 +45,7 @@ __global__ void matmul_rect(float *A, float *B, float *C,
     int rowBeginA = by * TILE_WIDTH + ty;
     int colBeginB = bx * TILE_WIDTH + tx;
 
-    float Cvalue = 0.0;
+    float Ctile = 0.0;
 
     // stride over the tiles along columns of A and rows of B
     for (int step = 0; step < nColsA; step += TILE_WIDTH) {
@@ -66,17 +66,18 @@ __global__ void matmul_rect(float *A, float *B, float *C,
         __syncthreads();
 
         for (int j = 0; j < TILE_WIDTH; ++j) {
-            Cvalue += sA[ty][j] * sB[j][tx];
+            Ctile += sA[ty][j] * sB[j][tx];
         }
         __syncthreads();
     }
 
+
     if (rowBeginA == (nRowsA * nColsA - 1) && colBeginB == (nColsB - 1))
     {
-        printf("GPU Last value output array C variable: %f\n", Cvalue);
+        printf("GPU Last value output array C variable: %f\n", Ctile);
     }
     if (rowBeginA < nRowsA && colBeginB < nColsB) {
-        C[rowBeginA * nColsB + colBeginB] = Cvalue;
+        C[rowBeginA * nColsA + colBeginB] = Ctile;
     }
     // if (rowBeginA == 0 && colBeginB == 0)
     // {
