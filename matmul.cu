@@ -31,7 +31,7 @@ class Matrix{
 
 __global__ void matrixMultiplyShared(float *A, float *B, float *C,
                                      int nRowsA, int nColsA, int nColsB
-                                     ) {
+                                    ) {
     // TODO: change to 1d. Why is 1d faster?                                    
     __shared__ float sA[TILE_WIDTH][TILE_WIDTH];   // Tile size of 32x32
     __shared__ float sB[TILE_WIDTH][TILE_WIDTH];
@@ -39,48 +39,50 @@ __global__ void matrixMultiplyShared(float *A, float *B, float *C,
     int by = blockIdx.y;
     int tx = threadIdx.x;
     int ty = threadIdx.y;
+    
     int nRowsB = nColsA;
-    int rowBeginA = by * TILE_WIDTH * nColsA;
-    int colBeginB = bx * TILE_WIDTH;
+    int rowBeginA = by * TILE_WIDTH + ty;
+    int colBeginB = bx * TILE_WIDTH + tx;
 
     float Cvalue = 0.0;
 
     // stride over the tiles along columns of A and rows of B
     for (int step = 0; step < nColsA; step += TILE_WIDTH) {
-        
-        // check if operands are in bounds
-        if (! (rowBeginA < nRowsA * nColsA && colBeginB < nColsB && tx + step < nColsA && ty + step < nRowsB) )
-            break;
-
         // load A's tiles into shared memory
-        sA[ty][tx] = A[rowBeginA + tx + step];
+        if (rowBeginA < nRowsA && tx + step < nColsA)
+            sA[ty][tx] = A[rowBeginA * nColsA + tx + step];
+        else
+            sA[ty][tx] = 0.0;
+
         // load B's tiles into shared memory
-        sB[ty][tx] = B[colBeginB + (ty + step) * nColsB];
-        // printf("sA[%d][%d] = %.1f, sB[%d][%d] = %.1f\n", ty, tx, sA[ty][tx], ty, tx, sB[ty][tx]);
+        if (colBeginB < nColsB && ty + step < nRowsB)
+            sB[ty][tx] = B[(ty + step) * nColsB + colBeginB];
+        else
+            sB[ty][tx] = 0.0;
+
+        if (sB[ty][tx] != 0.0 && sA[ty][tx] != 0.0)
+            printf("sA[%d][%d] = %.1f, sB[%d][%d] = %.1f, step = %d\n", ty, tx, sA[ty][tx], ty, tx, sB[ty][tx], step);
         __syncthreads();
 
         for (int j = 0; j < TILE_WIDTH; ++j) {
-            // if (rowBeginA == 0 && colBeginB == 0)
-                // printf("sA[%d][%d]=%.1f,sB[%d][%d]=%.1f\n", ty, j, sA[ty][j], j, tx, sB[j][tx]);
-            // if (tx < nColsB && ty < nRowsA)
             Cvalue += sA[ty][j] * sB[j][tx];
         }
         __syncthreads();
     }
 
-    if (rowBeginA == (nRowsA-1) && colBeginB == (nColsB-1))
+    if (rowBeginA == (nRowsA * nColsA - 1) && colBeginB == (nColsB - 1))
     {
         printf("GPU Last value output array C variable: %f\n", Cvalue);
     }
     if (rowBeginA < nRowsA && colBeginB < nColsB) {
         C[rowBeginA * nColsB + colBeginB] = Cvalue;
     }
-    if (rowBeginA == 0 && colBeginB == 0)
-    {
-        printf("GPU input A[0] = %.1f, A[n - 1] = %.1f\n", A[0], A[nRowsA * nColsA - 1]);
-        printf("GPU input B[0] = %.1f, B[n - 1] = %.1f\n", B[0], B[nColsA * nColsB - 1]);
-        printf("GPU output C[0] = %.1f, C[n - 1] = %.1f\n", C[0], C[nRowsA * nColsB - 1]);
-    }
+    // if (rowBeginA == 0 && colBeginB == 0)
+    // {
+    //     printf("GPU input A[0] = %.1f, A[n - 1] = %.1f\n", A[0], A[nRowsA * nColsA - 1]);
+    //     printf("GPU input B[0] = %.1f, B[n - 1] = %.1f\n", B[0], B[nColsA * nColsB - 1]);
+    //     printf("GPU output C[0] = %.1f, C[n - 1] = %.1f\n", C[0], C[nRowsA * nColsB - 1]);
+    // }
 }
 
 
@@ -89,7 +91,7 @@ __host__ void matmul(float *A, float *B, float *C,
 {
     dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);
     dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);
-
+    printf("dimGrid.x = %d, dimGrid.y = %d\n", dimGrid.x, dimGrid.y);
     matrixMultiplyShared<<<dimGrid, dimBlock>>>(A, B, C, nRowsA, nColsA, nColsB);
     kernel_err_check();
 }
@@ -106,7 +108,8 @@ __host__ void transpose(float *output, const float *input, int nrowBeginAs, int 
     cublasSgeam(handle, CUBLAS_OP_T, CUBLAS_OP_T, nrowBeginAs, ncolBeginBs, &alia,
                 input, nrowBeginAs, &beta, nullptr, nrowBeginAs,
                 output, nrowBeginAs);
-    cudaDeviceSynchronize();
+    // no need to sync because it uses default stream
+    // cudaStreamSynchronize(0);
 }
 
 ///////////////////// Activations //////////////////////
@@ -121,7 +124,7 @@ template <uint32_t N>
 __host__ __device__ inline float softmax(const float vals[N], uint32_t idx) {
 	float total = 0;
 
-	#pragma unroll
+	// #pragma unroll
 	for (uint32_t step = 0; step < N; ++step) {
 		total += expf(vals[step]);
 	}

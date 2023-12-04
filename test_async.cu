@@ -39,7 +39,7 @@ int main(int argc, char** argv){
     int nRowsA = n, nColsA = n, nColsB = n; // test square matrices for now
     int matrix_size = num_gpus * nRowsA * nColsA; // Total size of matrix
     int chunk_size = matrix_size / num_gpus; // Chunk going on each GPU
-    
+    cudaStream_t def_stream = nullptr; // device-wide default stream
     printf("Chunk size: %d\n", chunk_size);
 
     // Set up operands and result buffers on device 0 
@@ -58,7 +58,7 @@ int main(int argc, char** argv){
     dim3 initDimGrid((matrix_size + th_per_block - 1) / th_per_block);
     GPU_fill_rand_int<<<initDimGrid, th_per_block>>>(defaultArrA, matrix_size, 2.0f, 2.0f);
     GPU_fill_rand_int<<<initDimGrid, th_per_block>>>(defaultArrB, matrix_size, 2.0f, 2.0f);
-    cudaStreamSynchronize(0);
+    // cudaStreamSynchronize(0);
     
     // Create a stream for each GPU for pipelining
     cudaStream_t streams[num_gpus]; cudaStreamCreate(&streams[0]);
@@ -75,9 +75,9 @@ int main(int argc, char** argv){
         cudaEventCreate(&mem_events[i]);
         
         // async malloc for overlapping computation
-        cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), 0);
-        cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), 0);
-        cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), 0);
+        cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), def_stream);
+        cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), def_stream);
+        cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), def_stream);
         // sync barrier
         cudaEventRecord(mem_events[i], 0); 
     }
@@ -87,31 +87,34 @@ int main(int argc, char** argv){
     for (int i = 1; i < num_gpus; ++i) {
         int start = i * chunk_size;
         cudaSetDevice(i); // must switch to memcpy target device
-        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + start), 0, chunk_size * sizeof(float), 0));
-        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + start), 0, chunk_size * sizeof(float), 0));
+        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + start), 0, chunk_size * sizeof(float), def_stream));
+        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + start), 0, chunk_size * sizeof(float), def_stream));
     }
 
     // Launch kernel on each GPU with appropriate configurations
     dim3 matmulBlock(TILE_WIDTH, TILE_WIDTH); // tile size 
-    dim3 matmulGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);
+    dim3 matmulGrid((nColsB + TILE_WIDTH - 1) / TILE_WIDTH, (nRowsA + TILE_WIDTH - 1) / TILE_WIDTH);
+    printf("Launching %d blocks of %d threads each\n", matmulGrid.x * matmulGrid.y, matmulBlock.x * matmulBlock.y);
+
     for (int i = 0; i < num_gpus; ++i) {  
         cudaSetDevice(i);
         int start = i * chunk_size;
+
         if (i == 0){
-            matrixMultiplyShared<<<matmulBlock, matmulGrid, 0, 0>>>(
+            matrixMultiplyShared<<<matmulGrid, matmulBlock>>>(
                 defaultArrA, defaultArrB, defaultArrC, nRowsA, nColsA, nColsB
             );
             kernel_err_check();
-            }
+        }
         else{
-            matrixMultiplyShared<<<matmulBlock, matmulGrid, 0, 0>>>(
+            matrixMultiplyShared<<<matmulGrid, matmulBlock>>>(
                 deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1], nRowsA, nColsA, nColsB
             );
             kernel_err_check();
+            // all-gather to default device
+            CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(defaultArrC + start, 0, deviceArraysC[i - 1], i, chunk_size * sizeof(float), def_stream));
         }
-        // copy chunk back to device 0
-        if (i != 0)
-            CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(defaultArrC + start, 0, deviceArraysC[i - 1], i, chunk_size * sizeof(float), 0));
+            
     }
  
     // wait for results
@@ -122,7 +125,7 @@ int main(int argc, char** argv){
     
     //Print the result
     // printMatrix(defaultArrC, n);
-    printf("Matmul First value output: %f\nLast value output: %f\n", defaultArrC[0], defaultArrC[matrix_size-1]);
+    // printf("Matmul First value output: %f\nLast value output: %f\n", defaultArrC[0], defaultArrC[matrix_size-1]);
     
     // Clean up
     set_p2p_access(num_gpus, false);
