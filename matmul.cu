@@ -54,7 +54,6 @@ __global__ void matmul_rect(float *A, float *B, float *C,
             sA[ty][tx] = A[rowBeginA * nColsA + tx + step];
         else
             sA[ty][tx] = 0.0;
-
         // load B's tiles into shared memory
         if (colBeginB < nColsB && ty + step < nRowsB)
             sB[ty][tx] = B[(ty + step) * nColsB + colBeginB];
@@ -74,12 +73,11 @@ __global__ void matmul_rect(float *A, float *B, float *C,
     if (Ctile != 0.0)
         printf("tx = %d, ty = %d, Ctile = %f\n", tx, ty, Ctile);
 
-    if (rowBeginA == (nRowsA * nColsA - 1) && colBeginB == (nColsB - 1))
-    {
+    if (rowBeginA == nRowsA - 1 && colBeginB == nColsB - 1)
         printf("GPU Last value output array C variable: %f\n", Ctile);
-    }
+        
     if (rowBeginA < nRowsA && colBeginB < nColsB) {
-        C[rowBeginA * nColsA + colBeginB] = Ctile;
+        C[rowBeginA * nColsB + colBeginB] = Ctile;
     }
     // if (rowBeginA == 0 && colBeginB == 0)
     // {
