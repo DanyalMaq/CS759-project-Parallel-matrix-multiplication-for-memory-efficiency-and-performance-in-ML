@@ -68,9 +68,11 @@ __global__ void matmul_rect(float *A, float *B, float *C,
         for (int j = 0; j < TILE_WIDTH; ++j) {
             Ctile += sA[ty][j] * sB[j][tx];
         }
+
         __syncthreads();
     }
-
+    if (Ctile != 0.0)
+        printf("tx = %d, ty = %d, Ctile = %f\n", tx, ty, Ctile);
 
     if (rowBeginA == (nRowsA * nColsA - 1) && colBeginB == (nColsB - 1))
     {
