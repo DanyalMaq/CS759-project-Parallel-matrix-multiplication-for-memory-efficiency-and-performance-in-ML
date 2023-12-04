@@ -32,15 +32,15 @@ int main(int argc, char** argv){
     }
 
     /////////////////// hardcode params for testing ///////////////////
-    printf("Hardcoding params for testing\n");
-    printf("n = %d, num_gpus = %d\n", n, num_gpus);
-
-    num_gpus = 2;
     int nRowsA = n, nColsA = n, nColsB = n; // test square matrices for now
     int matrix_size = num_gpus * nRowsA * nColsA; // Total size of matrix
     int chunk_size = matrix_size / num_gpus; // Chunk going on each GPU
+    int def_device = 0; // default device
+    
     cudaStream_t def_stream = nullptr; // device-wide default stream
-    printf("Chunk size: %d * %d = %d\n", nRowsA, nColsA, chunk_size);
+    printf("n = %d, num_gpus = %d\n", n, num_gpus);
+    printf("Per-device chunk size: %d * %d = %d\n", nRowsA, nColsA, chunk_size);
+
     // Set up operands and result buffers on device 0 
     float* defaultArrA;
     float* defaultArrB;
@@ -55,8 +55,8 @@ int main(int argc, char** argv){
 
     // randomly init and rescale the array on GPU
     dim3 initDimGrid((matrix_size + th_per_block - 1) / th_per_block);
-    GPU_fill_rand_int<<<initDimGrid, th_per_block>>>(defaultArrA, matrix_size, 2.0f, 2.0f);
-    GPU_fill_rand_int<<<initDimGrid, th_per_block>>>(defaultArrB, matrix_size, 2.0f, 2.0f);
+    GPU_fill_rand_int<<<initDimGrid, th_per_block>>>(defaultArrA, matrix_size, 1.0f, 1.0f);
+    GPU_fill_rand_int<<<initDimGrid, th_per_block>>>(defaultArrB, matrix_size, 1.0f, 1.0f);
     // cudaStreamSynchronize(0);
     
     // Create a stream for each GPU for pipelining
@@ -86,8 +86,8 @@ int main(int argc, char** argv){
     for (int i = 1; i < num_gpus; ++i) {
         int start = i * chunk_size;
         cudaSetDevice(i); // must switch to memcpy target device
-        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + start), 0, chunk_size * sizeof(float), def_stream));
-        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + start), 0, chunk_size * sizeof(float), def_stream));
+        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + start), def_device, chunk_size * sizeof(float), def_stream));
+        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + start), def_device, chunk_size * sizeof(float), def_stream));
     }
 
     // Launch kernel on each GPU with appropriate configurations
@@ -111,7 +111,7 @@ int main(int argc, char** argv){
             );
             kernel_err_check();
             // all-gather to default device
-            CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(defaultArrC + start, 0, deviceArraysC[i - 1], i, chunk_size * sizeof(float), def_stream));
+            CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(defaultArrC + start, def_device, deviceArraysC[i - 1], i, chunk_size * sizeof(float), def_stream));
         }
             
     }
@@ -123,9 +123,12 @@ int main(int argc, char** argv){
     }
     
     //Print the result
-    // printMatrix(defaultArrC, n);
-    printf("Matmul First value output: %f\nLast value output: %f\n", defaultArrC[0], defaultArrC[matrix_size-1]);
+    // printMatrix(defaultArrC, num_gpus * nRowsA, nColsB);
+    printf("Matmul First value output: %f\n Middle value output: %f\n Last value output: %f\n",
+        defaultArrC[0], defaultArrC[num_gpus * nRowsA * nColsB / 2], defaultArrC[num_gpus * nRowsA * nColsB - 1]
+        );
     
+
     // Clean up
     set_p2p_access(num_gpus, false);
     cudaFree(defaultArrA);

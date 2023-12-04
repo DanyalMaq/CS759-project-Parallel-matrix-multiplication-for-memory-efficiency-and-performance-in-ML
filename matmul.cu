@@ -44,9 +44,9 @@ __global__ void matmul_rect(float *A, float *B, float *C,
         else
             sB[ty][tx] = 0.0;
 
-        // if (sB[ty][tx] != 0.0 && sA[ty][tx] != 0.0)
-            // printf("sA[%d][%d] = %.1f, sB[%d][%d] = %.1f, step = %d\n", ty, tx, sA[ty][tx], ty, tx, sB[ty][tx], step);
         __syncthreads();
+        // if (step == 0 && sA[ty][tx] != 0.0 && sB[ty][tx] != 0.0)
+            // printf("sA[%d][%d] = %.1f, sB[%d][%d] = %.1f, step = %d\n", ty, tx, sA[ty][tx], ty, tx, sB[ty][tx], step);
 
         for (int j = 0; j < TILE_WIDTH; ++j) {
             Ctile += sA[ty][j] * sB[j][tx];
@@ -62,7 +62,7 @@ __global__ void matmul_rect(float *A, float *B, float *C,
 
     if (rowBeginA < nRowsA && colBeginB < nColsB) {
         C[rowBeginA * nColsB + colBeginB] = Ctile;
-        printf("C[%d][%d] = %.1f\n", nRowsA, nColsB, C[rowBeginA * nColsB + colBeginB]);
+        // printf("C[%d][%d] = %.1f\n", nRowsA, nColsB, C[rowBeginA * nColsB + colBeginB]);
     }
     // if (nRowsA == 0 && nColsB == 0)
     // {
@@ -74,17 +74,23 @@ __global__ void matmul_rect(float *A, float *B, float *C,
 
 
 __host__ void matmul(float *A, float *B, float *C,
-                    int nRowsA, int nColsA, int nColsB)
+                    int nRowsA, int nColsA, int nColsB, 
+                    cudaEvent_t start, cudaEvent_t stop, cudaStream_t stream)
 {
     dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);
     dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);
-    printf("dimGrid.x = %d, dimGrid.y = %d\n", dimGrid.x, dimGrid.y);
-    matmul_rect<<<dimGrid, dimBlock>>>(A, B, C, nRowsA, nColsA, nColsB);
+    printf("Launching %d blocks of %d threads each\n", dimGrid.x * dimGrid.y, dimBlock.x * dimBlock.y);
+    
+    // run and time the kernel 
+    cudaEventRecord(start, stream);
+    matmul_rect<<<dimGrid, dimBlock, 0, stream>>>(A, B, C, nRowsA, nColsA, nColsB);
+    cudaEventRecord(stop, stream);
     kernel_err_check();
 }
 
 
-__host__ void transpose(float *output, const float *input, int nRows, int nCols) {
+// Transpose a given matrix
+void transpose(float *output, const float *input, int nRows, int nCols) {
     cublasHandle_t handle;
     cublasCreate(&handle);
     
@@ -94,8 +100,22 @@ __host__ void transpose(float *output, const float *input, int nRows, int nCols)
     cublasSgeam(handle, CUBLAS_OP_T, CUBLAS_OP_T, nRows, nCols, &a,
                 input, nRows, &b, nullptr, nRows,
                 output, nRows);
-    // no need to sync because it uses default stream
-    // cudaStreamSynchronize(0);
+}
+
+// Get the the specified columns of a matrix
+void columns(float *output, const float *input, int rows, int columns, int start_col, int end_col) {
+    cublasHandle_t handle;
+    cublasCreate(&handle);
+
+    // Calculate the number of columns to extract
+    int num_cols_to_extract = end_col - start_col;
+
+    // Use cublasSgeam to extract the specified range of columns
+    const float alpha = 1.0f;
+    const float beta = 0.0f;
+    cublasSgeam(handle, CUBLAS_OP_N, CUBLAS_OP_N, rows, num_cols_to_extract, &alpha,
+                input + start_col * rows, rows, &beta, nullptr, rows,
+                output, rows);
 }
 
 class GPUMatrix{
@@ -157,9 +177,8 @@ template <uint32_t N>
 __host__ __device__ inline float softmax(const float vals[N], uint32_t idx) {
 	float total = 0;
 
-	// #pragma unroll
-	for (uint32_t step = 0; step < N; ++step) {
-		total += expf(vals[step]);
+	for (uint32_t i = 0; i < N; ++i) {
+		total += expf(vals[i]);
 	}
 
 	return expf(vals[idx]) / total;

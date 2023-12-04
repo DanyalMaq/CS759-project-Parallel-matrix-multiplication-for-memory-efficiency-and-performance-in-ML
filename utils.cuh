@@ -27,14 +27,14 @@ __global__ void addOneToElements(int* array, int n) {
     }
 }
 
-__host__ void printMatrix(float* array, int n)
+__host__ void printMatrix(float* array, int n, int m)
 {
-    printf("Matrix:\n");
+    printf("\nMatrix:\n");
     for (int i = 0; i < n; i++)
     {
-        for (int j = 0; j < n; j++)
+        for (int j = 0; j < m; j++)
         {
-            printf("%f ", array[i*n + j]);
+            printf("%.0f ", array[i*m + j]);
         }
        printf("\n");
     }

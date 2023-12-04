@@ -1,0 +1,3688 @@
+759  | 
+759  | =============
+759  | == PyTorch ==
+759  | =============
+759  | 
+759  | NVIDIA Release 22.06 (build 39176199)
+759  | PyTorch Version 1.13.0a0+340c412
+759  | 
+759  | Container image Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+759  | 
+759  | Copyright (c) 2014-2022 Facebook Inc.
+759  | Copyright (c) 2011-2014 Idiap Research Institute (Ronan Collobert)
+759  | Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
+759  | Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
+759  | Copyright (c) 2011-2013 NYU                      (Clement Farabet)
+759  | Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+759  | Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
+759  | Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+759  | Copyright (c) 2015      Google Inc.
+759  | Copyright (c) 2015      Yangqing Jia
+759  | Copyright (c) 2013-2016 The Caffe contributors
+759  | All rights reserved.
+759  | 
+759  | Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+759  | 
+759  | This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+759  | By pulling and using the container, you accept the terms and conditions of this license:
+759  | https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+759  | 
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# 。/testtest^C
+759  | root@21e790338684:/fly# make test_time
+759  | nvcc test_time.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./test_time
+759  | root@21e790338684:/fly# ./test_time 4 [K[K1[K8 8 8 2
+759  | Distributed matmul with managed memory
+759  | Params for testing
+759  | nRowsA=8, nColsA=8, nColsA=8 num_gpus=2
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 8.000000
+759  | GPU First value output array C: 8.000000
+759  | 
+759  | 4
+759  | 4
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 8.000000
+759  | GPU First value output array C: 8.000000
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 8.000000
+759  | GPU First value output array C: 8.000000
+759  | 
+759  | Matrix sizes 8 x 8 and 8 x 8
+759  | Time taken for single GPU = 2.546688
+759  | Elapsed time on device 0: 0.214016 ms
+759  | Elapsed time on device 1: 3.389440 ms
+759  | Time taken for single GPU using CPU time = 2.350984
+759  | Time taken for 2 GPUs using CPU time = 3.453090
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# ./test_time 8 8 8 2[5Pmake test_time
+759  | nvcc test_time.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./test_time
+759  | root@21e790338684:/fly# make test_time./test_time 8 8 8 2
+759  | Distributed matmul with managed memory
+759  | Params for testing
+759  | nRowsA=8, nColsA=8, nColsA=8 num_gpus=2
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 8.000000
+759  | GPU First value output array C: 8.000000
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 8.000000
+759  | GPU First value output array C: 8.000000
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 8.000000
+759  | GPU First value output array C: 8.000000
+759  | 
+759  | Matrix sizes 8 x 8 and 8 x 8
+759  | Time taken for single GPU = 2.592768
+759  | Elapsed time on device 0: 0.202752 ms
+759  | Elapsed time on device 1: 3.394560 ms
+759  | Time taken for single GPU using CPU time = 2.412674
+759  | Time taken for 2 GPUs using CPU time = 3.457681
+759  | root@21e790338684:/fly# make ./test_time 8 8 8 2[5Pmake test_time
+759  | nvcc test_time.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./test_time
+759  | ^[[Aroot@21e790338684:/fly# make test_time./test_time 8 8 8 2
+759  | Distributed matmul with managed memory
+759  | Params for testing
+759  | nRowsA=8, nColsA=8, nColsA=8 num_gpus=2
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 8.000000
+759  | GPU First value output array C: 8.000000
+759  | Time taken for single GPU = 2.549760
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 8.000000
+759  | GPU First value output array C: 8.000000
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 8.000000
+759  | GPU First value output array C: 8.000000
+759  | 
+759  | Matrix sizes 8 x 8 and 8 x 8
+759  | Elapsed time on device 0: 0.199680 ms
+759  | Elapsed time on device 1: 3.390464 ms
+759  | Time taken for single GPU using CPU time = 2.377344
+759  | Time taken for 2 GPUs using CPU time = 3.453931
+759  | root@21e790338684:/fly# ./test_time 8 8 8 2[5Pmake test_time
+759  | nvcc test_time.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./test_time
+759  | root@21e790338684:/fly# make test_time
+759  | nvcc test_time.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./test_time
+759  | ^[[Aroot@21e790338684:/fly# make test_time./test_time 8 8 8 2
+759  | Distributed matmul with managed memory
+759  | Params for testing
+759  | nRowsA=8, nColsA=8, nColsA=8 num_gpus=2
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 8.000000
+759  | GPU First value output array C: 8.000000
+759  | Time taken for single GPU = 2.599936
+759  | 
+759  | Splitting one matrix (the first one)
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 8.000000
+759  | GPU First value output array C: 8.000000
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 8.000000
+759  | GPU First value output array C: 8.000000
+759  | 
+759  | Matrix sizes 8 x 8 and 8 x 8
+759  | Elapsed time on device 0: 0.214016 ms
+759  | Elapsed time on device 1: 3.438592 ms
+759  | Time taken for single GPU using CPU time = 2.411204
+759  | Time taken for 2 GPUs using CPU time = 3.502831
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# ./test_time 8 8 8 2[C[1P 2[1P2[1P 2[1P2[1P 29 2[C 29 2[C 29 2
+759  | Distributed matmul with managed memory
+759  | Params for testing
+759  | nRowsA=9, nColsA=9, nColsA=9 num_gpus=2
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 9.000000
+759  | GPU First value output array C: 9.000000
+759  | Time taken for single GPU = 2.574336
+759  | 
+759  | Splitting one matrix (the first one)
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 9.000000
+759  | GPU First value output array C: 9.000000
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 9.000000
+759  | GPU First value output array C: 9.000000
+759  | 
+759  | Matrix sizes 9 x 9 and 9 x 9
+759  | Elapsed time on device 0: 0.215040 ms
+759  | Elapsed time on device 1: 3.404800 ms
+759  | Time taken for single GPU using CPU time = 2.387754
+759  | Time taken for 2 GPUs using CPU time = 3.470361
+759  | root@21e790338684:/fly# make 
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# ./t 4 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 16
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 1.000000
+759  | GPU First value output array C: 1.000000
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 1.000000
+759  | GPU First value output array C: 1.000000
+759  | Matmul First value output: 1.000000
+759  | Last value output: 1.000000
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# ./t 4 2[2Pmake ./test_time 9 9 9 2make [K
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | root@21e790338684:/fly# make ./t 4 2[2Pmake ./test_time 9 9 9 2
+759  | Distributed matmul with managed memory
+759  | Params for testing
+759  | nRowsA=9, nColsA=9, nColsA=9 num_gpus=2
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 9.000000
+759  | GPU First value output array C: 9.000000
+759  | Time taken for single GPU = 3.126272
+759  | 
+759  | Splitting one matrix (the first one)
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 9.000000
+759  | GPU First value output array C: 9.000000
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 9.000000
+759  | GPU First value output array C: 9.000000
+759  | 
+759  | Matrix sizes 9 x 9 and 9 x 9
+759  | Elapsed time on device 0: 0.237568 ms
+759  | Elapsed time on device 1: 4.281344 ms
+759  | Time taken for single GPU using CPU time = 2.916371
+759  | Time taken for 2 GPUs using CPU time = 4.346787
+759  | root@21e790338684:/fly# ./test_time 9 9 9 2make [K./t 4 2[2Pmake 
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | root@21e790338684:/fly# make 
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | nvcc debug_p2p.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./debug
+759  | [01m[0m[01mdebug_p2p.cu(79)[0m: [01;35mwarning[0m #177-D: variable [01m"start"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(23)[0m: [01;35mwarning[0m #177-D: variable [01m"nColsB"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(58)[0m: [01;35mwarning[0m #177-D: variable [01m"streams"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(59)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | nvcc test_time.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./test_time
+759  | root@21e790338684:/fly# make ./test_time 9 9 9 2
+759  | Distributed matmul with managed memory
+759  | Params for testing:
+759  | nRowsA=9, nColsA=9, nColsA=9 num_gpus=2
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 9.000000
+759  | GPU First value output array C: 9.000000
+759  | Time taken for single GPU = 3.091456
+759  | 
+759  | Splitting one matrix (the first one)
+759  | nRowsA_per_GPU=5, lastnRowsA=4
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 9.000000
+759  | GPU First value output array C: 9.000000
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 9.000000
+759  | GPU First value output array C: 9.000000
+759  | 
+759  | Matrix sizes 9 x 9 and 9 x 9
+759  | Elapsed time on device 0: 0.257024 ms
+759  | Elapsed time on device 1: 4.307968 ms
+759  | Time taken for single GPU using CPU time = 2.875222
+759  | Time taken for 2 GPUs using CPU time = 4.374618
+759  | root@21e790338684:/fly# ./test_time 9 9 9 2make [Ktest_time
+759  | nvcc test_time.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./test_time
+759  | root@21e790338684:/fly# make test_time./test_time 9 9 9 2
+759  | Distributed matmul with managed memory
+759  | Params for testing:
+759  | nRowsA=9, nColsA=9, nColsA=9 num_gpus=2
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 9.000000
+759  | GPU First value output array C: 9.000000
+759  | Time taken for single GPU = 2.540544
+759  | 
+759  | Splitting one matrix (the first one)
+759  | nRowsA_per_GPU=5, lastnRowsA=4
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 9.000000
+759  | GPU First value output array C: 9.000000
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 9.000000
+759  | GPU First value output array C: 9.000000
+759  | 
+759  | Matrix sizes 9 x 9 and 9 x 9
+759  | Elapsed time on device 0: 0.201728 ms
+759  | Elapsed time on device 1: 3.462144 ms
+759  | Time taken for single GPU using CPU time = 2.366093
+759  | Time taken for 2 GPUs using CPU time = 3.537390
+759  | root@21e790338684:/fly# make 
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | nvcc debug_p2p.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./debug
+759  | [01m[0m[01mdebug_p2p.cu(79)[0m: [01;35mwarning[0m #177-D: variable [01m"start"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(23)[0m: [01;35mwarning[0m #177-D: variable [01m"nColsB"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(58)[0m: [01;35mwarning[0m #177-D: variable [01m"streams"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(59)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | root@21e790338684:/fly# make 
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | ^Cmake: *** Deleting file 't2'
+759  | nvcc error   : 'g++' died due to signal 2 
+759  | make: *** [Makefile:14: t2] Error 2
+759  | 
+759  | root@21e790338684:/fly# ./t 4 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 4 * 4 = 16
+759  | Launching 1 blocks of 1024 threads each
+759  | sA[0][0] = 2.0, sB[0][0] = 2.0, step = 0
+759  | sA[0][1] = 2.0, sB[0][1] = 2.0, step = 0
+759  | sA[0][2] = 2.0, sB[0][2] = 2.0, step = 0
+759  | sA[0][3] = 2.0, sB[0][3] = 2.0, step = 0
+759  | sA[2][0] = 2.0, sB[2][0] = 2.0, step = 0
+759  | sA[2][1] = 2.0, sB[2][1] = 2.0, step = 0
+759  | sA[2][2] = 2.0, sB[2][2] = 2.0, step = 0
+759  | sA[2][3] = 2.0, sB[2][3] = 2.0, step = 0
+759  | sA[3][0] = 2.0, sB[3][0] = 2.0, step = 0
+759  | sA[3][1] = 2.0, sB[3][1] = 2.0, step = 0
+759  | sA[3][2] = 2.0, sB[3][2] = 2.0, step = 0
+759  | sA[3][3] = 2.0, sB[3][3] = 2.0, step = 0
+759  | sA[1][0] = 2.0, sB[1][0] = 2.0, step = 0
+759  | sA[1][1] = 2.0, sB[1][1] = 2.0, step = 0
+759  | sA[1][2] = 2.0, sB[1][2] = 2.0, step = 0
+759  | sA[1][3] = 2.0, sB[1][3] = 2.0, step = 0
+759  | tx = 0, ty = 1, Ctile = 16.000000
+759  | tx = 1, ty = 1, Ctile = 16.000000
+759  | tx = 2, ty = 1, Ctile = 16.000000
+759  | tx = 3, ty = 1, Ctile = 16.000000
+759  | tx = 0, ty = 2, Ctile = 16.000000
+759  | tx = 1, ty = 2, Ctile = 16.000000
+759  | tx = 2, ty = 2, Ctile = 16.000000
+759  | tx = 3, ty = 2, Ctile = 16.000000
+759  | tx = 0, ty = 3, Ctile = 16.000000
+759  | tx = 1, ty = 3, Ctile = 16.000000
+759  | tx = 2, ty = 3, Ctile = 16.000000
+759  | tx = 3, ty = 3, Ctile = 16.000000
+759  | tx = 0, ty = 0, Ctile = 16.000000
+759  | tx = 1, ty = 0, Ctile = 16.000000
+759  | tx = 2, ty = 0, Ctile = 16.000000
+759  | tx = 3, ty = 0, Ctile = 16.000000
+759  | GPU Last value output array C variable: 16.000000
+759  | sA[0][0] = 2.0, sB[0][0] = 2.0, step = 0
+759  | sA[0][1] = 2.0, sB[0][1] = 2.0, step = 0
+759  | sA[0][2] = 2.0, sB[0][2] = 2.0, step = 0
+759  | sA[0][3] = 2.0, sB[0][3] = 2.0, step = 0
+759  | sA[2][0] = 2.0, sB[2][0] = 2.0, step = 0
+759  | sA[2][1] = 2.0, sB[2][1] = 2.0, step = 0
+759  | sA[2][2] = 2.0, sB[2][2] = 2.0, step = 0
+759  | sA[2][3] = 2.0, sB[2][3] = 2.0, step = 0
+759  | sA[3][0] = 2.0, sB[3][0] = 2.0, step = 0
+759  | sA[3][1] = 2.0, sB[3][1] = 2.0, step = 0
+759  | sA[3][2] = 2.0, sB[3][2] = 2.0, step = 0
+759  | sA[3][3] = 2.0, sB[3][3] = 2.0, step = 0
+759  | sA[1][0] = 2.0, sB[1][0] = 2.0, step = 0
+759  | sA[1][1] = 2.0, sB[1][1] = 2.0, step = 0
+759  | sA[1][2] = 2.0, sB[1][2] = 2.0, step = 0
+759  | sA[1][3] = 2.0, sB[1][3] = 2.0, step = 0
+759  | tx = 0, ty = 0, Ctile = 16.000000
+759  | tx = 1, ty = 0, Ctile = 16.000000
+759  | tx = 2, ty = 0, Ctile = 16.000000
+759  | tx = 3, ty = 0, Ctile = 16.000000
+759  | tx = 0, ty = 2, Ctile = 16.000000
+759  | tx = 1, ty = 2, Ctile = 16.000000
+759  | tx = 2, ty = 2, Ctile = 16.000000
+759  | tx = 3, ty = 2, Ctile = 16.000000
+759  | tx = 0, ty = 3, Ctile = 16.000000
+759  | tx = 1, ty = 3, Ctile = 16.000000
+759  | tx = 2, ty = 3, Ctile = 16.000000
+759  | tx = 3, ty = 3, Ctile = 16.000000
+759  | tx = 0, ty = 1, Ctile = 16.000000
+759  | tx = 1, ty = 1, Ctile = 16.000000
+759  | tx = 2, ty = 1, Ctile = 16.000000
+759  | tx = 3, ty = 1, Ctile = 16.000000
+759  | GPU Last value output array C variable: 16.000000
+759  | root@21e790338684:/fly# ./t 4 2[1P 28 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 8, num_gpus = 2
+759  | Chunk size: 8 * 8 = 64
+759  | Launching 1 blocks of 1024 threads each
+759  | sA[6][0] = 2.0, sB[6][0] = 2.0, step = 0
+759  | sA[6][1] = 2.0, sB[6][1] = 2.0, step = 0
+759  | sA[6][2] = 2.0, sB[6][2] = 2.0, step = 0
+759  | sA[6][3] = 2.0, sB[6][3] = 2.0, step = 0
+759  | sA[6][4] = 2.0, sB[6][4] = 2.0, step = 0
+759  | sA[6][5] = 2.0, sB[6][5] = 2.0, step = 0
+759  | sA[6][6] = 2.0, sB[6][6] = 2.0, step = 0
+759  | sA[6][7] = 2.0, sB[6][7] = 2.0, step = 0
+759  | sA[5][0] = 2.0, sB[5][0] = 2.0, step = 0
+759  | sA[5][1] = 2.0, sB[5][1] = 2.0, step = 0
+759  | sA[5][2] = 2.0, sB[5][2] = 2.0, step = 0
+759  | sA[5][3] = 2.0, sB[5][3] = 2.0, step = 0
+759  | sA[5][4] = 2.0, sB[5][4] = 2.0, step = 0
+759  | sA[5][5] = 2.0, sB[5][5] = 2.0, step = 0
+759  | sA[5][6] = 2.0, sB[5][6] = 2.0, step = 0
+759  | sA[5][7] = 2.0, sB[5][7] = 2.0, step = 0
+759  | sA[2][0] = 2.0, sB[2][0] = 2.0, step = 0
+759  | sA[2][1] = 2.0, sB[2][1] = 2.0, step = 0
+759  | sA[2][2] = 2.0, sB[2][2] = 2.0, step = 0
+759  | sA[2][3] = 2.0, sB[2][3] = 2.0, step = 0
+759  | sA[2][4] = 2.0, sB[2][4] = 2.0, step = 0
+759  | sA[2][5] = 2.0, sB[2][5] = 2.0, step = 0
+759  | sA[2][6] = 2.0, sB[2][6] = 2.0, step = 0
+759  | sA[2][7] = 2.0, sB[2][7] = 2.0, step = 0
+759  | sA[1][0] = 2.0, sB[1][0] = 2.0, step = 0
+759  | sA[1][1] = 2.0, sB[1][1] = 2.0, step = 0
+759  | sA[1][2] = 2.0, sB[1][2] = 2.0, step = 0
+759  | sA[1][3] = 2.0, sB[1][3] = 2.0, step = 0
+759  | sA[1][4] = 2.0, sB[1][4] = 2.0, step = 0
+759  | sA[1][5] = 2.0, sB[1][5] = 2.0, step = 0
+759  | sA[1][6] = 2.0, sB[1][6] = 2.0, step = 0
+759  | sA[1][7] = 2.0, sB[1][7] = 2.0, step = 0
+759  | sA[7][0] = 2.0, sB[7][0] = 2.0, step = 0
+759  | sA[7][1] = 2.0, sB[7][1] = 2.0, step = 0
+759  | sA[7][2] = 2.0, sB[7][2] = 2.0, step = 0
+759  | sA[7][3] = 2.0, sB[7][3] = 2.0, step = 0
+759  | sA[7][4] = 2.0, sB[7][4] = 2.0, step = 0
+759  | sA[7][5] = 2.0, sB[7][5] = 2.0, step = 0
+759  | sA[7][6] = 2.0, sB[7][6] = 2.0, step = 0
+759  | sA[7][7] = 2.0, sB[7][7] = 2.0, step = 0
+759  | sA[4][0] = 2.0, sB[4][0] = 2.0, step = 0
+759  | sA[4][1] = 2.0, sB[4][1] = 2.0, step = 0
+759  | sA[4][2] = 2.0, sB[4][2] = 2.0, step = 0
+759  | sA[4][3] = 2.0, sB[4][3] = 2.0, step = 0
+759  | sA[4][4] = 2.0, sB[4][4] = 2.0, step = 0
+759  | sA[4][5] = 2.0, sB[4][5] = 2.0, step = 0
+759  | sA[4][6] = 2.0, sB[4][6] = 2.0, step = 0
+759  | sA[4][7] = 2.0, sB[4][7] = 2.0, step = 0
+759  | sA[3][0] = 2.0, sB[3][0] = 2.0, step = 0
+759  | sA[3][1] = 2.0, sB[3][1] = 2.0, step = 0
+759  | sA[3][2] = 2.0, sB[3][2] = 2.0, step = 0
+759  | sA[3][3] = 2.0, sB[3][3] = 2.0, step = 0
+759  | sA[3][4] = 2.0, sB[3][4] = 2.0, step = 0
+759  | sA[3][5] = 2.0, sB[3][5] = 2.0, step = 0
+759  | sA[3][6] = 2.0, sB[3][6] = 2.0, step = 0
+759  | sA[3][7] = 2.0, sB[3][7] = 2.0, step = 0
+759  | sA[0][0] = 2.0, sB[0][0] = 2.0, step = 0
+759  | sA[0][1] = 2.0, sB[0][1] = 2.0, step = 0
+759  | sA[0][2] = 2.0, sB[0][2] = 2.0, step = 0
+759  | sA[0][3] = 2.0, sB[0][3] = 2.0, step = 0
+759  | sA[0][4] = 2.0, sB[0][4] = 2.0, step = 0
+759  | sA[0][5] = 2.0, sB[0][5] = 2.0, step = 0
+759  | sA[0][6] = 2.0, sB[0][6] = 2.0, step = 0
+759  | sA[0][7] = 2.0, sB[0][7] = 2.0, step = 0
+759  | tx = 0, ty = 4, Ctile = 32.000000
+759  | tx = 1, ty = 4, Ctile = 32.000000
+759  | tx = 2, ty = 4, Ctile = 32.000000
+759  | tx = 3, ty = 4, Ctile = 32.000000
+759  | tx = 4, ty = 4, Ctile = 32.000000
+759  | tx = 5, ty = 4, Ctile = 32.000000
+759  | tx = 6, ty = 4, Ctile = 32.000000
+759  | tx = 7, ty = 4, Ctile = 32.000000
+759  | tx = 0, ty = 5, Ctile = 32.000000
+759  | tx = 1, ty = 5, Ctile = 32.000000
+759  | tx = 2, ty = 5, Ctile = 32.000000
+759  | tx = 3, ty = 5, Ctile = 32.000000
+759  | tx = 4, ty = 5, Ctile = 32.000000
+759  | tx = 5, ty = 5, Ctile = 32.000000
+759  | tx = 6, ty = 5, Ctile = 32.000000
+759  | tx = 7, ty = 5, Ctile = 32.000000
+759  | tx = 0, ty = 6, Ctile = 32.000000
+759  | tx = 1, ty = 6, Ctile = 32.000000
+759  | tx = 2, ty = 6, Ctile = 32.000000
+759  | tx = 3, ty = 6, Ctile = 32.000000
+759  | tx = 4, ty = 6, Ctile = 32.000000
+759  | tx = 5, ty = 6, Ctile = 32.000000
+759  | tx = 6, ty = 6, Ctile = 32.000000
+759  | tx = 7, ty = 6, Ctile = 32.000000
+759  | tx = 0, ty = 7, Ctile = 32.000000
+759  | tx = 1, ty = 7, Ctile = 32.000000
+759  | tx = 2, ty = 7, Ctile = 32.000000
+759  | tx = 3, ty = 7, Ctile = 32.000000
+759  | tx = 4, ty = 7, Ctile = 32.000000
+759  | tx = 5, ty = 7, Ctile = 32.000000
+759  | tx = 6, ty = 7, Ctile = 32.000000
+759  | tx = 7, ty = 7, Ctile = 32.000000
+759  | tx = 0, ty = 1, Ctile = 32.000000
+759  | tx = 1, ty = 1, Ctile = 32.000000
+759  | tx = 2, ty = 1, Ctile = 32.000000
+759  | tx = 3, ty = 1, Ctile = 32.000000
+759  | tx = 4, ty = 1, Ctile = 32.000000
+759  | tx = 5, ty = 1, Ctile = 32.000000
+759  | tx = 6, ty = 1, Ctile = 32.000000
+759  | tx = 7, ty = 1, Ctile = 32.000000
+759  | tx = 0, ty = 0, Ctile = 32.000000
+759  | tx = 1, ty = 0, Ctile = 32.000000
+759  | tx = 2, ty = 0, Ctile = 32.000000
+759  | tx = 3, ty = 0, Ctile = 32.000000
+759  | tx = 4, ty = 0, Ctile = 32.000000
+759  | tx = 5, ty = 0, Ctile = 32.000000
+759  | tx = 6, ty = 0, Ctile = 32.000000
+759  | tx = 7, ty = 0, Ctile = 32.000000
+759  | tx = 0, ty = 2, Ctile = 32.000000
+759  | tx = 1, ty = 2, Ctile = 32.000000
+759  | tx = 2, ty = 2, Ctile = 32.000000
+759  | tx = 3, ty = 2, Ctile = 32.000000
+759  | tx = 4, ty = 2, Ctile = 32.000000
+759  | tx = 5, ty = 2, Ctile = 32.000000
+759  | tx = 6, ty = 2, Ctile = 32.000000
+759  | tx = 7, ty = 2, Ctile = 32.000000
+759  | tx = 0, ty = 3, Ctile = 32.000000
+759  | tx = 1, ty = 3, Ctile = 32.000000
+759  | tx = 2, ty = 3, Ctile = 32.000000
+759  | tx = 3, ty = 3, Ctile = 32.000000
+759  | tx = 4, ty = 3, Ctile = 32.000000
+759  | tx = 5, ty = 3, Ctile = 32.000000
+759  | tx = 6, ty = 3, Ctile = 32.000000
+759  | tx = 7, ty = 3, Ctile = 32.000000
+759  | GPU Last value output array C variable: 32.000000
+759  | sA[4][0] = 2.0, sB[4][0] = 2.0, step = 0
+759  | sA[4][1] = 2.0, sB[4][1] = 2.0, step = 0
+759  | sA[4][2] = 2.0, sB[4][2] = 2.0, step = 0
+759  | sA[4][3] = 2.0, sB[4][3] = 2.0, step = 0
+759  | sA[4][4] = 2.0, sB[4][4] = 2.0, step = 0
+759  | sA[4][5] = 2.0, sB[4][5] = 2.0, step = 0
+759  | sA[4][6] = 2.0, sB[4][6] = 2.0, step = 0
+759  | sA[4][7] = 2.0, sB[4][7] = 2.0, step = 0
+759  | sA[7][0] = 2.0, sB[7][0] = 2.0, step = 0
+759  | sA[7][1] = 2.0, sB[7][1] = 2.0, step = 0
+759  | sA[7][2] = 2.0, sB[7][2] = 2.0, step = 0
+759  | sA[7][3] = 2.0, sB[7][3] = 2.0, step = 0
+759  | sA[7][4] = 2.0, sB[7][4] = 2.0, step = 0
+759  | sA[7][5] = 2.0, sB[7][5] = 2.0, step = 0
+759  | sA[7][6] = 2.0, sB[7][6] = 2.0, step = 0
+759  | sA[7][7] = 2.0, sB[7][7] = 2.0, step = 0
+759  | sA[6][0] = 2.0, sB[6][0] = 2.0, step = 0
+759  | sA[6][1] = 2.0, sB[6][1] = 2.0, step = 0
+759  | sA[6][2] = 2.0, sB[6][2] = 2.0, step = 0
+759  | sA[6][3] = 2.0, sB[6][3] = 2.0, step = 0
+759  | sA[6][4] = 2.0, sB[6][4] = 2.0, step = 0
+759  | sA[6][5] = 2.0, sB[6][5] = 2.0, step = 0
+759  | sA[6][6] = 2.0, sB[6][6] = 2.0, step = 0
+759  | sA[6][7] = 2.0, sB[6][7] = 2.0, step = 0
+759  | sA[5][0] = 2.0, sB[5][0] = 2.0, step = 0
+759  | sA[5][1] = 2.0, sB[5][1] = 2.0, step = 0
+759  | sA[5][2] = 2.0, sB[5][2] = 2.0, step = 0
+759  | sA[5][3] = 2.0, sB[5][3] = 2.0, step = 0
+759  | sA[5][4] = 2.0, sB[5][4] = 2.0, step = 0
+759  | sA[5][5] = 2.0, sB[5][5] = 2.0, step = 0
+759  | sA[5][6] = 2.0, sB[5][6] = 2.0, step = 0
+759  | sA[5][7] = 2.0, sB[5][7] = 2.0, step = 0
+759  | sA[3][0] = 2.0, sB[3][0] = 2.0, step = 0
+759  | sA[3][1] = 2.0, sB[3][1] = 2.0, step = 0
+759  | sA[3][2] = 2.0, sB[3][2] = 2.0, step = 0
+759  | sA[3][3] = 2.0, sB[3][3] = 2.0, step = 0
+759  | sA[3][4] = 2.0, sB[3][4] = 2.0, step = 0
+759  | sA[3][5] = 2.0, sB[3][5] = 2.0, step = 0
+759  | sA[3][6] = 2.0, sB[3][6] = 2.0, step = 0
+759  | sA[3][7] = 2.0, sB[3][7] = 2.0, step = 0
+759  | sA[2][0] = 2.0, sB[2][0] = 2.0, step = 0
+759  | sA[2][1] = 2.0, sB[2][1] = 2.0, step = 0
+759  | sA[2][2] = 2.0, sB[2][2] = 2.0, step = 0
+759  | sA[2][3] = 2.0, sB[2][3] = 2.0, step = 0
+759  | sA[2][4] = 2.0, sB[2][4] = 2.0, step = 0
+759  | sA[2][5] = 2.0, sB[2][5] = 2.0, step = 0
+759  | sA[2][6] = 2.0, sB[2][6] = 2.0, step = 0
+759  | sA[2][7] = 2.0, sB[2][7] = 2.0, step = 0
+759  | sA[1][0] = 2.0, sB[1][0] = 2.0, step = 0
+759  | sA[1][1] = 2.0, sB[1][1] = 2.0, step = 0
+759  | sA[1][2] = 2.0, sB[1][2] = 2.0, step = 0
+759  | sA[1][3] = 2.0, sB[1][3] = 2.0, step = 0
+759  | sA[1][4] = 2.0, sB[1][4] = 2.0, step = 0
+759  | sA[1][5] = 2.0, sB[1][5] = 2.0, step = 0
+759  | sA[1][6] = 2.0, sB[1][6] = 2.0, step = 0
+759  | sA[1][7] = 2.0, sB[1][7] = 2.0, step = 0
+759  | sA[0][0] = 2.0, sB[0][0] = 2.0, step = 0
+759  | sA[0][1] = 2.0, sB[0][1] = 2.0, step = 0
+759  | sA[0][2] = 2.0, sB[0][2] = 2.0, step = 0
+759  | sA[0][3] = 2.0, sB[0][3] = 2.0, step = 0
+759  | sA[0][4] = 2.0, sB[0][4] = 2.0, step = 0
+759  | sA[0][5] = 2.0, sB[0][5] = 2.0, step = 0
+759  | sA[0][6] = 2.0, sB[0][6] = 2.0, step = 0
+759  | sA[0][7] = 2.0, sB[0][7] = 2.0, step = 0
+759  | tx = 0, ty = 5, Ctile = 32.000000
+759  | tx = 1, ty = 5, Ctile = 32.000000
+759  | tx = 2, ty = 5, Ctile = 32.000000
+759  | tx = 3, ty = 5, Ctile = 32.000000
+759  | tx = 4, ty = 5, Ctile = 32.000000
+759  | tx = 5, ty = 5, Ctile = 32.000000
+759  | tx = 6, ty = 5, Ctile = 32.000000
+759  | tx = 7, ty = 5, Ctile = 32.000000
+759  | tx = 0, ty = 7, Ctile = 32.000000
+759  | tx = 1, ty = 7, Ctile = 32.000000
+759  | tx = 2, ty = 7, Ctile = 32.000000
+759  | tx = 3, ty = 7, Ctile = 32.000000
+759  | tx = 4, ty = 7, Ctile = 32.000000
+759  | tx = 5, ty = 7, Ctile = 32.000000
+759  | tx = 6, ty = 7, Ctile = 32.000000
+759  | tx = 7, ty = 7, Ctile = 32.000000
+759  | tx = 0, ty = 6, Ctile = 32.000000
+759  | tx = 1, ty = 6, Ctile = 32.000000
+759  | tx = 2, ty = 6, Ctile = 32.000000
+759  | tx = 3, ty = 6, Ctile = 32.000000
+759  | tx = 4, ty = 6, Ctile = 32.000000
+759  | tx = 5, ty = 6, Ctile = 32.000000
+759  | tx = 6, ty = 6, Ctile = 32.000000
+759  | tx = 7, ty = 6, Ctile = 32.000000
+759  | tx = 0, ty = 1, Ctile = 32.000000
+759  | tx = 1, ty = 1, Ctile = 32.000000
+759  | tx = 2, ty = 1, Ctile = 32.000000
+759  | tx = 3, ty = 1, Ctile = 32.000000
+759  | tx = 4, ty = 1, Ctile = 32.000000
+759  | tx = 5, ty = 1, Ctile = 32.000000
+759  | tx = 6, ty = 1, Ctile = 32.000000
+759  | tx = 7, ty = 1, Ctile = 32.000000
+759  | tx = 0, ty = 0, Ctile = 32.000000
+759  | tx = 1, ty = 0, Ctile = 32.000000
+759  | tx = 2, ty = 0, Ctile = 32.000000
+759  | tx = 3, ty = 0, Ctile = 32.000000
+759  | tx = 4, ty = 0, Ctile = 32.000000
+759  | tx = 5, ty = 0, Ctile = 32.000000
+759  | tx = 6, ty = 0, Ctile = 32.000000
+759  | tx = 7, ty = 0, Ctile = 32.000000
+759  | tx = 0, ty = 2, Ctile = 32.000000
+759  | tx = 1, ty = 2, Ctile = 32.000000
+759  | tx = 2, ty = 2, Ctile = 32.000000
+759  | tx = 3, ty = 2, Ctile = 32.000000
+759  | tx = 4, ty = 2, Ctile = 32.000000
+759  | tx = 5, ty = 2, Ctile = 32.000000
+759  | tx = 6, ty = 2, Ctile = 32.000000
+759  | tx = 7, ty = 2, Ctile = 32.000000
+759  | tx = 0, ty = 4, Ctile = 32.000000
+759  | tx = 1, ty = 4, Ctile = 32.000000
+759  | tx = 2, ty = 4, Ctile = 32.000000
+759  | tx = 3, ty = 4, Ctile = 32.000000
+759  | tx = 4, ty = 4, Ctile = 32.000000
+759  | tx = 5, ty = 4, Ctile = 32.000000
+759  | tx = 6, ty = 4, Ctile = 32.000000
+759  | tx = 7, ty = 4, Ctile = 32.000000
+759  | tx = 0, ty = 3, Ctile = 32.000000
+759  | tx = 1, ty = 3, Ctile = 32.000000
+759  | tx = 2, ty = 3, Ctile = 32.000000
+759  | tx = 3, ty = 3, Ctile = 32.000000
+759  | tx = 4, ty = 3, Ctile = 32.000000
+759  | tx = 5, ty = 3, Ctile = 32.000000
+759  | tx = 6, ty = 3, Ctile = 32.000000
+759  | tx = 7, ty = 3, Ctile = 32.000000
+759  | GPU Last value output array C variable: 32.000000
+759  | root@21e790338684:/fly# compute-santi[K[Kitizer ./t
+759  | ========= COMPUTE-SANITIZER
+759  | Distributed matmul with async overlapping
+759  | Usage: /fly/./t <matrix size> <num_gpus>
+759  | ========= Error: Target application terminated before first instrumented API call
+759  | ========= Tracking kernels launched by child processes requires the --target-processes all option.
+759  | root@21e790338684:/fly# compute-sanitizer ./t 4 2[K[K[K8 2
+759  | ========= COMPUTE-SANITIZER
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 8, num_gpus = 2
+759  | Chunk size: 8 * 8 = 64
+759  | Launching 1 blocks of 1024 threads each
+759  | sA[5][0] = 2.0, sB[5][0] = 2.0, step = 0
+759  | sA[5][1] = 2.0, sB[5][1] = 2.0, step = 0
+759  | sA[5][2] = 2.0, sB[5][2] = 2.0, step = 0
+759  | sA[5][3] = 2.0, sB[5][3] = 2.0, step = 0
+759  | sA[5][4] = 2.0, sB[5][4] = 2.0, step = 0
+759  | sA[5][5] = 2.0, sB[5][5] = 2.0, step = 0
+759  | sA[5][6] = 2.0, sB[5][6] = 2.0, step = 0
+759  | sA[5][7] = 2.0, sB[5][7] = 2.0, step = 0
+759  | sA[4][0] = 2.0, sB[4][0] = 2.0, step = 0
+759  | sA[4][1] = 2.0, sB[4][1] = 2.0, step = 0
+759  | sA[4][2] = 2.0, sB[4][2] = 2.0, step = 0
+759  | sA[4][3] = 2.0, sB[4][3] = 2.0, step = 0
+759  | sA[4][4] = 2.0, sB[4][4] = 2.0, step = 0
+759  | sA[4][5] = 2.0, sB[4][5] = 2.0, step = 0
+759  | sA[4][6] = 2.0, sB[4][6] = 2.0, step = 0
+759  | sA[4][7] = 2.0, sB[4][7] = 2.0, step = 0
+759  | sA[7][0] = 2.0, sB[7][0] = 2.0, step = 0
+759  | sA[7][1] = 2.0, sB[7][1] = 2.0, step = 0
+759  | sA[7][2] = 2.0, sB[7][2] = 2.0, step = 0
+759  | sA[7][3] = 2.0, sB[7][3] = 2.0, step = 0
+759  | sA[7][4] = 2.0, sB[7][4] = 2.0, step = 0
+759  | sA[7][5] = 2.0, sB[7][5] = 2.0, step = 0
+759  | sA[7][6] = 2.0, sB[7][6] = 2.0, step = 0
+759  | sA[7][7] = 2.0, sB[7][7] = 2.0, step = 0
+759  | sA[6][0] = 2.0, sB[6][0] = 2.0, step = 0
+759  | sA[6][1] = 2.0, sB[6][1] = 2.0, step = 0
+759  | sA[6][2] = 2.0, sB[6][2] = 2.0, step = 0
+759  | sA[6][3] = 2.0, sB[6][3] = 2.0, step = 0
+759  | sA[6][4] = 2.0, sB[6][4] = 2.0, step = 0
+759  | sA[6][5] = 2.0, sB[6][5] = 2.0, step = 0
+759  | sA[6][6] = 2.0, sB[6][6] = 2.0, step = 0
+759  | sA[6][7] = 2.0, sB[6][7] = 2.0, step = 0
+759  | sA[2][0] = 2.0, sB[2][0] = 2.0, step = 0
+759  | sA[2][1] = 2.0, sB[2][1] = 2.0, step = 0
+759  | sA[2][2] = 2.0, sB[2][2] = 2.0, step = 0
+759  | sA[2][3] = 2.0, sB[2][3] = 2.0, step = 0
+759  | sA[2][4] = 2.0, sB[2][4] = 2.0, step = 0
+759  | sA[2][5] = 2.0, sB[2][5] = 2.0, step = 0
+759  | sA[2][6] = 2.0, sB[2][6] = 2.0, step = 0
+759  | sA[2][7] = 2.0, sB[2][7] = 2.0, step = 0
+759  | sA[1][0] = 2.0, sB[1][0] = 2.0, step = 0
+759  | sA[1][1] = 2.0, sB[1][1] = 2.0, step = 0
+759  | sA[1][2] = 2.0, sB[1][2] = 2.0, step = 0
+759  | sA[1][3] = 2.0, sB[1][3] = 2.0, step = 0
+759  | sA[1][4] = 2.0, sB[1][4] = 2.0, step = 0
+759  | sA[1][5] = 2.0, sB[1][5] = 2.0, step = 0
+759  | sA[1][6] = 2.0, sB[1][6] = 2.0, step = 0
+759  | sA[1][7] = 2.0, sB[1][7] = 2.0, step = 0
+759  | sA[0][0] = 2.0, sB[0][0] = 2.0, step = 0
+759  | sA[0][1] = 2.0, sB[0][1] = 2.0, step = 0
+759  | sA[0][2] = 2.0, sB[0][2] = 2.0, step = 0
+759  | sA[0][3] = 2.0, sB[0][3] = 2.0, step = 0
+759  | sA[0][4] = 2.0, sB[0][4] = 2.0, step = 0
+759  | sA[0][5] = 2.0, sB[0][5] = 2.0, step = 0
+759  | sA[0][6] = 2.0, sB[0][6] = 2.0, step = 0
+759  | sA[0][7] = 2.0, sB[0][7] = 2.0, step = 0
+759  | sA[3][0] = 2.0, sB[3][0] = 2.0, step = 0
+759  | sA[3][1] = 2.0, sB[3][1] = 2.0, step = 0
+759  | sA[3][2] = 2.0, sB[3][2] = 2.0, step = 0
+759  | sA[3][3] = 2.0, sB[3][3] = 2.0, step = 0
+759  | sA[3][4] = 2.0, sB[3][4] = 2.0, step = 0
+759  | sA[3][5] = 2.0, sB[3][5] = 2.0, step = 0
+759  | sA[3][6] = 2.0, sB[3][6] = 2.0, step = 0
+759  | sA[3][7] = 2.0, sB[3][7] = 2.0, step = 0
+759  | tx = 0, ty = 5, Ctile = 32.000000
+759  | tx = 1, ty = 5, Ctile = 32.000000
+759  | tx = 2, ty = 5, Ctile = 32.000000
+759  | tx = 3, ty = 5, Ctile = 32.000000
+759  | tx = 4, ty = 5, Ctile = 32.000000
+759  | tx = 5, ty = 5, Ctile = 32.000000
+759  | tx = 6, ty = 5, Ctile = 32.000000
+759  | tx = 7, ty = 5, Ctile = 32.000000
+759  | tx = 0, ty = 6, Ctile = 32.000000
+759  | tx = 1, ty = 6, Ctile = 32.000000
+759  | tx = 2, ty = 6, Ctile = 32.000000
+759  | tx = 3, ty = 6, Ctile = 32.000000
+759  | tx = 4, ty = 6, Ctile = 32.000000
+759  | tx = 5, ty = 6, Ctile = 32.000000
+759  | tx = 6, ty = 6, Ctile = 32.000000
+759  | tx = 7, ty = 6, Ctile = 32.000000
+759  | tx = 0, ty = 7, Ctile = 32.000000
+759  | tx = 1, ty = 7, Ctile = 32.000000
+759  | tx = 2, ty = 7, Ctile = 32.000000
+759  | tx = 3, ty = 7, Ctile = 32.000000
+759  | tx = 4, ty = 7, Ctile = 32.000000
+759  | tx = 5, ty = 7, Ctile = 32.000000
+759  | tx = 6, ty = 7, Ctile = 32.000000
+759  | tx = 7, ty = 7, Ctile = 32.000000
+759  | tx = 0, ty = 4, Ctile = 32.000000
+759  | tx = 1, ty = 4, Ctile = 32.000000
+759  | tx = 2, ty = 4, Ctile = 32.000000
+759  | tx = 3, ty = 4, Ctile = 32.000000
+759  | tx = 4, ty = 4, Ctile = 32.000000
+759  | tx = 5, ty = 4, Ctile = 32.000000
+759  | tx = 6, ty = 4, Ctile = 32.000000
+759  | tx = 7, ty = 4, Ctile = 32.000000
+759  | tx = 0, ty = 1, Ctile = 32.000000
+759  | tx = 1, ty = 1, Ctile = 32.000000
+759  | tx = 2, ty = 1, Ctile = 32.000000
+759  | tx = 3, ty = 1, Ctile = 32.000000
+759  | tx = 4, ty = 1, Ctile = 32.000000
+759  | tx = 5, ty = 1, Ctile = 32.000000
+759  | tx = 6, ty = 1, Ctile = 32.000000
+759  | tx = 7, ty = 1, Ctile = 32.000000
+759  | tx = 0, ty = 0, Ctile = 32.000000
+759  | tx = 1, ty = 0, Ctile = 32.000000
+759  | tx = 2, ty = 0, Ctile = 32.000000
+759  | tx = 3, ty = 0, Ctile = 32.000000
+759  | tx = 4, ty = 0, Ctile = 32.000000
+759  | tx = 5, ty = 0, Ctile = 32.000000
+759  | tx = 6, ty = 0, Ctile = 32.000000
+759  | tx = 7, ty = 0, Ctile = 32.000000
+759  | tx = 0, ty = 2, Ctile = 32.000000
+759  | tx = 1, ty = 2, Ctile = 32.000000
+759  | tx = 2, ty = 2, Ctile = 32.000000
+759  | tx = 3, ty = 2, Ctile = 32.000000
+759  | tx = 4, ty = 2, Ctile = 32.000000
+759  | tx = 5, ty = 2, Ctile = 32.000000
+759  | tx = 6, ty = 2, Ctile = 32.000000
+759  | tx = 7, ty = 2, Ctile = 32.000000
+759  | tx = 0, ty = 3, Ctile = 32.000000
+759  | tx = 1, ty = 3, Ctile = 32.000000
+759  | tx = 2, ty = 3, Ctile = 32.000000
+759  | tx = 3, ty = 3, Ctile = 32.000000
+759  | tx = 4, ty = 3, Ctile = 32.000000
+759  | tx = 5, ty = 3, Ctile = 32.000000
+759  | tx = 6, ty = 3, Ctile = 32.000000
+759  | tx = 7, ty = 3, Ctile = 32.000000
+759  | GPU Last value output array C variable: 32.000000
+759  | sA[4][0] = 2.0, sB[4][0] = 2.0, step = 0
+759  | sA[4][1] = 2.0, sB[4][1] = 2.0, step = 0
+759  | sA[4][2] = 2.0, sB[4][2] = 2.0, step = 0
+759  | sA[4][3] = 2.0, sB[4][3] = 2.0, step = 0
+759  | sA[4][4] = 2.0, sB[4][4] = 2.0, step = 0
+759  | sA[4][5] = 2.0, sB[4][5] = 2.0, step = 0
+759  | sA[4][6] = 2.0, sB[4][6] = 2.0, step = 0
+759  | sA[4][7] = 2.0, sB[4][7] = 2.0, step = 0
+759  | sA[5][0] = 2.0, sB[5][0] = 2.0, step = 0
+759  | sA[5][1] = 2.0, sB[5][1] = 2.0, step = 0
+759  | sA[5][2] = 2.0, sB[5][2] = 2.0, step = 0
+759  | sA[5][3] = 2.0, sB[5][3] = 2.0, step = 0
+759  | sA[5][4] = 2.0, sB[5][4] = 2.0, step = 0
+759  | sA[5][5] = 2.0, sB[5][5] = 2.0, step = 0
+759  | sA[5][6] = 2.0, sB[5][6] = 2.0, step = 0
+759  | sA[5][7] = 2.0, sB[5][7] = 2.0, step = 0
+759  | sA[7][0] = 2.0, sB[7][0] = 2.0, step = 0
+759  | sA[7][1] = 2.0, sB[7][1] = 2.0, step = 0
+759  | sA[7][2] = 2.0, sB[7][2] = 2.0, step = 0
+759  | sA[7][3] = 2.0, sB[7][3] = 2.0, step = 0
+759  | sA[7][4] = 2.0, sB[7][4] = 2.0, step = 0
+759  | sA[7][5] = 2.0, sB[7][5] = 2.0, step = 0
+759  | sA[7][6] = 2.0, sB[7][6] = 2.0, step = 0
+759  | sA[7][7] = 2.0, sB[7][7] = 2.0, step = 0
+759  | sA[6][0] = 2.0, sB[6][0] = 2.0, step = 0
+759  | sA[6][1] = 2.0, sB[6][1] = 2.0, step = 0
+759  | sA[6][2] = 2.0, sB[6][2] = 2.0, step = 0
+759  | sA[6][3] = 2.0, sB[6][3] = 2.0, step = 0
+759  | sA[6][4] = 2.0, sB[6][4] = 2.0, step = 0
+759  | sA[6][5] = 2.0, sB[6][5] = 2.0, step = 0
+759  | sA[6][6] = 2.0, sB[6][6] = 2.0, step = 0
+759  | sA[6][7] = 2.0, sB[6][7] = 2.0, step = 0
+759  | sA[1][0] = 2.0, sB[1][0] = 2.0, step = 0
+759  | sA[1][1] = 2.0, sB[1][1] = 2.0, step = 0
+759  | sA[1][2] = 2.0, sB[1][2] = 2.0, step = 0
+759  | sA[1][3] = 2.0, sB[1][3] = 2.0, step = 0
+759  | sA[1][4] = 2.0, sB[1][4] = 2.0, step = 0
+759  | sA[1][5] = 2.0, sB[1][5] = 2.0, step = 0
+759  | sA[1][6] = 2.0, sB[1][6] = 2.0, step = 0
+759  | sA[1][7] = 2.0, sB[1][7] = 2.0, step = 0
+759  | sA[3][0] = 2.0, sB[3][0] = 2.0, step = 0
+759  | sA[3][1] = 2.0, sB[3][1] = 2.0, step = 0
+759  | sA[3][2] = 2.0, sB[3][2] = 2.0, step = 0
+759  | sA[3][3] = 2.0, sB[3][3] = 2.0, step = 0
+759  | sA[3][4] = 2.0, sB[3][4] = 2.0, step = 0
+759  | sA[3][5] = 2.0, sB[3][5] = 2.0, step = 0
+759  | sA[3][6] = 2.0, sB[3][6] = 2.0, step = 0
+759  | sA[3][7] = 2.0, sB[3][7] = 2.0, step = 0
+759  | sA[0][0] = 2.0, sB[0][0] = 2.0, step = 0
+759  | sA[0][1] = 2.0, sB[0][1] = 2.0, step = 0
+759  | sA[0][2] = 2.0, sB[0][2] = 2.0, step = 0
+759  | sA[0][3] = 2.0, sB[0][3] = 2.0, step = 0
+759  | sA[0][4] = 2.0, sB[0][4] = 2.0, step = 0
+759  | sA[0][5] = 2.0, sB[0][5] = 2.0, step = 0
+759  | sA[0][6] = 2.0, sB[0][6] = 2.0, step = 0
+759  | sA[0][7] = 2.0, sB[0][7] = 2.0, step = 0
+759  | sA[2][0] = 2.0, sB[2][0] = 2.0, step = 0
+759  | sA[2][1] = 2.0, sB[2][1] = 2.0, step = 0
+759  | sA[2][2] = 2.0, sB[2][2] = 2.0, step = 0
+759  | sA[2][3] = 2.0, sB[2][3] = 2.0, step = 0
+759  | sA[2][4] = 2.0, sB[2][4] = 2.0, step = 0
+759  | sA[2][5] = 2.0, sB[2][5] = 2.0, step = 0
+759  | sA[2][6] = 2.0, sB[2][6] = 2.0, step = 0
+759  | sA[2][7] = 2.0, sB[2][7] = 2.0, step = 0
+759  | tx = 0, ty = 4, Ctile = 32.000000
+759  | tx = 1, ty = 4, Ctile = 32.000000
+759  | tx = 2, ty = 4, Ctile = 32.000000
+759  | tx = 3, ty = 4, Ctile = 32.000000
+759  | tx = 4, ty = 4, Ctile = 32.000000
+759  | tx = 5, ty = 4, Ctile = 32.000000
+759  | tx = 6, ty = 4, Ctile = 32.000000
+759  | tx = 7, ty = 4, Ctile = 32.000000
+759  | tx = 0, ty = 7, Ctile = 32.000000
+759  | tx = 1, ty = 7, Ctile = 32.000000
+759  | tx = 2, ty = 7, Ctile = 32.000000
+759  | tx = 3, ty = 7, Ctile = 32.000000
+759  | tx = 4, ty = 7, Ctile = 32.000000
+759  | tx = 5, ty = 7, Ctile = 32.000000
+759  | tx = 6, ty = 7, Ctile = 32.000000
+759  | tx = 7, ty = 7, Ctile = 32.000000
+759  | tx = 0, ty = 5, Ctile = 32.000000
+759  | tx = 1, ty = 5, Ctile = 32.000000
+759  | tx = 2, ty = 5, Ctile = 32.000000
+759  | tx = 3, ty = 5, Ctile = 32.000000
+759  | tx = 4, ty = 5, Ctile = 32.000000
+759  | tx = 5, ty = 5, Ctile = 32.000000
+759  | tx = 6, ty = 5, Ctile = 32.000000
+759  | tx = 7, ty = 5, Ctile = 32.000000
+759  | tx = 0, ty = 3, Ctile = 32.000000
+759  | tx = 1, ty = 3, Ctile = 32.000000
+759  | tx = 2, ty = 3, Ctile = 32.000000
+759  | tx = 3, ty = 3, Ctile = 32.000000
+759  | tx = 4, ty = 3, Ctile = 32.000000
+759  | tx = 5, ty = 3, Ctile = 32.000000
+759  | tx = 6, ty = 3, Ctile = 32.000000
+759  | tx = 7, ty = 3, Ctile = 32.000000
+759  | tx = 0, ty = 0, Ctile = 32.000000
+759  | tx = 1, ty = 0, Ctile = 32.000000
+759  | tx = 2, ty = 0, Ctile = 32.000000
+759  | tx = 3, ty = 0, Ctile = 32.000000
+759  | tx = 4, ty = 0, Ctile = 32.000000
+759  | tx = 5, ty = 0, Ctile = 32.000000
+759  | tx = 6, ty = 0, Ctile = 32.000000
+759  | tx = 7, ty = 0, Ctile = 32.000000
+759  | tx = 0, ty = 1, Ctile = 32.000000
+759  | tx = 1, ty = 1, Ctile = 32.000000
+759  | tx = 2, ty = 1, Ctile = 32.000000
+759  | tx = 3, ty = 1, Ctile = 32.000000
+759  | tx = 4, ty = 1, Ctile = 32.000000
+759  | tx = 5, ty = 1, Ctile = 32.000000
+759  | tx = 6, ty = 1, Ctile = 32.000000
+759  | tx = 7, ty = 1, Ctile = 32.000000
+759  | tx = 0, ty = 6, Ctile = 32.000000
+759  | tx = 1, ty = 6, Ctile = 32.000000
+759  | tx = 2, ty = 6, Ctile = 32.000000
+759  | tx = 3, ty = 6, Ctile = 32.000000
+759  | tx = 4, ty = 6, Ctile = 32.000000
+759  | tx = 5, ty = 6, Ctile = 32.000000
+759  | tx = 6, ty = 6, Ctile = 32.000000
+759  | tx = 7, ty = 6, Ctile = 32.000000
+759  | tx = 0, ty = 2, Ctile = 32.000000
+759  | tx = 1, ty = 2, Ctile = 32.000000
+759  | tx = 2, ty = 2, Ctile = 32.000000
+759  | tx = 3, ty = 2, Ctile = 32.000000
+759  | tx = 4, ty = 2, Ctile = 32.000000
+759  | tx = 5, ty = 2, Ctile = 32.000000
+759  | tx = 6, ty = 2, Ctile = 32.000000
+759  | tx = 7, ty = 2, Ctile = 32.000000
+759  | GPU Last value output array C variable: 32.000000
+759  | ========= ERROR SUMMARY: 0 errors
+759  | root@21e790338684:/fly# compute-sanitizer ./t 8 2[K 8 2[Kmake t
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | [01m[0m[01mmatmul.cu(82)[0m: [01;31merror[0m: expected a ";"
+759  | 
+759  | 1 error detected in the compilation of "matmul.cu".
+759  | make: *** [Makefile:11: t] Error 1
+759  | root@21e790338684:/fly# make t
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | root@21e790338684:/fly# make tcompute-sanitizer ./t 8 2[K 8 2
+759  | ========= COMPUTE-SANITIZER
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 8, num_gpus = 2
+759  | Chunk size: 8 * 8 = 64
+759  | Launching 1 blocks of 1024 threads each
+759  | sA[7][0] = 2.0, sB[7][0] = 2.0, step = 0
+759  | sA[7][1] = 2.0, sB[7][1] = 2.0, step = 0
+759  | sA[7][2] = 2.0, sB[7][2] = 2.0, step = 0
+759  | sA[7][3] = 2.0, sB[7][3] = 2.0, step = 0
+759  | sA[7][4] = 2.0, sB[7][4] = 2.0, step = 0
+759  | sA[7][5] = 2.0, sB[7][5] = 2.0, step = 0
+759  | sA[7][6] = 2.0, sB[7][6] = 2.0, step = 0
+759  | sA[7][7] = 2.0, sB[7][7] = 2.0, step = 0
+759  | sA[6][0] = 2.0, sB[6][0] = 2.0, step = 0
+759  | sA[6][1] = 2.0, sB[6][1] = 2.0, step = 0
+759  | sA[6][2] = 2.0, sB[6][2] = 2.0, step = 0
+759  | sA[6][3] = 2.0, sB[6][3] = 2.0, step = 0
+759  | sA[6][4] = 2.0, sB[6][4] = 2.0, step = 0
+759  | sA[6][5] = 2.0, sB[6][5] = 2.0, step = 0
+759  | sA[6][6] = 2.0, sB[6][6] = 2.0, step = 0
+759  | sA[6][7] = 2.0, sB[6][7] = 2.0, step = 0
+759  | sA[4][0] = 2.0, sB[4][0] = 2.0, step = 0
+759  | sA[4][1] = 2.0, sB[4][1] = 2.0, step = 0
+759  | sA[4][2] = 2.0, sB[4][2] = 2.0, step = 0
+759  | sA[4][3] = 2.0, sB[4][3] = 2.0, step = 0
+759  | sA[4][4] = 2.0, sB[4][4] = 2.0, step = 0
+759  | sA[4][5] = 2.0, sB[4][5] = 2.0, step = 0
+759  | sA[4][6] = 2.0, sB[4][6] = 2.0, step = 0
+759  | sA[4][7] = 2.0, sB[4][7] = 2.0, step = 0
+759  | sA[5][0] = 2.0, sB[5][0] = 2.0, step = 0
+759  | sA[5][1] = 2.0, sB[5][1] = 2.0, step = 0
+759  | sA[5][2] = 2.0, sB[5][2] = 2.0, step = 0
+759  | sA[5][3] = 2.0, sB[5][3] = 2.0, step = 0
+759  | sA[5][4] = 2.0, sB[5][4] = 2.0, step = 0
+759  | sA[5][5] = 2.0, sB[5][5] = 2.0, step = 0
+759  | sA[5][6] = 2.0, sB[5][6] = 2.0, step = 0
+759  | sA[5][7] = 2.0, sB[5][7] = 2.0, step = 0
+759  | sA[2][0] = 2.0, sB[2][0] = 2.0, step = 0
+759  | sA[2][1] = 2.0, sB[2][1] = 2.0, step = 0
+759  | sA[2][2] = 2.0, sB[2][2] = 2.0, step = 0
+759  | sA[2][3] = 2.0, sB[2][3] = 2.0, step = 0
+759  | sA[2][4] = 2.0, sB[2][4] = 2.0, step = 0
+759  | sA[2][5] = 2.0, sB[2][5] = 2.0, step = 0
+759  | sA[2][6] = 2.0, sB[2][6] = 2.0, step = 0
+759  | sA[2][7] = 2.0, sB[2][7] = 2.0, step = 0
+759  | sA[3][0] = 2.0, sB[3][0] = 2.0, step = 0
+759  | sA[3][1] = 2.0, sB[3][1] = 2.0, step = 0
+759  | sA[3][2] = 2.0, sB[3][2] = 2.0, step = 0
+759  | sA[3][3] = 2.0, sB[3][3] = 2.0, step = 0
+759  | sA[3][4] = 2.0, sB[3][4] = 2.0, step = 0
+759  | sA[3][5] = 2.0, sB[3][5] = 2.0, step = 0
+759  | sA[3][6] = 2.0, sB[3][6] = 2.0, step = 0
+759  | sA[3][7] = 2.0, sB[3][7] = 2.0, step = 0
+759  | sA[1][0] = 2.0, sB[1][0] = 2.0, step = 0
+759  | sA[1][1] = 2.0, sB[1][1] = 2.0, step = 0
+759  | sA[1][2] = 2.0, sB[1][2] = 2.0, step = 0
+759  | sA[1][3] = 2.0, sB[1][3] = 2.0, step = 0
+759  | sA[1][4] = 2.0, sB[1][4] = 2.0, step = 0
+759  | sA[1][5] = 2.0, sB[1][5] = 2.0, step = 0
+759  | sA[1][6] = 2.0, sB[1][6] = 2.0, step = 0
+759  | sA[1][7] = 2.0, sB[1][7] = 2.0, step = 0
+759  | sA[0][0] = 2.0, sB[0][0] = 2.0, step = 0
+759  | sA[0][1] = 2.0, sB[0][1] = 2.0, step = 0
+759  | sA[0][2] = 2.0, sB[0][2] = 2.0, step = 0
+759  | sA[0][3] = 2.0, sB[0][3] = 2.0, step = 0
+759  | sA[0][4] = 2.0, sB[0][4] = 2.0, step = 0
+759  | sA[0][5] = 2.0, sB[0][5] = 2.0, step = 0
+759  | sA[0][6] = 2.0, sB[0][6] = 2.0, step = 0
+759  | sA[0][7] = 2.0, sB[0][7] = 2.0, step = 0
+759  | C[4][0] = 32.0
+759  | C[4][1] = 32.0
+759  | C[4][2] = 32.0
+759  | C[4][3] = 32.0
+759  | C[4][4] = 32.0
+759  | C[4][5] = 32.0
+759  | C[4][6] = 32.0
+759  | C[4][7] = 32.0
+759  | C[5][0] = 32.0
+759  | C[5][1] = 32.0
+759  | C[5][2] = 32.0
+759  | C[5][3] = 32.0
+759  | C[5][4] = 32.0
+759  | C[5][5] = 32.0
+759  | C[5][6] = 32.0
+759  | C[5][7] = 32.0
+759  | C[2][0] = 32.0
+759  | C[2][1] = 32.0
+759  | C[2][2] = 32.0
+759  | C[2][3] = 32.0
+759  | C[2][4] = 32.0
+759  | C[2][5] = 32.0
+759  | C[2][6] = 32.0
+759  | C[2][7] = 32.0
+759  | C[3][0] = 32.0
+759  | C[3][1] = 32.0
+759  | C[3][2] = 32.0
+759  | C[3][3] = 32.0
+759  | C[3][4] = 32.0
+759  | C[3][5] = 32.0
+759  | C[3][6] = 32.0
+759  | C[3][7] = 32.0
+759  | C[6][0] = 32.0
+759  | C[6][1] = 32.0
+759  | C[6][2] = 32.0
+759  | C[6][3] = 32.0
+759  | C[6][4] = 32.0
+759  | C[6][5] = 32.0
+759  | C[6][6] = 32.0
+759  | C[6][7] = 32.0
+759  | C[7][0] = 32.0
+759  | C[7][1] = 32.0
+759  | C[7][2] = 32.0
+759  | C[7][3] = 32.0
+759  | C[7][4] = 32.0
+759  | C[7][5] = 32.0
+759  | C[7][6] = 32.0
+759  | C[7][7] = 32.0
+759  | C[0][0] = 32.0
+759  | C[0][1] = 32.0
+759  | C[0][2] = 32.0
+759  | C[0][3] = 32.0
+759  | C[0][4] = 32.0
+759  | C[0][5] = 32.0
+759  | C[0][6] = 32.0
+759  | C[0][7] = 32.0
+759  | C[1][0] = 32.0
+759  | C[1][1] = 32.0
+759  | C[1][2] = 32.0
+759  | C[1][3] = 32.0
+759  | C[1][4] = 32.0
+759  | C[1][5] = 32.0
+759  | C[1][6] = 32.0
+759  | C[1][7] = 32.0
+759  | sA[6][0] = 2.0, sB[6][0] = 2.0, step = 0
+759  | sA[6][1] = 2.0, sB[6][1] = 2.0, step = 0
+759  | sA[6][2] = 2.0, sB[6][2] = 2.0, step = 0
+759  | sA[6][3] = 2.0, sB[6][3] = 2.0, step = 0
+759  | sA[6][4] = 2.0, sB[6][4] = 2.0, step = 0
+759  | sA[6][5] = 2.0, sB[6][5] = 2.0, step = 0
+759  | sA[6][6] = 2.0, sB[6][6] = 2.0, step = 0
+759  | sA[6][7] = 2.0, sB[6][7] = 2.0, step = 0
+759  | sA[5][0] = 2.0, sB[5][0] = 2.0, step = 0
+759  | sA[5][1] = 2.0, sB[5][1] = 2.0, step = 0
+759  | sA[5][2] = 2.0, sB[5][2] = 2.0, step = 0
+759  | sA[5][3] = 2.0, sB[5][3] = 2.0, step = 0
+759  | sA[5][4] = 2.0, sB[5][4] = 2.0, step = 0
+759  | sA[5][5] = 2.0, sB[5][5] = 2.0, step = 0
+759  | sA[5][6] = 2.0, sB[5][6] = 2.0, step = 0
+759  | sA[5][7] = 2.0, sB[5][7] = 2.0, step = 0
+759  | sA[7][0] = 2.0, sB[7][0] = 2.0, step = 0
+759  | sA[7][1] = 2.0, sB[7][1] = 2.0, step = 0
+759  | sA[7][2] = 2.0, sB[7][2] = 2.0, step = 0
+759  | sA[7][3] = 2.0, sB[7][3] = 2.0, step = 0
+759  | sA[7][4] = 2.0, sB[7][4] = 2.0, step = 0
+759  | sA[7][5] = 2.0, sB[7][5] = 2.0, step = 0
+759  | sA[7][6] = 2.0, sB[7][6] = 2.0, step = 0
+759  | sA[7][7] = 2.0, sB[7][7] = 2.0, step = 0
+759  | sA[4][0] = 2.0, sB[4][0] = 2.0, step = 0
+759  | sA[4][1] = 2.0, sB[4][1] = 2.0, step = 0
+759  | sA[4][2] = 2.0, sB[4][2] = 2.0, step = 0
+759  | sA[4][3] = 2.0, sB[4][3] = 2.0, step = 0
+759  | sA[4][4] = 2.0, sB[4][4] = 2.0, step = 0
+759  | sA[4][5] = 2.0, sB[4][5] = 2.0, step = 0
+759  | sA[4][6] = 2.0, sB[4][6] = 2.0, step = 0
+759  | sA[4][7] = 2.0, sB[4][7] = 2.0, step = 0
+759  | sA[1][0] = 2.0, sB[1][0] = 2.0, step = 0
+759  | sA[1][1] = 2.0, sB[1][1] = 2.0, step = 0
+759  | sA[1][2] = 2.0, sB[1][2] = 2.0, step = 0
+759  | sA[1][3] = 2.0, sB[1][3] = 2.0, step = 0
+759  | sA[1][4] = 2.0, sB[1][4] = 2.0, step = 0
+759  | sA[1][5] = 2.0, sB[1][5] = 2.0, step = 0
+759  | sA[1][6] = 2.0, sB[1][6] = 2.0, step = 0
+759  | sA[1][7] = 2.0, sB[1][7] = 2.0, step = 0
+759  | sA[2][0] = 2.0, sB[2][0] = 2.0, step = 0
+759  | sA[2][1] = 2.0, sB[2][1] = 2.0, step = 0
+759  | sA[2][2] = 2.0, sB[2][2] = 2.0, step = 0
+759  | sA[2][3] = 2.0, sB[2][3] = 2.0, step = 0
+759  | sA[2][4] = 2.0, sB[2][4] = 2.0, step = 0
+759  | sA[2][5] = 2.0, sB[2][5] = 2.0, step = 0
+759  | sA[2][6] = 2.0, sB[2][6] = 2.0, step = 0
+759  | sA[2][7] = 2.0, sB[2][7] = 2.0, step = 0
+759  | sA[0][0] = 2.0, sB[0][0] = 2.0, step = 0
+759  | sA[0][1] = 2.0, sB[0][1] = 2.0, step = 0
+759  | sA[0][2] = 2.0, sB[0][2] = 2.0, step = 0
+759  | sA[0][3] = 2.0, sB[0][3] = 2.0, step = 0
+759  | sA[0][4] = 2.0, sB[0][4] = 2.0, step = 0
+759  | sA[0][5] = 2.0, sB[0][5] = 2.0, step = 0
+759  | sA[0][6] = 2.0, sB[0][6] = 2.0, step = 0
+759  | sA[0][7] = 2.0, sB[0][7] = 2.0, step = 0
+759  | sA[3][0] = 2.0, sB[3][0] = 2.0, step = 0
+759  | sA[3][1] = 2.0, sB[3][1] = 2.0, step = 0
+759  | sA[3][2] = 2.0, sB[3][2] = 2.0, step = 0
+759  | sA[3][3] = 2.0, sB[3][3] = 2.0, step = 0
+759  | sA[3][4] = 2.0, sB[3][4] = 2.0, step = 0
+759  | sA[3][5] = 2.0, sB[3][5] = 2.0, step = 0
+759  | sA[3][6] = 2.0, sB[3][6] = 2.0, step = 0
+759  | sA[3][7] = 2.0, sB[3][7] = 2.0, step = 0
+759  | C[2][0] = 32.0
+759  | C[2][1] = 32.0
+759  | C[2][2] = 32.0
+759  | C[2][3] = 32.0
+759  | C[2][4] = 32.0
+759  | C[2][5] = 32.0
+759  | C[2][6] = 32.0
+759  | C[2][7] = 32.0
+759  | C[4][0] = 32.0
+759  | C[4][1] = 32.0
+759  | C[4][2] = 32.0
+759  | C[4][3] = 32.0
+759  | C[4][4] = 32.0
+759  | C[4][5] = 32.0
+759  | C[4][6] = 32.0
+759  | C[4][7] = 32.0
+759  | C[3][0] = 32.0
+759  | C[3][1] = 32.0
+759  | C[3][2] = 32.0
+759  | C[3][3] = 32.0
+759  | C[3][4] = 32.0
+759  | C[3][5] = 32.0
+759  | C[3][6] = 32.0
+759  | C[3][7] = 32.0
+759  | C[5][0] = 32.0
+759  | C[5][1] = 32.0
+759  | C[5][2] = 32.0
+759  | C[5][3] = 32.0
+759  | C[5][4] = 32.0
+759  | C[5][5] = 32.0
+759  | C[5][6] = 32.0
+759  | C[5][7] = 32.0
+759  | C[0][0] = 32.0
+759  | C[0][1] = 32.0
+759  | C[0][2] = 32.0
+759  | C[0][3] = 32.0
+759  | C[0][4] = 32.0
+759  | C[0][5] = 32.0
+759  | C[0][6] = 32.0
+759  | C[0][7] = 32.0
+759  | C[7][0] = 32.0
+759  | C[7][1] = 32.0
+759  | C[7][2] = 32.0
+759  | C[7][3] = 32.0
+759  | C[7][4] = 32.0
+759  | C[7][5] = 32.0
+759  | C[7][6] = 32.0
+759  | C[7][7] = 32.0
+759  | C[1][0] = 32.0
+759  | C[1][1] = 32.0
+759  | C[1][2] = 32.0
+759  | C[1][3] = 32.0
+759  | C[1][4] = 32.0
+759  | C[1][5] = 32.0
+759  | C[1][6] = 32.0
+759  | C[1][7] = 32.0
+759  | C[6][0] = 32.0
+759  | C[6][1] = 32.0
+759  | C[6][2] = 32.0
+759  | C[6][3] = 32.0
+759  | C[6][4] = 32.0
+759  | C[6][5] = 32.0
+759  | C[6][6] = 32.0
+759  | C[6][7] = 32.0
+759  | ========= ERROR SUMMARY: 0 errors
+759  | root@21e790338684:/fly# compute-sanitizer ./t 8 2make t[Kcompute-sanitizer ./t 8 2make t[K
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | root@21e790338684:/fly# make tcompute-sanitizer ./t 8 2
+759  | ========= COMPUTE-SANITIZER
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 8, num_gpus = 2
+759  | Chunk size: 8 * 8 = 64
+759  | Launching 1 blocks of 1024 threads each
+759  | C[1][0] = 32.0
+759  | C[1][1] = 32.0
+759  | C[1][2] = 32.0
+759  | C[1][3] = 32.0
+759  | C[1][4] = 32.0
+759  | C[1][5] = 32.0
+759  | C[1][6] = 32.0
+759  | C[1][7] = 32.0
+759  | C[3][0] = 32.0
+759  | C[3][1] = 32.0
+759  | C[3][2] = 32.0
+759  | C[3][3] = 32.0
+759  | C[3][4] = 32.0
+759  | C[3][5] = 32.0
+759  | C[3][6] = 32.0
+759  | C[3][7] = 32.0
+759  | C[0][0] = 32.0
+759  | C[0][1] = 32.0
+759  | C[0][2] = 32.0
+759  | C[0][3] = 32.0
+759  | C[0][4] = 32.0
+759  | C[0][5] = 32.0
+759  | C[0][6] = 32.0
+759  | C[0][7] = 32.0
+759  | C[2][0] = 32.0
+759  | C[2][1] = 32.0
+759  | C[2][2] = 32.0
+759  | C[2][3] = 32.0
+759  | C[2][4] = 32.0
+759  | C[2][5] = 32.0
+759  | C[2][6] = 32.0
+759  | C[2][7] = 32.0
+759  | C[4][0] = 32.0
+759  | C[4][1] = 32.0
+759  | C[4][2] = 32.0
+759  | C[4][3] = 32.0
+759  | C[4][4] = 32.0
+759  | C[4][5] = 32.0
+759  | C[4][6] = 32.0
+759  | C[4][7] = 32.0
+759  | C[5][0] = 32.0
+759  | C[5][1] = 32.0
+759  | C[5][2] = 32.0
+759  | C[5][3] = 32.0
+759  | C[5][4] = 32.0
+759  | C[5][5] = 32.0
+759  | C[5][6] = 32.0
+759  | C[5][7] = 32.0
+759  | C[6][0] = 32.0
+759  | C[6][1] = 32.0
+759  | C[6][2] = 32.0
+759  | C[6][3] = 32.0
+759  | C[6][4] = 32.0
+759  | C[6][5] = 32.0
+759  | C[6][6] = 32.0
+759  | C[6][7] = 32.0
+759  | C[7][0] = 32.0
+759  | C[7][1] = 32.0
+759  | C[7][2] = 32.0
+759  | C[7][3] = 32.0
+759  | C[7][4] = 32.0
+759  | C[7][5] = 32.0
+759  | C[7][6] = 32.0
+759  | C[7][7] = 32.0
+759  | C[5][0] = 32.0
+759  | C[5][1] = 32.0
+759  | C[5][2] = 32.0
+759  | C[5][3] = 32.0
+759  | C[5][4] = 32.0
+759  | C[5][5] = 32.0
+759  | C[5][6] = 32.0
+759  | C[5][7] = 32.0
+759  | C[7][0] = 32.0
+759  | C[7][1] = 32.0
+759  | C[7][2] = 32.0
+759  | C[7][3] = 32.0
+759  | C[7][4] = 32.0
+759  | C[7][5] = 32.0
+759  | C[7][6] = 32.0
+759  | C[7][7] = 32.0
+759  | C[1][0] = 32.0
+759  | C[1][1] = 32.0
+759  | C[1][2] = 32.0
+759  | C[1][3] = 32.0
+759  | C[1][4] = 32.0
+759  | C[1][5] = 32.0
+759  | C[1][6] = 32.0
+759  | C[1][7] = 32.0
+759  | C[6][0] = 32.0
+759  | C[6][1] = 32.0
+759  | C[6][2] = 32.0
+759  | C[6][3] = 32.0
+759  | C[6][4] = 32.0
+759  | C[6][5] = 32.0
+759  | C[6][6] = 32.0
+759  | C[6][7] = 32.0
+759  | C[3][0] = 32.0
+759  | C[3][1] = 32.0
+759  | C[3][2] = 32.0
+759  | C[3][3] = 32.0
+759  | C[3][4] = 32.0
+759  | C[3][5] = 32.0
+759  | C[3][6] = 32.0
+759  | C[3][7] = 32.0
+759  | C[4][0] = 32.0
+759  | C[4][1] = 32.0
+759  | C[4][2] = 32.0
+759  | C[4][3] = 32.0
+759  | C[4][4] = 32.0
+759  | C[4][5] = 32.0
+759  | C[4][6] = 32.0
+759  | C[4][7] = 32.0
+759  | C[2][0] = 32.0
+759  | C[2][1] = 32.0
+759  | C[2][2] = 32.0
+759  | C[2][3] = 32.0
+759  | C[2][4] = 32.0
+759  | C[2][5] = 32.0
+759  | C[2][6] = 32.0
+759  | C[2][7] = 32.0
+759  | C[0][0] = 32.0
+759  | C[0][1] = 32.0
+759  | C[0][2] = 32.0
+759  | C[0][3] = 32.0
+759  | C[0][4] = 32.0
+759  | C[0][5] = 32.0
+759  | C[0][6] = 32.0
+759  | C[0][7] = 32.0
+759  | ========= ERROR SUMMARY: 0 errors
+759  | root@21e790338684:/fly# make 
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | nvcc debug_p2p.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./debug
+759  | [01m[0m[01mdebug_p2p.cu(79)[0m: [01;35mwarning[0m #177-D: variable [01m"start"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(23)[0m: [01;35mwarning[0m #177-D: variable [01m"nColsB"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(58)[0m: [01;35mwarning[0m #177-D: variable [01m"streams"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(59)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | root@21e790338684:/fly# ./[K[K./t [K[K[K[K./t [K2 16 2
+759  | Distributed matmul with managed memory
+759  | Hardcoding params for testing
+759  | n=16, num_gpus=2
+759  | First value input: 1.000000
+759  | Last value input: 1.000000
+759  | dimGrid.x = 1, dimGrid.y = 1
+759  | dimGrid.x = 1, dimGrid.y = 1
+759  | C[15][0] = 16.0
+759  | C[15][1] = 16.0
+759  | C[15][2] = 16.0
+759  | C[15][3] = 16.0
+759  | C[15][4] = 16.0
+759  | C[15][5] = 16.0
+759  | C[15][6] = 16.0
+759  | C[15][7] = 16.0
+759  | C[15][8] = 16.0
+759  | C[15][9] = 16.0
+759  | C[15][10] = 16.0
+759  | C[15][11] = 16.0
+759  | C[15][12] = 16.0
+759  | C[15][13] = 16.0
+759  | C[15][14] = 16.0
+759  | C[15][15] = 16.0
+759  | C[12][0] = 16.0
+759  | C[12][1] = 16.0
+759  | C[12][2] = 16.0
+759  | C[12][3] = 16.0
+759  | C[12][4] = 16.0
+759  | C[12][5] = 16.0
+759  | C[12][6] = 16.0
+759  | C[12][7] = 16.0
+759  | C[12][8] = 16.0
+759  | C[12][9] = 16.0
+759  | C[12][10] = 16.0
+759  | C[12][11] = 16.0
+759  | C[12][12] = 16.0
+759  | C[12][13] = 16.0
+759  | C[12][14] = 16.0
+759  | C[12][15] = 16.0
+759  | C[11][0] = 16.0
+759  | C[11][1] = 16.0
+759  | C[11][2] = 16.0
+759  | C[11][3] = 16.0
+759  | C[11][4] = 16.0
+759  | C[11][5] = 16.0
+759  | C[11][6] = 16.0
+759  | C[11][7] = 16.0
+759  | C[11][8] = 16.0
+759  | C[11][9] = 16.0
+759  | C[11][10] = 16.0
+759  | C[11][11] = 16.0
+759  | C[11][12] = 16.0
+759  | C[11][13] = 16.0
+759  | C[11][14] = 16.0
+759  | C[11][15] = 16.0
+759  | C[13][0] = 16.0
+759  | C[13][1] = 16.0
+759  | C[13][2] = 16.0
+759  | C[13][3] = 16.0
+759  | C[13][4] = 16.0
+759  | C[13][5] = 16.0
+759  | C[13][6] = 16.0
+759  | C[13][7] = 16.0
+759  | C[13][8] = 16.0
+759  | C[13][9] = 16.0
+759  | C[13][10] = 16.0
+759  | C[13][11] = 16.0
+759  | C[13][12] = 16.0
+759  | C[13][13] = 16.0
+759  | C[13][14] = 16.0
+759  | C[13][15] = 16.0
+759  | C[10][0] = 16.0
+759  | C[10][1] = 16.0
+759  | C[10][2] = 16.0
+759  | C[10][3] = 16.0
+759  | C[10][4] = 16.0
+759  | C[10][5] = 16.0
+759  | C[10][6] = 16.0
+759  | C[10][7] = 16.0
+759  | C[10][8] = 16.0
+759  | C[10][9] = 16.0
+759  | C[10][10] = 16.0
+759  | C[10][11] = 16.0
+759  | C[10][12] = 16.0
+759  | C[10][13] = 16.0
+759  | C[10][14] = 16.0
+759  | C[10][15] = 16.0
+759  | C[4][0] = 16.0
+759  | C[4][1] = 16.0
+759  | C[4][2] = 16.0
+759  | C[4][3] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][5] = 16.0
+759  | C[4][6] = 16.0
+759  | C[4][7] = 16.0
+759  | C[4][8] = 16.0
+759  | C[4][9] = 16.0
+759  | C[4][10] = 16.0
+759  | C[4][11] = 16.0
+759  | C[4][12] = 16.0
+759  | C[4][13] = 16.0
+759  | C[4][14] = 16.0
+759  | C[4][15] = 16.0
+759  | C[9][0] = 16.0
+759  | C[9][1] = 16.0
+759  | C[9][2] = 16.0
+759  | C[9][3] = 16.0
+759  | C[9][4] = 16.0
+759  | C[9][5] = 16.0
+759  | C[9][6] = 16.0
+759  | C[9][7] = 16.0
+759  | C[9][8] = 16.0
+759  | C[9][9] = 16.0
+759  | C[9][10] = 16.0
+759  | C[9][11] = 16.0
+759  | C[9][12] = 16.0
+759  | C[9][13] = 16.0
+759  | C[9][14] = 16.0
+759  | C[9][15] = 16.0
+759  | C[14][0] = 16.0
+759  | C[14][1] = 16.0
+759  | C[14][2] = 16.0
+759  | C[14][3] = 16.0
+759  | C[14][4] = 16.0
+759  | C[14][5] = 16.0
+759  | C[14][6] = 16.0
+759  | C[14][7] = 16.0
+759  | C[14][8] = 16.0
+759  | C[14][9] = 16.0
+759  | C[14][10] = 16.0
+759  | C[14][11] = 16.0
+759  | C[14][12] = 16.0
+759  | C[14][13] = 16.0
+759  | C[14][14] = 16.0
+759  | C[14][15] = 16.0
+759  | C[8][0] = 16.0
+759  | C[8][1] = 16.0
+759  | C[8][2] = 16.0
+759  | C[8][3] = 16.0
+759  | C[8][4] = 16.0
+759  | C[8][5] = 16.0
+759  | C[8][6] = 16.0
+759  | C[8][7] = 16.0
+759  | C[8][8] = 16.0
+759  | C[8][9] = 16.0
+759  | C[8][10] = 16.0
+759  | C[8][11] = 16.0
+759  | C[8][12] = 16.0
+759  | C[8][13] = 16.0
+759  | C[8][14] = 16.0
+759  | C[8][15] = 16.0
+759  | C[6][0] = 16.0
+759  | C[6][1] = 16.0
+759  | C[6][2] = 16.0
+759  | C[6][3] = 16.0
+759  | C[6][4] = 16.0
+759  | C[6][5] = 16.0
+759  | C[6][6] = 16.0
+759  | C[6][7] = 16.0
+759  | C[6][8] = 16.0
+759  | C[6][9] = 16.0
+759  | C[6][10] = 16.0
+759  | C[6][11] = 16.0
+759  | C[6][12] = 16.0
+759  | C[6][13] = 16.0
+759  | C[6][14] = 16.0
+759  | C[6][15] = 16.0
+759  | C[7][0] = 16.0
+759  | C[7][1] = 16.0
+759  | C[7][2] = 16.0
+759  | C[7][3] = 16.0
+759  | C[7][4] = 16.0
+759  | C[7][5] = 16.0
+759  | C[7][6] = 16.0
+759  | C[7][7] = 16.0
+759  | C[7][8] = 16.0
+759  | C[7][9] = 16.0
+759  | C[7][10] = 16.0
+759  | C[7][11] = 16.0
+759  | C[7][12] = 16.0
+759  | C[7][13] = 16.0
+759  | C[7][14] = 16.0
+759  | C[7][15] = 16.0
+759  | C[5][0] = 16.0
+759  | C[5][1] = 16.0
+759  | C[5][2] = 16.0
+759  | C[5][3] = 16.0
+759  | C[5][4] = 16.0
+759  | C[5][5] = 16.0
+759  | C[5][6] = 16.0
+759  | C[5][7] = 16.0
+759  | C[5][8] = 16.0
+759  | C[5][9] = 16.0
+759  | C[5][10] = 16.0
+759  | C[5][11] = 16.0
+759  | C[5][12] = 16.0
+759  | C[5][13] = 16.0
+759  | C[5][14] = 16.0
+759  | C[5][15] = 16.0
+759  | C[0][0] = 16.0
+759  | C[0][1] = 16.0
+759  | C[0][2] = 16.0
+759  | C[0][3] = 16.0
+759  | C[0][4] = 16.0
+759  | C[0][5] = 16.0
+759  | C[0][6] = 16.0
+759  | C[0][7] = 16.0
+759  | C[0][8] = 16.0
+759  | C[0][9] = 16.0
+759  | C[0][10] = 16.0
+759  | C[0][11] = 16.0
+759  | C[0][12] = 16.0
+759  | C[0][13] = 16.0
+759  | C[0][14] = 16.0
+759  | C[0][15] = 16.0
+759  | C[3][0] = 16.0
+759  | C[3][1] = 16.0
+759  | C[3][2] = 16.0
+759  | C[3][3] = 16.0
+759  | C[3][4] = 16.0
+759  | C[3][5] = 16.0
+759  | C[3][6] = 16.0
+759  | C[3][7] = 16.0
+759  | C[3][8] = 16.0
+759  | C[3][9] = 16.0
+759  | C[3][10] = 16.0
+759  | C[3][11] = 16.0
+759  | C[3][12] = 16.0
+759  | C[3][13] = 16.0
+759  | C[3][14] = 16.0
+759  | C[3][15] = 16.0
+759  | C[1][0] = 16.0
+759  | C[1][1] = 16.0
+759  | C[1][2] = 16.0
+759  | C[1][3] = 16.0
+759  | C[1][4] = 16.0
+759  | C[1][5] = 16.0
+759  | C[1][6] = 16.0
+759  | C[1][7] = 16.0
+759  | C[1][8] = 16.0
+759  | C[1][9] = 16.0
+759  | C[1][10] = 16.0
+759  | C[1][11] = 16.0
+759  | C[1][12] = 16.0
+759  | C[1][13] = 16.0
+759  | C[1][14] = 16.0
+759  | C[1][15] = 16.0
+759  | C[2][0] = 16.0
+759  | C[2][1] = 16.0
+759  | C[2][2] = 16.0
+759  | C[2][3] = 16.0
+759  | C[2][4] = 16.0
+759  | C[2][5] = 16.0
+759  | C[2][6] = 16.0
+759  | C[2][7] = 16.0
+759  | C[2][8] = 16.0
+759  | C[2][9] = 16.0
+759  | C[2][10] = 16.0
+759  | C[2][11] = 16.0
+759  | C[2][12] = 16.0
+759  | C[2][13] = 16.0
+759  | C[2][14] = 16.0
+759  | C[2][15] = 16.0
+759  | C[14][0] = 16.0
+759  | C[14][1] = 16.0
+759  | C[14][2] = 16.0
+759  | C[14][3] = 16.0
+759  | C[14][4] = 16.0
+759  | C[14][5] = 16.0
+759  | C[14][6] = 16.0
+759  | C[14][7] = 16.0
+759  | C[14][8] = 16.0
+759  | C[14][9] = 16.0
+759  | C[14][10] = 16.0
+759  | C[14][11] = 16.0
+759  | C[14][12] = 16.0
+759  | C[14][13] = 16.0
+759  | C[14][14] = 16.0
+759  | C[14][15] = 16.0
+759  | C[15][0] = 16.0
+759  | C[15][1] = 16.0
+759  | C[15][2] = 16.0
+759  | C[15][3] = 16.0
+759  | C[15][4] = 16.0
+759  | C[15][5] = 16.0
+759  | C[15][6] = 16.0
+759  | C[15][7] = 16.0
+759  | C[15][8] = 16.0
+759  | C[15][9] = 16.0
+759  | C[15][10] = 16.0
+759  | C[15][11] = 16.0
+759  | C[15][12] = 16.0
+759  | C[15][13] = 16.0
+759  | C[15][14] = 16.0
+759  | C[15][15] = 16.0
+759  | C[12][0] = 16.0
+759  | C[12][1] = 16.0
+759  | C[12][2] = 16.0
+759  | C[12][3] = 16.0
+759  | C[12][4] = 16.0
+759  | C[12][5] = 16.0
+759  | C[12][6] = 16.0
+759  | C[12][7] = 16.0
+759  | C[12][8] = 16.0
+759  | C[12][9] = 16.0
+759  | C[12][10] = 16.0
+759  | C[12][11] = 16.0
+759  | C[12][12] = 16.0
+759  | C[12][13] = 16.0
+759  | C[12][14] = 16.0
+759  | C[12][15] = 16.0
+759  | C[13][0] = 16.0
+759  | C[13][1] = 16.0
+759  | C[13][2] = 16.0
+759  | C[13][3] = 16.0
+759  | C[13][4] = 16.0
+759  | C[13][5] = 16.0
+759  | C[13][6] = 16.0
+759  | C[13][7] = 16.0
+759  | C[13][8] = 16.0
+759  | C[13][9] = 16.0
+759  | C[13][10] = 16.0
+759  | C[13][11] = 16.0
+759  | C[13][12] = 16.0
+759  | C[13][13] = 16.0
+759  | C[13][14] = 16.0
+759  | C[13][15] = 16.0
+759  | C[11][0] = 16.0
+759  | C[11][1] = 16.0
+759  | C[11][2] = 16.0
+759  | C[11][3] = 16.0
+759  | C[11][4] = 16.0
+759  | C[11][5] = 16.0
+759  | C[11][6] = 16.0
+759  | C[11][7] = 16.0
+759  | C[11][8] = 16.0
+759  | C[11][9] = 16.0
+759  | C[11][10] = 16.0
+759  | C[11][11] = 16.0
+759  | C[11][12] = 16.0
+759  | C[11][13] = 16.0
+759  | C[11][14] = 16.0
+759  | C[11][15] = 16.0
+759  | C[8][0] = 16.0
+759  | C[8][1] = 16.0
+759  | C[8][2] = 16.0
+759  | C[8][3] = 16.0
+759  | C[8][4] = 16.0
+759  | C[8][5] = 16.0
+759  | C[8][6] = 16.0
+759  | C[8][7] = 16.0
+759  | C[8][8] = 16.0
+759  | C[8][9] = 16.0
+759  | C[8][10] = 16.0
+759  | C[8][11] = 16.0
+759  | C[8][12] = 16.0
+759  | C[8][13] = 16.0
+759  | C[8][14] = 16.0
+759  | C[8][15] = 16.0
+759  | C[6][0] = 16.0
+759  | C[6][1] = 16.0
+759  | C[6][2] = 16.0
+759  | C[6][3] = 16.0
+759  | C[6][4] = 16.0
+759  | C[6][5] = 16.0
+759  | C[6][6] = 16.0
+759  | C[6][7] = 16.0
+759  | C[6][8] = 16.0
+759  | C[6][9] = 16.0
+759  | C[6][10] = 16.0
+759  | C[6][11] = 16.0
+759  | C[6][12] = 16.0
+759  | C[6][13] = 16.0
+759  | C[6][14] = 16.0
+759  | C[6][15] = 16.0
+759  | C[9][0] = 16.0
+759  | C[9][1] = 16.0
+759  | C[9][2] = 16.0
+759  | C[9][3] = 16.0
+759  | C[9][4] = 16.0
+759  | C[9][5] = 16.0
+759  | C[9][6] = 16.0
+759  | C[9][7] = 16.0
+759  | C[9][8] = 16.0
+759  | C[9][9] = 16.0
+759  | C[9][10] = 16.0
+759  | C[9][11] = 16.0
+759  | C[9][12] = 16.0
+759  | C[9][13] = 16.0
+759  | C[9][14] = 16.0
+759  | C[9][15] = 16.0
+759  | C[3][0] = 16.0
+759  | C[3][1] = 16.0
+759  | C[3][2] = 16.0
+759  | C[3][3] = 16.0
+759  | C[3][4] = 16.0
+759  | C[3][5] = 16.0
+759  | C[3][6] = 16.0
+759  | C[3][7] = 16.0
+759  | C[3][8] = 16.0
+759  | C[3][9] = 16.0
+759  | C[3][10] = 16.0
+759  | C[3][11] = 16.0
+759  | C[3][12] = 16.0
+759  | C[3][13] = 16.0
+759  | C[3][14] = 16.0
+759  | C[3][15] = 16.0
+759  | C[10][0] = 16.0
+759  | C[10][1] = 16.0
+759  | C[10][2] = 16.0
+759  | C[10][3] = 16.0
+759  | C[10][4] = 16.0
+759  | C[10][5] = 16.0
+759  | C[10][6] = 16.0
+759  | C[10][7] = 16.0
+759  | C[10][8] = 16.0
+759  | C[10][9] = 16.0
+759  | C[10][10] = 16.0
+759  | C[10][11] = 16.0
+759  | C[10][12] = 16.0
+759  | C[10][13] = 16.0
+759  | C[10][14] = 16.0
+759  | C[10][15] = 16.0
+759  | C[4][0] = 16.0
+759  | C[4][1] = 16.0
+759  | C[4][2] = 16.0
+759  | C[4][3] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][5] = 16.0
+759  | C[4][6] = 16.0
+759  | C[4][7] = 16.0
+759  | C[4][8] = 16.0
+759  | C[4][9] = 16.0
+759  | C[4][10] = 16.0
+759  | C[4][11] = 16.0
+759  | C[4][12] = 16.0
+759  | C[4][13] = 16.0
+759  | C[4][14] = 16.0
+759  | C[4][15] = 16.0
+759  | C[1][0] = 16.0
+759  | C[1][1] = 16.0
+759  | C[1][2] = 16.0
+759  | C[1][3] = 16.0
+759  | C[1][4] = 16.0
+759  | C[1][5] = 16.0
+759  | C[1][6] = 16.0
+759  | C[1][7] = 16.0
+759  | C[1][8] = 16.0
+759  | C[1][9] = 16.0
+759  | C[1][10] = 16.0
+759  | C[1][11] = 16.0
+759  | C[1][12] = 16.0
+759  | C[1][13] = 16.0
+759  | C[1][14] = 16.0
+759  | C[1][15] = 16.0
+759  | C[7][0] = 16.0
+759  | C[7][1] = 16.0
+759  | C[7][2] = 16.0
+759  | C[7][3] = 16.0
+759  | C[7][4] = 16.0
+759  | C[7][5] = 16.0
+759  | C[7][6] = 16.0
+759  | C[7][7] = 16.0
+759  | C[7][8] = 16.0
+759  | C[7][9] = 16.0
+759  | C[7][10] = 16.0
+759  | C[7][11] = 16.0
+759  | C[7][12] = 16.0
+759  | C[7][13] = 16.0
+759  | C[7][14] = 16.0
+759  | C[7][15] = 16.0
+759  | C[2][0] = 16.0
+759  | C[2][1] = 16.0
+759  | C[2][2] = 16.0
+759  | C[2][3] = 16.0
+759  | C[2][4] = 16.0
+759  | C[2][5] = 16.0
+759  | C[2][6] = 16.0
+759  | C[2][7] = 16.0
+759  | C[2][8] = 16.0
+759  | C[2][9] = 16.0
+759  | C[2][10] = 16.0
+759  | C[2][11] = 16.0
+759  | C[2][12] = 16.0
+759  | C[2][13] = 16.0
+759  | C[2][14] = 16.0
+759  | C[2][15] = 16.0
+759  | C[0][0] = 16.0
+759  | C[0][1] = 16.0
+759  | C[0][2] = 16.0
+759  | C[0][3] = 16.0
+759  | C[0][4] = 16.0
+759  | C[0][5] = 16.0
+759  | C[0][6] = 16.0
+759  | C[0][7] = 16.0
+759  | C[0][8] = 16.0
+759  | C[0][9] = 16.0
+759  | C[0][10] = 16.0
+759  | C[0][11] = 16.0
+759  | C[0][12] = 16.0
+759  | C[0][13] = 16.0
+759  | C[0][14] = 16.0
+759  | C[0][15] = 16.0
+759  | C[5][0] = 16.0
+759  | C[5][1] = 16.0
+759  | C[5][2] = 16.0
+759  | C[5][3] = 16.0
+759  | C[5][4] = 16.0
+759  | C[5][5] = 16.0
+759  | C[5][6] = 16.0
+759  | C[5][7] = 16.0
+759  | C[5][8] = 16.0
+759  | C[5][9] = 16.0
+759  | C[5][10] = 16.0
+759  | C[5][11] = 16.0
+759  | C[5][12] = 16.0
+759  | C[5][13] = 16.0
+759  | C[5][14] = 16.0
+759  | C[5][15] = 16.0
+759  | First value output: 16.000000
+759  | Middle value output: 16.000000
+759  | Last value output: 16.000000
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# make 
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | [01m[0m[01mutils.cuh(37)[0m: [01;31merror[0m: identifier "[01mm[0m" is undefined
+759  | 
+759  | 1 error detected in the compilation of "test_async.cu".
+759  | make: *** [Makefile:10: t] Error 1
+759  | root@21e790338684:/fly# make 
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | [01m[0m[01mmatmul.cu(29)[0m: [01;31merror[0m: "[01mnRowsA[0m" has already been declared in the current scope
+759  | 
+759  | [01m[0m[01mmatmul.cu(30)[0m: [01;31merror[0m: "[01mnColsB[0m" has already been declared in the current scope
+759  | 
+759  | [01m[0m[01mmatmul.cu(134)[0m: [01;31merror[0m: no instance of overloaded function [01m"cudaMallocAsync"[0m matches the argument list
+759  |             argument types are: (float **, unsigned long)
+759  | 
+759  | 3 errors detected in the compilation of "matmul.cu".
+759  | make: *** [Makefile:10: t] Error 1
+759  | root@21e790338684:/fly# git checkout debug
+759  | Makefile: needs merge
+759  | debug: needs merge
+759  | matmul.cu: needs merge
+759  | t: needs merge
+759  | t2: needs merge
+759  | utils.cuh: needs merge
+759  | error: you need to resolve your current index first
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# makje
+759  | bash: makje: command not found
+759  | root@21e790338684:/fly# make
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | [01m[0m[01mmatmul.cu(134)[0m: [01;31merror[0m: no instance of overloaded function [01m"cudaMallocAsync"[0m matches the argument list
+759  |             argument types are: (float **, unsigned long)
+759  | 
+759  | 1 error detected in the compilation of "matmul.cu".
+759  | make: *** [Makefile:10: t] Error 1
+759  | root@21e790338684:/fly# maje
+759  | bash: maje: command not found
+759  | root@21e790338684:/fly# make
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | [01m[0m[01mmatmul.cu(134)[0m: [01;31merror[0m: identifier "[01mstraem[0m" is undefined
+759  | 
+759  | 1 error detected in the compilation of "matmul.cu".
+759  | make: *** [Makefile:10: t] Error 1
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# make
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(100)[0m: [01;31merror[0m: too many arguments in function call
+759  | 
+759  | [01m[0m[01mtest_managed.cu(101)[0m: [01;31merror[0m: too many arguments in function call
+759  | 
+759  | [01m[0m[01mtest_managed.cu(102)[0m: [01;31merror[0m: too many arguments in function call
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | 3 errors detected in the compilation of "test_managed.cu".
+759  | make: *** [Makefile:13: t2] Error 1
+759  | root@21e790338684:/fly# a[Kmake
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | nvcc debug_p2p.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./debug
+759  | [01m[0m[01mdebug_p2p.cu(79)[0m: [01;35mwarning[0m #177-D: variable [01m"start"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(23)[0m: [01;35mwarning[0m #177-D: variable [01m"nColsB"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(58)[0m: [01;35mwarning[0m #177-D: variable [01m"streams"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(59)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | nvcc test_time.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./test_time
+759  | root@21e790338684:/fly# ./t 4[K8 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 8, num_gpus = 2
+759  | Chunk size: 8 * 8 = 64
+759  | Launching 1 blocks of 1024 threads each
+759  | root@21e790338684:/fly# ./t 8 2[3Pmake./t 8 2[1@c[1@o[1@m[1@p[1@u[1@t[1@e[1@-[1@s[1@a[1@n[1@i[1@t[1@i[1@z[1@e[1@r[1@ 
+759  | ========= COMPUTE-SANITIZER
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 8, num_gpus = 2
+759  | Chunk size: 8 * 8 = 64
+759  | Launching 1 blocks of 1024 threads each
+759  | ========= ERROR SUMMARY: 0 errors
+759  | root@21e790338684:/fly# git commit -m "merge debu[K[K[K[Kdebug branch kernel"
+759  | U	Makefile
+759  | U	debug
+759  | U	matmul.cu
+759  | U	t
+759  | U	t2
+759  | U	utils.cuh
+759  | error: Committing is not possible because you have unmerged files.
+759  | [33mhint: Fix them up in the work tree, and then use 'git add/rm <file>'[m
+759  | [33mhint: as appropriate to mark resolution and make a commit.[m
+759  | fatal: Exiting because of an unresolved conflict.
+759  | root@21e790338684:/fly# git add .
+759  | root@21e790338684:/fly# git add .commit -m "merge debug branch kernel"
+759  | 
+759  | *** Please tell me who you are.
+759  | 
+759  | Run
+759  | 
+759  |   git config --global user.email "you@example.com"
+759  |   git config --global user.name "Your Name"
+759  | 
+759  | to set your account's default identity.
+759  | Omit --global to set the identity only in this repository.
+759  | 
+759  | fatal: unable to auto-detect email address (got 'root@21e790338684.(none)')
+759  | root@21e790338684:/fly# make
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | [01m[0m[01mmatmul.cu(119)[0m: [01;31merror[0m: no instance of overloaded function [01m"cudaMallocAsync"[0m matches the argument list
+759  |             argument types are: (float **, unsigned long)
+759  | 
+759  | 1 error detected in the compilation of "matmul.cu".
+759  | make: *** [Makefile:11: t] Error 1
+759  | root@21e790338684:/fly# make
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | nvcc debug_p2p.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./debug
+759  | ^Cnvcc error   : 'gcc' died due to signal 2 
+759  | make: *** [Makefile:17: debug] Error 2
+759  | 
+759  | root@21e790338684:/fly# ./t 4 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 4 * 4 = 16
+759  | Launching 1 blocks of 1024 threads each
+759  | root@21e790338684:/fly# ./t 4 2[Kmake t
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | ./t 4 2
+759  | root@21e790338684:/fly# ./t 4 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 4 * 4 = 16
+759  | Launching 1 blocks of 1024 threads each
+759  | Matrix:
+759  | 0.000000 0.000000 0.000000 0.000000 
+759  | 0.000000 0.000000 0.000000 0.000000 
+759  | 0.000000 0.000000 0.000000 0.000000 
+759  | 0.000000 0.000000 0.000000 0.000000 
+759  | Matmul First value output: 0.000000
+759  | Last value output: 0.000000
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# makje[K[K[K[Kake
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | nvcc debug_p2p.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./debug
+759  | [01m[0m[01mdebug_p2p.cu(79)[0m: [01;35mwarning[0m #177-D: variable [01m"start"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(23)[0m: [01;35mwarning[0m #177-D: variable [01m"nColsB"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(58)[0m: [01;35mwarning[0m #177-D: variable [01m"streams"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(59)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | root@21e790338684:/fly# ./t 4 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 4 * 4 = 16
+759  | Launching 1 blocks of 1024 threads each
+759  | Matrix:
+759  | 0.000000 0.000000 0.000000 0.000000 
+759  | 0.000000 0.000000 0.000000 0.000000 
+759  | 0.000000 0.000000 0.000000 0.000000 
+759  | 0.000000 0.000000 0.000000 0.000000 
+759  | Matmul First value output: 0.000000
+759  | Last value output: 0.000000
+759  | root@21e790338684:/fly# make
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | nvcc debug_p2p.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./debug
+759  | [01m[0m[01mdebug_p2p.cu(79)[0m: [01;35mwarning[0m #177-D: variable [01m"start"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(23)[0m: [01;35mwarning[0m #177-D: variable [01m"nColsB"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(58)[0m: [01;35mwarning[0m #177-D: variable [01m"streams"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(59)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | root@21e790338684:/fly# ./t 4 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 4 * 4 = 16
+759  | Launching 1 blocks of 1024 threads each
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | Matrix:
+759  | 16.000000 16.000000 16.000000 16.000000 
+759  | 16.000000 16.000000 16.000000 16.000000 
+759  | 16.000000 16.000000 16.000000 16.000000 
+759  | 16.000000 16.000000 16.000000 16.000000 
+759  | Matmul First value output: 16.000000
+759  | Last value output: 16.000000
+759  | root@21e790338684:/fly# make
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# ./t 16 4
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 16, num_gpus = 4
+759  | Chunk size: 16 * 16 = 256
+759  | Launching 1 blocks of 1024 threads each
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | Matmul First value output: 64.000000
+759  | Last value output: 64.000000
+759  | root@21e790338684:/fly# ./t [K2 4 2
+759  | Distributed matmul with managed memory
+759  | Hardcoding params for testing
+759  | n=4, num_gpus=2
+759  | First value input: 1.000000
+759  | Last value input: 1.000000
+759  | dimGrid.x = 1, dimGrid.y = 1
+759  | dimGrid.x = 1, dimGrid.y = 1
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | C[4][4] = 4.0
+759  | First value output: 4.000000
+759  | Middle value output: 4.000000
+759  | Last value output: 4.000000
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# make 
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# ./test_[K[K[K[K[K1 16 2
+759  | bash: ./1: No such file or directory
+759  | root@21e790338684:/fly# ./t 16 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 16, num_gpus = 2
+759  | Chunk size: 16 * 16 = 256
+759  | Launching 1 blocks of 1024 threads each
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | C[16][16] = 64.0
+759  | Matmul First value output: 64.000000
+759  | Last value output: 64.000000
+759  | root@21e790338684:/fly# ./t 16 2[C[C[1P 2[1P 24 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 4 * 4 = 16
+759  | Launching 1 blocks of 1024 threads each
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | C[4][4] = 16.0
+759  | Matmul First value output: 16.000000
+759  | Last value output: 16.000000
+759  | root@21e790338684:/fly# ./t 4 2[C[1P 28 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 8, num_gpus = 2
+759  | Chunk size: 8 * 8 = 64
+759  | Launching 1 blocks of 1024 threads each
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | C[8][8] = 32.0
+759  | Matmul First value output: 32.000000
+759  | Last value output: 32.000000
+759  | root@21e790338684:/fly# ./t 2[K[K2 4 4 4 2
+759  | Distributed matmul with managed memory
+759  | Usage: ./t <matrix size> <num_gpus>
+759  | root@21e790338684:/fly# ./t2 4 4 4 2[Kmakje[K[Ke
+759  | make: Nothing to be done for 'all'.
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# make./t2 4 4 4 2^C
+759  | root@21e790338684:/fly# make test+ti[K[K[K_time
+759  | make: 'test_time' is up to date.
+759  | root@21e790338684:/fly# make test_time[K./t2 4 4 4 2[1P[1@e[1@s[1@t[1@_[1@t[1@i[1@m[1@e
+759  | Distributed matmul with managed memory
+759  | Params for testing:
+759  | nRowsA=4, nColsA=4, nColsA=4 num_gpus=2
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 4.000000
+759  | GPU First value output array C: 4.000000
+759  | Time taken for single GPU = 3.206144
+759  | 
+759  | Splitting one matrix (the first one)
+759  | nRowsA_per_GPU=2, lastnRowsA=2
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 4.000000
+759  | GPU First value output array C: 4.000000
+759  | GPU First value input array A: 1.000000
+759  | GPU Last value output array C variable: 4.000000
+759  | GPU First value output array C: 4.000000
+759  | 
+759  | Matrix sizes 4 x 4 and 4 x 4
+759  | Elapsed time on device 0: 0.215040 ms
+759  | Elapsed time on device 1: 4.279296 ms
+759  | Time taken for single GPU using CPU time = 3.009802
+759  | Time taken for 2 GPUs using CPU time = 4.345320
+759  | root@21e790338684:/fly# make 
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | nvcc debug_p2p.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./debug
+759  | [01m[0m[01mdebug_p2p.cu(79)[0m: [01;35mwarning[0m #177-D: variable [01m"start"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(23)[0m: [01;35mwarning[0m #177-D: variable [01m"nColsB"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(58)[0m: [01;35mwarning[0m #177-D: variable [01m"streams"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mdebug_p2p.cu(59)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | nvcc test_time.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./test_time
+759  | root@21e790338684:/fly# .make ./test_time 4 4 4 2
+759  | Distributed matmul with managed memory
+759  | Params for testing:
+759  | nRowsA=4, nColsA=4, nColsA=4 num_gpus=2
+759  | dimGrid.x = 1, dimGrid.y = 1
+759  | Time taken for single GPU = 0.030720
+759  | 
+759  | Splitting one matrix (the first one)
+759  | nRowsA_per_GPU=2, lastnRowsA=2
+759  | dimGrid.x = 1, dimGrid.y = 1
+759  | dimGrid.x = 1, dimGrid.y = 1
+759  | 
+759  | Matrix sizes 4 x 4 and 4 x 4
+759  | Elapsed time on device 0: 0.048128 ms
+759  | Elapsed time on device 1: 0.441344 ms
+759  | Time taken for single GPU using CPU time = 0.030580
+759  | Time taken for 2 GPUs using CPU time = 0.506669
+759  | root@21e790338684:/fly# make
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | [01m[0m[01mmatmul.cu(82)[0m: [01;31merror[0m: expected a ";"
+759  | 
+759  | 1 error detected in the compilation of "matmul.cu".
+759  | make: *** [Makefile:10: t] Error 1
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# make 
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | nvcc test_time.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./test_time
+759  | root@21e790338684:/fly# ./t 4 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 4 * 4 = 16
+759  | Launching 1 blocks of 1024 threads each
+759  | Matmul First value output: 16.000000
+759  | Last value output: 16.000000
+759  | root@21e790338684:/fly# ./t 4 2[1P 28 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 8, num_gpus = 2
+759  | Chunk size: 8 * 8 = 64
+759  | Launching 1 blocks of 1024 threads each
+759  | Matmul First value output: 32.000000
+759  | Last value output: 32.000000
+759  | root@21e790338684:/fly# ./test_time 8 8 82[K 2
+759  | Distributed matmul with managed memory
+759  | Params for testing:
+759  | nRowsA=8, nColsA=8, nColsA=8 num_gpus=2
+759  | Launching 1 blocks of 1024 threads each
+759  | Time taken for single GPU = 0.027648
+759  | 
+759  | Splitting one matrix (the first one)
+759  | nRowsA_per_GPU=4, lastnRowsA=4
+759  | Launching 1 blocks of 1024 threads each
+759  | Launching 1 blocks of 1024 threads each
+759  | 
+759  | Matrix sizes 8 x 8 and 8 x 8
+759  | Elapsed time on device 0: 0.056320 ms
+759  | Elapsed time on device 1: 0.450560 ms
+759  | Time taken for single GPU using CPU time = 0.031070
+759  | Time taken for 2 GPUs using CPU time = 0.531978
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# ./test_time 8 8 8 2[K[Kroot@21e790338684:/fly# ./t 4 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 4 * 4 = 16
+759  | Launching 1 blocks of 1024 threads each
+759  | Matmul First value output: 16.000000
+759  | Last value output: 16.000000
+759  | root@21e790338684:/fly# ./t 4 2[1P 26 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 6, num_gpus = 2
+759  | Chunk size: 6 * 6 = 36
+759  | Launching 1 blocks of 1024 threads each
+759  | Matmul First value output: 24.000000
+759  | Last value output: 24.000000
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# ./t 6 2[K1
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 6, num_gpus = 1
+759  | Chunk size: 6 * 6 = 36
+759  | Launching 1 blocks of 1024 threads each
+759  | Matmul First value output: 24.000000
+759  | Last value output: 24.000000
+759  | root@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# [Kroot@21e790338684:/fly# ./t2 8 8 8 2
+759  | Distributed matmul with managed memory
+759  | Usage: ./t <matrix size> <num_gpus>
+759  | root@21e790338684:/fly# ./t2 8 8 8 2[1P[1@e[1@s[1@t[1@_[1@t[1@i[1@m[1@e
+759  | Distributed matmul with managed memory
+759  | Params for testing:
+759  | nRowsA=8, nColsA=8, nColsA=8 num_gpus=2
+759  | ^C
+759  | root@21e790338684:/fly# make
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | [01m[Ktest_async.cu:[m[K In function ‘[01m[Kint main(int, char**)[m[K’:
+759  | [01m[Ktest_async.cu:78:16:[m[K [01;35m[Kwarning: [m[Karray subscript -1 is outside array bounds of ‘[01m[Kunsigned char [8][m[K’ [[01;35m[K-Warray-bounds[m[K]
+759  |    78 | [01;35m[K        cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), def_stre[m[Kam);
+759  |       |         [01;35m[K~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+759  | In file included from [01m[Ktmpxft_00000bb9_00000000-6_test_async.cudafe1.stub.c:1[m[K:
+759  | [01m[K/tmp/tmpxft_00000bb9_00000000-6_test_async.cudafe1.stub.c:4:27:[m[K [01;36m[Knote: [m[Kwhile referencing ‘[01m[K<anonymous>[m[K’
+759  |     4 | #define __NV_CUBIN_HANDLE_[01;36m[KS[m[KTORAGE__ static
+759  |       |                           [01;36m[K^[m[K
+759  | [01m[Ktest_async.cu:79:16:[m[K [01;35m[Kwarning: [m[Karray subscript -1 is outside array bounds of ‘[01m[Kunsigned char [8][m[K’ [[01;35m[K-Warray-bounds[m[K]
+759  |    79 | [01;35m[K        cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), def_stre[m[Kam);
+759  |       |         [01;35m[K~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+759  | In file included from [01m[Ktmpxft_00000bb9_00000000-6_test_async.cudafe1.stub.c:1[m[K:
+759  | [01m[K/tmp/tmpxft_00000bb9_00000000-6_test_async.cudafe1.stub.c:4:27:[m[K [01;36m[Knote: [m[Kwhile referencing ‘[01m[K<anonymous>[m[K’
+759  |     4 | #define __NV_CUBIN_HANDLE_[01;36m[KS[m[KTORAGE__ static
+759  |       |                           [01;36m[K^[m[K
+759  | [01m[Ktest_async.cu:80:16:[m[K [01;35m[Kwarning: [m[Karray subscript -1 is outside array bounds of ‘[01m[Kunsigned char [8][m[K’ [[01;35m[K-Warray-bounds[m[K]
+759  |    80 | [01;35m[K        cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), def_stre[m[Kam);
+759  |       |         [01;35m[K~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+759  | In file included from [01m[Ktmpxft_00000bb9_00000000-6_test_async.cudafe1.stub.c:1[m[K:
+759  | [01m[K/tmp/tmpxft_00000bb9_00000000-6_test_async.cudafe1.stub.c:4:27:[m[K [01;36m[Knote: [m[Kwhile referencing ‘[01m[K<anonymous>[m[K’
+759  |     4 | #define __NV_CUBIN_HANDLE_[01;36m[KS[m[KTORAGE__ static
+759  |       |                           [01;36m[K^[m[K
+759  | nvcc test_managed.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t2
+759  | [01m[0m[01mtest_managed.cu(81)[0m: [01;35mwarning[0m #177-D: variable [01m"end"[0m was declared but never referenced
+759  | 
+759  | [01m[0m[01mtest_managed.cu(71)[0m: [01;35mwarning[0m #177-D: variable [01m"mem_events"[0m was declared but never referenced
+759  | 
+759  | root@21e790338684:/fly# make
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | root@21e790338684:/fly# ./t 4 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 4 * 4 = 16
+759  | Launching 1 blocks of 1024 threads each
+759  | CUDA Runtime Error at: test_async.cu:116
+759  | invalid argument cudaMemcpyPeerAsync(defaultArrC + start, def_device, deviceArraysC[i - 1], i, chunk_size * sizeof(float), def_stream)
+759  | root@21e790338684:/fly# make
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | ^[root@21e790338684:/fly# [Amake
+759  | make: Nothing to be done for 'all'.
+759  | root@21e790338684:/fly# make./t 4 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 4 * 4 = 16
+759  | Launching 1 blocks of 1024 threads each
+759  | CUDA Runtime Error at: test_async.cu:116
+759  | invalid argument cudaMemcpyPeerAsync(defaultArrC + start, 0, deviceArraysC[i - 1], i, chunk_size * sizeof(float), def_stream)
+759  | root@21e790338684:/fly# make
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | root@21e790338684:/fly# ./t 4 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 4 * 4 = 16
+759  | Launching 1 blocks of 1024 threads each
+759  | Matmul First value output: 16.000000
+759  | Last value output: 0.000000
+759  | root@21e790338684:/fly# git diff 
+759  | [?1h=[1mdiff --git a/Makefile b/Makefile[m[m
+759  | [1mindex dabcf2e..1e403b5 100644[m[m
+759  | [1m--- a/Makefile[m[m
+759  | [1m+++ b/Makefile[m[m
+759  | [36m@@ -3,7 +3,7 @@[m [mNVCC = nvcc[m[m
+759  |  NVCC_FLAGS = -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17 [m[m
+759  |  LIBS = -lcurand -lcublas[m[m
+759  |  [m[m
+759  | [31m-all: t t2 debug test_time[m[m
+759  | [32m+[m[32mall: t t2 test_time[m[m
+759  |  [m[m
+759  |  # Executables[m[m
+759  |  t: test_async.cu matmul.cu matmul.cuh utils.cuh[m[m
+759  | [1mdiff --git a/debug b/debug[m[m
+759  | [1mindex 93a0a31..0429fc3 100755[m[m
+759  | Binary files a/debug and b/debug differ[m
+759  | [1mdiff --git a/matmul.cu b/matmul.cu[m[m
+759  | [1mindex bc86789..d25b26f 100644[m[m
+759  | :[K[K[1m--- a/matmul.cu[m[m
+759  | [1m+++ b/matmul.cu[m[m
+759  | [36m@@ -62,7 +62,7 @@[m [m__global__ void matmul_rect(float *A, float *B, float *C,[m[m
+759  |  [m[m
+759  |      if (rowBeginA < nRowsA && colBeginB < nColsB) {[m[m
+759  |          C[rowBeginA * nColsB + colBeginB] = Ctile;[m[m
+759  | [31m-        printf("C[%d][%d] = %.1f\n", nRowsA, nColsB, C[rowBeginA * nColsB + colBeginB]);[m[m
+759  | [32m+[m[32m        // printf("C[%d][%d] = %.1f\n", nRowsA, nColsB, C[rowBeginA * nColsB + colBeginB]);[m[m
+759  |      }[m[m
+759  |      // if (nRowsA == 0 && nColsB == 0)[m[m
+759  |      // {[m[m
+759  | [36m@@ -78,7 +78,7 @@[m [m__host__ void matmul(float *A, float *B, float *C,[m[m
+759  |  {[m[m
+759  |      dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);[m[m
+759  |      dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);[m[m
+759  | [31m-    printf("dimGrid.x = %d, dimGrid.y = %d\n", dimGrid.x, dimGrid.y);[m[m
+759  | [32m+[m[32m    printf("Launching %d blocks of %d threads each\n", dimGrid.x * dimGrid.y, dimBlock.x * dimBlock.y);[m[m
+759  |      matmul_rect<<<dimGrid, dimBlock>>>(A, B, C, nRowsA, nColsA, nColsB);[m[m
+759  | :[K[K     kernel_err_check();[m[m
+759  |  }[m[m
+759  | [1mdiff --git a/t b/t[m[m
+759  | [1mindex 788b11a..eb312a4 100755[m[m
+759  | Binary files a/t and b/t differ[m
+759  | [1mdiff --git a/t2 b/t2[m[m
+759  | [1mindex bf6b61e..747798a 100755[m[m
+759  | Binary files a/t2 and b/t2 differ[m
+759  | [1mdiff --git a/test_async.cu b/test_async.cu[m[m
+759  | [1mindex 50664f0..7103be9 100644[m[m
+759  | [1m--- a/test_async.cu[m[m
+759  | [1m+++ b/test_async.cu[m[m
+759  | [36m@@ -33,14 +33,18 @@[m [mint main(int argc, char** argv){[m[m
+759  |  [m[m
+759  |      /////////////////// hardcode params for testing ///////////////////[m[m
+759  |      printf("Hardcoding params for testing\n");[m[m
+759  | [31m-    printf("n = %d, num_gpus = %d\n", n, num_gpus);[m[m
+759  | [32m+[m[41m    [m[m
+759  | :[K[K [KESCESC[KOO[KAA[K[HM     matmul_rect<<<dimGrid, dimBlock>>>(A, B, C, nRowsA, nColsA, nColsB);[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM[32m+[m[32m    printf("Launching %d blocks of %d threads each\n", dimGrid.x * dimGrid.y, dimBlock.x * dimBlock.y);[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM[31m-    printf("dimGrid.x = %d, dimGrid.y = %d\n", dimGrid.x, dimGrid.y);[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM     dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM     dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM {[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM[36m@@ -78,7 +78,7 @@[m [m__host__ void matmul(float *A, float *B, float *C,[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM     // {[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM     // if (nRowsA == 0 && nColsB == 0)[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM     }[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM[32m+[m[32m        // printf("C[%d][%d] = %.1f\n", nRowsA, nColsB, C[rowBeginA * nColsB + colBeginB]);[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM[31m-        printf("C[%d][%d] = %.1f\n", nRowsA, nColsB, C[rowBeginA * nColsB + colBeginB]);[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM         C[rowBeginA * nColsB + colBeginB] = Ctile;[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM     if (rowBeginA < nRowsA && colBeginB < nColsB) {[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM [m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM[36m@@ -62,7 +62,7 @@[m [m__global__ void matmul_rect(float *A, float *B, float *C,[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM[1m+++ b/matmul.cu[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM[1m--- a/matmul.cu[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM[1mindex bc86789..d25b26f 100644[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM[1mdiff --git a/matmul.cu b/matmul.cu[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HMBinary files a/debug and b/debug differ[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KAA[K[HM[1mindex 93a0a31..0429fc3 100755[m[m
+759  | [19;1H[K:[K[K [KESCESC[KOO[KBB[K     dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[31m-    printf("dimGrid.x = %d, dimGrid.y = %d\n", dimGrid.x, dimGrid.y);[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[32m+[m[32m    printf("Launching %d blocks of %d threads each\n", dimGrid.x * dimGrid.y, dimBlock.x * dimBlock.y);[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     matmul_rect<<<dimGrid, dimBlock>>>(A, B, C, nRowsA, nColsA, nColsB);[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     kernel_err_check();[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K }[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[1mdiff --git a/t b/t[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[1mindex 788b11a..eb312a4 100755[m[m
+759  | :[K[K [KESCESC[KOO[KBB[KBinary files a/t and b/t differ[m
+759  | :[K[K [KESCESC[KOO[KBB[K[1mdiff --git a/t2 b/t2[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[1mindex bf6b61e..747798a 100755[m[m
+759  | :[K[K [KESCESC[KOO[KBB[KBinary files a/t2 and b/t2 differ[m
+759  | :[K[K [KESCESC[KOO[KBB[K[1mdiff --git a/test_async.cu b/test_async.cu[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[1mindex 50664f0..7103be9 100644[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[1m--- a/test_async.cu[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[1m+++ b/test_async.cu[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[36m@@ -33,14 +33,18 @@[m [mint main(int argc, char** argv){[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K [m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     /////////////////// hardcode params for testing ///////////////////[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     printf("Hardcoding params for testing\n");[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[31m-    printf("n = %d, num_gpus = %d\n", n, num_gpus);[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[32m+[m[41m    [m[m
+759  | :[K[K [KESCESC[KOO[KBB[K [m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     num_gpus = 2;[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     int nRowsA = n, nColsA = n, nColsB = n; // test square matrices for now[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     int matrix_size = num_gpus * nRowsA * nColsA; // Total size of matrix[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     int chunk_size = matrix_size / num_gpus; // Chunk going on each GPU[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[32m+[m[32m    int def_device = 0; // default device[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[32m+[m[41m    [m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     cudaStream_t def_stream = nullptr; // device-wide default stream[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[32m+[m[32m    printf("n = %d, num_gpus = %d\n", n, num_gpus);[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     printf("Chunk size: %d * %d = %d\n", nRowsA, nColsA, chunk_size);[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[32m+[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     // Set up operands and result buffers on device 0 [m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     float* defaultArrA;[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     float* defaultArrB;[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[36m@@ -86,8 +90,8 @@[m [mint main(int argc, char** argv){[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     for (int i = 1; i < num_gpus; ++i) {[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K         int start = i * chunk_size;[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K         cudaSetDevice(i); // must switch to memcpy target device[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[31m-        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + start), 0, chunk_size * sizeof(float), def_stream));[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[31m-        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + start), 0, chunk_size * sizeof(float), def_stream));[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[32m+[m[32m        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i], i, (defaultArrA + start), def_device, chunk_size * sizeof(float), def_stream));[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[32m+[m[32m        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i], i, (defaultArrB + start), def_device, chunk_size * sizeof(float), def_stream));[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     }[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K [m[m
+759  | :[K[K [KESCESC[KOO[KBB[K     // Launch kernel on each GPU with appropriate configurations[m[m
+759  | :[K[K [KESCESC[KOO[KBB[K[36m@@ -111,7 +115,7 @@[m [mint main(int argc, char** argv){[m[m
+759  | :[K[K[?1l>root@21e790338684:/fly# make 
+759  | nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
+759  | root@21e790338684:/fly# ./t 4 2
+759  | Distributed matmul with async overlapping
+759  | Hardcoding params for testing
+759  | n = 4, num_gpus = 2
+759  | Chunk size: 4 * 4 = 16
+759  | Launching 1 blocks of 1024 threads each
+759  | Matmul First value output: 16.000000
+759  | Last value output: 16.000000

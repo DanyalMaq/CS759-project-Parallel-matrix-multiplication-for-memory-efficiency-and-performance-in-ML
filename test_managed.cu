@@ -33,12 +33,12 @@ int main(int argc, char** argv){
     }
     /////////////////// hardcode params for testing ///////////////////
     printf("Hardcoding params for testing\n");
-    printf("n=%d, num_gpus=%d\n", n, num_gpus);
     num_gpus = 2;
     int nRowsA = n, nColsA = n, nColsB = n; // test square matrices for now
     int matrix_size = num_gpus * nRowsA * nColsA; // Total size of matrix
     int chunk_size = matrix_size / num_gpus; // Chunk going on each GPU
-
+    printf("n=%d, num_gpus=%d\n", n, num_gpus);
+    
     // grid and block sizes
     dim3 threadsPerBlock(threads_per_block);
     int blocks_per_dim = (chunk_size + threadsPerBlock.x - 1) / threadsPerBlock.x;
@@ -78,7 +78,6 @@ int main(int argc, char** argv){
     for (int i = 0; i < num_gpus; ++i) {  
         cudaSetDevice(i);
         int start = i * chunk_size;
-        int end = start + chunk_size;
     
         if (i == 0)
         {
@@ -97,7 +96,9 @@ int main(int argc, char** argv){
     }
     
     //Print the result
-    // printMatrix(defaultArrC, n);
+    printMatrix(defaultArrA, 2*n, n);
+    printMatrix(defaultArrB, 2*n, n);
+    printMatrix(defaultArrC, 2*n, n);
     printf("First value output: %f\nMiddle value output: %f\n", defaultArrC[0], defaultArrC[matrix_size/2-1]);
     printf("Last value output: %f\n", defaultArrC[matrix_size - 1]);
      
