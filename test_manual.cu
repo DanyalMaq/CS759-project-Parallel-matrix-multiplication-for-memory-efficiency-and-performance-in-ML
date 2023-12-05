@@ -121,10 +121,51 @@ int main(int argc, char** argv) {
     printf("First value output: %f\nMiddle value output: %f\n", hostC[0], hostC[matrix_size_C/2-1]);
     printf("Last value output: %f\n", hostC[matrix_size_C - 1]);
 
+    ////////////////////// Running on one GPU /////////////////////////
+    printf("---------------------------------------------\n");
+    printf("Running on one GPU\n");
+    for (int i = 0; i < matrix_size_C; i++)
+    {
+        hostC[i] = 0;
+    }
+
+    float* devAFull;
+    float* devBFull;
+    float* devCFull;
+    cudaSetDevice(0);
+
+    cudaMalloc((void**)&devAFull, matrix_size_A * sizeof(float));
+    cudaMemcpy(devAFull, hostA, matrix_size_A * sizeof(float), cudaMemcpyHostToDevice);
+    
+    cudaMalloc((void**)&devBFull, matrix_size_B * sizeof(float));
+    cudaMemcpy(devBFull, hostB, matrix_size_B * sizeof(float), cudaMemcpyHostToDevice);
+
+    cudaMalloc((void**)&devCFull, matrix_size_C * sizeof(float));
+    cudaMemcpy(devCFull, hostC, matrix_size_C * sizeof(float), cudaMemcpyHostToDevice);
+    
+    matmul(devAFull, devBFull, devCFull,
+        nRowsA, nColsA, nColsB,
+        start, stop
+        );
+    cudaEventSynchronize(stop);
+    cudaDeviceSynchronize();
+
+    cudaMemcpy(hostC, devCFull, matrix_size_C * sizeof(float), cudaMemcpyDeviceToHost);
+
+    float ms_single;
+    cudaEventElapsedTime(&ms_single, start, stop);
+    printf("Time taken for single GPU = %f\n", ms_single);
+    printf("---------------------------------------------\n");
+    printf("First value output: %f\nMiddle value output: %f\n", hostC[0], hostC[matrix_size_C/2-1]);
+    printf("Last value output: %f\n", hostC[matrix_size_C - 1]);
+
     // Free allocated memory
-    cudaFree(defaultArrA);
-    cudaFree(defaultArrB);
-    cudaFree(defaultArrC);
+    for (int i = 0; i < num_gpus; i++)
+    {
+        cudaFree(devA[i]);
+        cudaFree(devB[i]);
+        cudaFree(devC[i]);
+    }
 
     for(int i = 0; i < num_gpus; i++)
     {
