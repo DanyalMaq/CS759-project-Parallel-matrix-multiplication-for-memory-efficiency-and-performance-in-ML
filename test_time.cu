@@ -59,9 +59,9 @@ int main(int argc, char** argv) {
     int blocks_per_dim_alloc_C = (matrix_size_B + threadsPerBlockAlloc.x - 1) / threadsPerBlockAlloc.x;
     dim3 blocksPerGridAllocC(blocks_per_dim_alloc_C);
 
-    GPU_fill_rand_int<<<blocksPerGridAllocA, threadsPerBlockAlloc>>>(defaultArrA, matrix_size_A, 1.0f, 1.0f);
-    GPU_fill_rand_int<<<blocksPerGridAllocB, threadsPerBlockAlloc>>>(defaultArrB, matrix_size_B, 1.0f, 1.0f);
-    GPU_fill_rand_int<<<blocksPerGridAllocC, threadsPerBlockAlloc>>>(defaultArrC, matrix_size_C, 0.0f, 0.0f);
+    GPU_fill_rand<<<blocksPerGridAllocA, threadsPerBlockAlloc>>>(defaultArrA, matrix_size_A, 1.0f, 1.0f);
+    GPU_fill_rand<<<blocksPerGridAllocB, threadsPerBlockAlloc>>>(defaultArrB, matrix_size_B, 1.0f, 1.0f);
+    GPU_fill_rand<<<blocksPerGridAllocC, threadsPerBlockAlloc>>>(defaultArrC, matrix_size_C, 0.0f, 0.0f);
     kernel_err_check();
     cudaDeviceSynchronize();
     // printf("First value input: %f\nLast value input: %f\n", defaultArrA[0], defaultArrA[matrix_size-1]);
@@ -169,7 +169,7 @@ int main(int argc, char** argv) {
     /////////////Splitting both matrices/////////////////////////////
     // THIS PART IS BUGGY FOR NOW. 
 
-    // GPU_fill_rand_int<<<blocksPerGridAllocC, threadsPerBlockAlloc>>>(defaultArrC, matrix_size_C, 0.0f, 0.0f);
+    // GPU_fill_rand<<<blocksPerGridAllocC, threadsPerBlockAlloc>>>(defaultArrC, matrix_size_C, 0.0f, 0.0f);
 
     // int nColsB_per_GPU = (nColsB + num_gpus - 1)/num_gpus;
     // int lastnColsB = nColsB - nColsB_per_GPU*(num_gpus-1);

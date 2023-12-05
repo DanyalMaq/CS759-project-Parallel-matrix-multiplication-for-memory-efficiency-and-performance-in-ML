@@ -5,7 +5,7 @@
 #include <cstdio>
 
 // Fill an array with random integers in [min, max]
-__global__ void  GPU_fill_rand_int(float* A, const int n, float min, float max) {
+__global__ void  GPU_fill_rand(float* A, const int n, float min, float max) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx >= n) return;
     

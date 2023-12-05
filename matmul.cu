@@ -81,6 +81,7 @@ __host__ void matmul(float *A, float *B, float *C,
     dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);
     printf("Launching %d blocks of %d threads each\n", dimGrid.x * dimGrid.y, dimBlock.x * dimBlock.y);
     
+    // cudaStreamSynchronize(stream);
     // run and time the kernel 
     cudaEventRecord(start, stream);
     matmul_rect<<<dimGrid, dimBlock, 0, stream>>>(A, B, C, nRowsA, nColsA, nColsB);

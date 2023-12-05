@@ -87,8 +87,8 @@ int main(int argc, char** argv){
     cudaMallocManaged((void**)&hostArrayC, matrix_size  * sizeof(float)); 
 
     // randomly init and rescale the array on GPU
-    GPU_fill_rand_int<<<blocksPerGrid, threadsPerBlock>>>(hostArrayA, matrix_size, 1.0f, 1.0f);
-    GPU_fill_rand_int<<<blocksPerGrid, threadsPerBlock>>>(hostArrayB, matrix_size, 1.0f, 1.0f);
+    GPU_fill_rand<<<blocksPerGrid, threadsPerBlock>>>(hostArrayA, matrix_size, 1.0f, 1.0f);
+    GPU_fill_rand<<<blocksPerGrid, threadsPerBlock>>>(hostArrayB, matrix_size, 1.0f, 1.0f);
     cudaDeviceSynchronize();
     printf("First value input: %f\nLast value input: %f\n", hostArrayA[0], hostArrayA[matrix_size-1]);
     

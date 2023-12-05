@@ -60,15 +60,14 @@ int main(int argc, char** argv){
     dim3 threadsPerBlockAlloc(threads_per_block);
     int blocks_per_dim_alloc = (matrix_size + threadsPerBlockAlloc.x - 1) / threadsPerBlockAlloc.x;
     dim3 blocksPerGridAlloc(blocks_per_dim_alloc);
-    GPU_fill_rand_int<<<blocksPerGridAlloc, threadsPerBlockAlloc>>>(defaultArrA, matrix_size, 1.0f, 1.0f);
-    GPU_fill_rand_int<<<blocksPerGridAlloc, threadsPerBlockAlloc>>>(defaultArrB, matrix_size, 1.0f, 1.0f);
+    GPU_fill_rand<<<blocksPerGridAlloc, threadsPerBlockAlloc>>>(defaultArrA, matrix_size, 1.0f, 1.0f);
+    GPU_fill_rand<<<blocksPerGridAlloc, threadsPerBlockAlloc>>>(defaultArrB, matrix_size, 1.0f, 1.0f);
     kernel_err_check();
     cudaDeviceSynchronize();
     printf("First value input: %f\nLast value input: %f\n", defaultArrA[0], defaultArrA[matrix_size-1]);
     
     cudaStream_t streams[num_gpus]; // Create a stream for each GPU for overlapping
     cudaStreamCreate(&streams[0]); // Create default device stream
-    cudaEvent_t mem_events[num_gpus - 1]; // For malloc
     float* deviceArraysA[num_gpus - 1];
     float* deviceArraysB[num_gpus - 1];
     float* deviceArraysC[num_gpus - 1];

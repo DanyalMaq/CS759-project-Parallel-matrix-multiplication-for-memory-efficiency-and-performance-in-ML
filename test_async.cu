@@ -47,69 +47,75 @@ int main(int argc, char** argv){
     float* defaultArrC;
 
     // Use managed for async memcpy
-    CHECK_CUDA_ERROR(cudaMallocManaged((void**)&defaultArrA, matrix_size  * sizeof(float))); 
-    CHECK_CUDA_ERROR(cudaMallocManaged((void**)&defaultArrB, matrix_size  * sizeof(float))); 
-    CHECK_CUDA_ERROR(cudaMallocManaged((void**)&defaultArrC, matrix_size  * sizeof(float))); 
+    CHECK_CUDA_ERROR(cudaMalloc((void**)&defaultArrA, matrix_size  * sizeof(float))); 
+    CHECK_CUDA_ERROR(cudaMalloc((void**)&defaultArrB, matrix_size  * sizeof(float))); 
+    CHECK_CUDA_ERROR(cudaMalloc((void**)&defaultArrC, matrix_size  * sizeof(float))); 
     // enable bidirectional peer access
     set_p2p_access(num_gpus);
 
     // randomly init and rescale the array on GPU
     dim3 initDimGrid((matrix_size + th_per_block - 1) / th_per_block);
-    GPU_fill_rand_int<<<initDimGrid, th_per_block>>>(defaultArrA, matrix_size, 1.0f, 1.0f);
-    GPU_fill_rand_int<<<initDimGrid, th_per_block>>>(defaultArrB, matrix_size, 1.0f, 1.0f);
+    GPU_fill_rand<<<initDimGrid, th_per_block>>>(defaultArrA, matrix_size, 1.0f, 1.0f);
+    GPU_fill_rand<<<initDimGrid, th_per_block>>>(defaultArrB, matrix_size, 1.0f, 1.0f);
+    GPU_fill_rand<<<initDimGrid, th_per_block>>>(defaultArrC, matrix_size, 0.0f, 0.0f);
     // cudaStreamSynchronize(0);
     
     // Create a stream for each GPU for pipelining
-    cudaStream_t streams[num_gpus]; cudaStreamCreate(&streams[0]);
-    cudaEvent_t mem_events[num_gpus]; // For malloc
+    // cudaStream_t streams[num_gpus]; cudaStreamCreate(&streams[0]);
+    cudaEvent_t start_events[num_gpus]; 
+    cudaEvent_t end_events[num_gpus];
     float* deviceArraysA[num_gpus - 1];
     float* deviceArraysB[num_gpus - 1];
     float* deviceArraysC[num_gpus - 1];
 
     // Allocate chunk on each GPU
-    for (int i = 1; i < num_gpus; ++i) {
+    for (int i = 0; i < num_gpus; ++i) {
         cudaSetDevice(i);
-        // Set up synchronization points (use default stream for now)
-        // cudaStreamCreate(&streams[i]);
-        cudaEventCreate(&mem_events[i]);
         
-        // async malloc for overlapping computation
-        cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), def_stream);
-        cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), def_stream);
-        cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), def_stream);
-        // sync barrier
-        cudaEventRecord(mem_events[i], 0); 
+        
+        // create events for timing
+        cudaEventCreate(&start_events[i]);
+        cudaEventCreate(&end_events[i]);
+        // alloc chunks on each GPU
+        if (i != 0){
+            // async malloc for overlapping computation
+            cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), def_stream);
+            cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), def_stream);
+            cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), def_stream);
+        }
+ 
     }
 
-    // enable access from device 0 to all others
-    // TODO: malloc only one chunk on device 0; use as buffer for all others
+    // Copy chunks to each GPU
     for (int i = 1; i < num_gpus; ++i) {
         int start = i * chunk_size;
-        cudaSetDevice(i); // must switch to memcpy target device
         CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + start), def_device, chunk_size * sizeof(float), def_stream));
         CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + start), def_device, chunk_size * sizeof(float), def_stream));
+        // cudaStreamSynchronize(def_stream);
     }
 
-    // Launch kernel on each GPU with appropriate configurations
-    dim3 matmulBlock(TILE_WIDTH, TILE_WIDTH); // tile size 
-    dim3 matmulGrid((nColsB + TILE_WIDTH - 1) / TILE_WIDTH, (nRowsA + TILE_WIDTH - 1) / TILE_WIDTH);
-    printf("Launching %d blocks of %d threads each\n", matmulGrid.x * matmulGrid.y, matmulBlock.x * matmulBlock.y);
-
+    // Launch kernel on each GPU 
     for (int i = 0; i < num_gpus; ++i) {  
         cudaSetDevice(i);
         int start = i * chunk_size;
 
         if (i == 0){
-            matmul_rect<<<matmulGrid, matmulBlock>>>(
-                defaultArrA, defaultArrB, defaultArrC, nRowsA, nColsA, nColsB
-            );
-            kernel_err_check();
+            // matmul_rect<<<matmulGrid, matmulBlock>>>(
+            //     defaultArrA, defaultArrB, defaultArrC, nRowsA, nColsA, nColsB
+            // );
+            matmul(defaultArrA, defaultArrB, defaultArrC,
+                    nRowsA, nColsA, nColsB,
+                    start_events[i], end_events[i]
+                );
         }
         else{
-            matmul_rect<<<matmulGrid, matmulBlock>>>(
-                deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1], nRowsA, nColsA, nColsB
-            );
-            kernel_err_check();
+            // matmul_rect<<<matmulGrid, matmulBlock>>>(
+            //     deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1], nRowsA, nColsA, nColsB
+            // );
+            matmul(deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1],
+                    nRowsA, nColsA, nColsB,
+                    start_events[i], end_events[i]
+                );
             // all-gather to default device
             CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(defaultArrC + start, def_device, deviceArraysC[i - 1], i, chunk_size * sizeof(float), def_stream));
         }
@@ -117,16 +123,22 @@ int main(int argc, char** argv){
     }
  
     // wait for results
+    float time = 0.0f;
     for (int i = 0; i < num_gpus; ++i) {
         cudaSetDevice(i);
         cudaStreamSynchronize(0);
+        
+        cudaEventElapsedTime(&time, start_events[i], end_events[i]);
+        printf("Elasped time on GPU %d: %f ms\n", i, time);
     }
     
-    //Print the result
-    // printMatrix(defaultArrC, num_gpus * nRowsA, nColsB);
+    // copy back to host
+    float *results = (float*)malloc(matrix_size * sizeof(float));
+    CHECK_CUDA_ERROR(cudaMemcpy(results, defaultArrC, matrix_size * sizeof(float), cudaMemcpyDeviceToHost));
+    // printMatrix(results, num_gpus * nRowsA, nColsB);
     printf("Matmul First value output: %f\n Middle value output: %f\n Last value output: %f\n",
-        defaultArrC[0], defaultArrC[num_gpus * nRowsA * nColsB / 2], defaultArrC[num_gpus * nRowsA * nColsB - 1]
-        );
+        results[0], results[num_gpus * nRowsA * nColsB / 2 + 1], results[num_gpus * nRowsA * nColsB - 1]
+    );
     
 
     // Clean up

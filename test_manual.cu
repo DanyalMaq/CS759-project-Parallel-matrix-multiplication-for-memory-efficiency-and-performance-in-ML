@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
     int nRowsA_per_GPU = (nRowsA + num_gpus - 1)/num_gpus;
     int lastnRowsA = nRowsA - nRowsA_per_GPU*(num_gpus-1);
     lastnRowsA = (lastnRowsA <= 0 ? nRowsA_per_GPU : lastnRowsA);
-    printf("nRowsA_per_GPU=%d, lastnRowsA=%d\n", nRowsA_per_GPU, lastnRowsA);
+    printf("nRowsA_per_GPU=%d, lastnRowsA=%d, nColsA=%d\n", nRowsA_per_GPU, lastnRowsA, nColsA);
 
     float* hostA = new float[matrix_size_A];
     float* hostB = new float[matrix_size_B];
