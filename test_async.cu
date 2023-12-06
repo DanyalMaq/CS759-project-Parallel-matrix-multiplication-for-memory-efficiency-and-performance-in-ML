@@ -12,6 +12,7 @@
 #include <string>
 #include "matmul.cuh"
 #include "utils.cuh"
+// #include "cnpy.h"
 using namespace std;
 
 int main(int argc, char** argv){

@@ -119,53 +119,6 @@ void columns(float *output, const float *input, int rows, int columns, int start
                 output, rows);
 }
 
-class GPUMatrix{
-    public:
-        uint32_t nRows;
-        uint32_t nCols;
-        float *data;
-        MatrixLayout layout;
-
-    GPUMatrix(uint32_t nRows, uint32_t nCols, float* data, MatrixLayout layout=RM){
-        this->nRows = nRows;
-        this->nCols = nCols;
-        this->data = data;
-        this->layout = layout;
-    }
-
-    GPUMatrix(uint32_t nRows, uint32_t nCols, MatrixLayout layout=RM, cudaStream_t stream=nullptr){
-        this->nRows = nRows;
-        this->nCols = nCols;
-        this->layout = layout;
-        cudaMallocAsync(&data, nRows * nCols * sizeof(float), stream);
-    }
-
-    ~GPUMatrix(){
-        cudaFree(data);
-    }   
-    
-    // override indexing operatnRows
-    float& operator()(uint32_t i, uint32_t j){
-        if (i >= nRows || j >= nCols)
-            throw std::out_of_range("Index out of range");
-        return data[i * nCols + j];
-    }
-
-    const float& operator()(uint32_t i, uint32_t j) const{
-        if (i >= nRows || j >= nCols)
-            throw std::out_of_range("Index out of range");
-        return data[i * nCols + j];
-    }
-    
-    void T(){
-        transpose(data, data, nRows, nCols);
-        // swap nRows and nCols and reverse layout
-        std::swap(nRows, nCols);
-        layout = (layout == RM) ? CM : RM; 
-    }
-        
-};
-
 ///////////////////// Activations //////////////////////
 template <typename T>
 __host__ __device__ T relu(T val) {

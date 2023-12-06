@@ -1,7 +1,7 @@
 # Compiler settings
 NVCC = nvcc
 NVCC_FLAGS = -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17 
-LIBS = -lcurand -lcublas
+LIBS = -lcurand -lcublas #-lcnpy -lz
 
 all: t t2 test_time
 
