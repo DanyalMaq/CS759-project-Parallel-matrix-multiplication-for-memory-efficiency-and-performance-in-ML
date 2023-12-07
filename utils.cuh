@@ -53,3 +53,7 @@ __host__ void set_p2p_access(int num_gpus, bool enable = true){
                     CHECK_CUDA_ERROR(cudaDeviceDisablePeerAccess(j));
     }
 }
+
+__host__ float matmul_TFLOPS(int nRowsA, int nColsA, int nColsB, float time){
+    return (2.0 * nRowsA * nColsA * nColsB) / (time * 1e12);
+}
