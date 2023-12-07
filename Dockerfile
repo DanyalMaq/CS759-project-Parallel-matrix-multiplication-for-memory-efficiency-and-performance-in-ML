@@ -138,5 +138,8 @@ RUN pip install tensorboard seqeval psutil sacrebleu rouge-score tensorflow_data
 RUN pip install scikit-learn tqdm loralib 
 RUN pip install evaluate 
 
-
-#RUN rm /opt/conda/lib/python3.8/site-packages/transformers/models/roberta/modeling_roberta.py; ln /fly/modeling_roberta.py /opt/conda/lib/python3.8/site-packages/transformers/models/roberta
+# Build cnpy
+RUN git clone https://github.com/rogersce/cnpy.git /cnpy
+WORKDIR /build 
+RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local/cuda/bin/../targets/x86_64-linux/ /cnpy && make && make install
+RUN rm -rf /build /cnpy

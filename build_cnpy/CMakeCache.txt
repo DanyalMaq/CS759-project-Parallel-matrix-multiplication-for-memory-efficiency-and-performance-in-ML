@@ -104,7 +104,7 @@ CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=
 CMAKE_FIND_PACKAGE_REDIRECTS_DIR:STATIC=/fly/build_cnpy/CMakeFiles/pkgRedirects
 
 //Install path prefix, prepended onto install directories.
-CMAKE_INSTALL_PREFIX:PATH=/usr/local/include
+CMAKE_INSTALL_PREFIX:PATH=/usr/local/cuda/targets/x86_64-linux/include
 
 //Path to a program.
 CMAKE_LINKER:FILEPATH=/usr/bin/ld

@@ -1,6 +1,6 @@
-/usr/local/include/lib/libcnpy.so
-/usr/local/include/lib/libcnpy.a
-/usr/local/include/include/cnpy.h
-/usr/local/include/bin/mat2npz
-/usr/local/include/bin/npy2mat
-/usr/local/include/bin/npz2mat
+/usr/local/cuda/targets/x86_64-linux/include/lib/libcnpy.so
+/usr/local/cuda/targets/x86_64-linux/include/lib/libcnpy.a
+/usr/local/cuda/targets/x86_64-linux/include/include/cnpy.h
+/usr/local/cuda/targets/x86_64-linux/include/bin/mat2npz
+/usr/local/cuda/targets/x86_64-linux/include/bin/npy2mat
+/usr/local/cuda/targets/x86_64-linux/include/bin/npz2mat
