@@ -91,17 +91,30 @@ class GPUMatrix{
         return data[i * nCols + j];
     }
     
-    // GPUMatrix& operator=(const GPUMatrix& other){
-    //     if (this != &other){
-    //         nRows = other.nRows;
-    //         nCols = other.nCols;
-    //         layout = other.layout;
-    //         cudaFree(data);
-    //         cudaMalloc(&data, nRows * nCols * sizeof(float));
-    //         cudaMemcpyAsync(data, other.data, nRows * nCols * sizeof(float), cudaMemcpyDeviceToDevice);
-    //     }
-    //     return *this;
-    // }
+    GPUMatrix& operator=(const GPUMatrix& other){
+        if (this != &other){
+            nRows = other.nRows;
+            nCols = other.nCols;
+            layout = other.layout;
+            
+            if (data != nullptr && data != other.data){
+                // check if they are on the same device
+                cudaPointerAttributes attr1, attr2;
+                cudaPointerGetAttributes(&attr1, data);
+                cudaPointerGetAttributes(&attr2, other.data);
+                if (attr1.device != attr2.device){
+                    cudaFree(data);
+                    cudaMallocAsync(&data, nRows * nCols * sizeof(float), nullptr);
+                }else{
+                    data = other.data;
+                }
+
+
+
+            }
+        }
+        return *this;
+    }
 
 };
 

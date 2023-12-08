@@ -126,9 +126,10 @@ __host__ __device__ T relu(T val) {
 }
 
 
-// TODO: change to parallel reduction
+// TODO: upgrade to online softmax
 template <uint32_t N>
 __host__ __device__ inline float softmax(const float vals[N], uint32_t idx) {
+    
 	float total = 0;
 
 	for (uint32_t i = 0; i < N; ++i) {

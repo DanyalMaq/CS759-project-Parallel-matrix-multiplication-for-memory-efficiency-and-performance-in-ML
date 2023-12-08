@@ -42,6 +42,9 @@ __host__ void printMatrix(float* array, int n, int m)
 
 // enable bidirectional p2p access between all GPUs
 __host__ void set_p2p_access(int num_gpus, bool enable = true){
+    // Get current device
+    int current_device;
+    CHECK_CUDA_ERROR(cudaGetDevice(&current_device));
     for (int i = 0; i < num_gpus; i++){
         cudaSetDevice(i);
 
@@ -52,6 +55,7 @@ __host__ void set_p2p_access(int num_gpus, bool enable = true){
                 else
                     CHECK_CUDA_ERROR(cudaDeviceDisablePeerAccess(j));
     }
+    cudaSetDevice(current_device);
 }
 
 __host__ float matmul_TFLOPS(int nRowsA, int nColsA, int nColsB, float time){

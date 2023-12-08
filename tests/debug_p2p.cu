@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include "matmul.cuh"
-#include "utils.cuh"
+#include "../matmul.cuh"
+#include "../utils.cuh"
 using namespace std;
 
 void __global__ check_matrix(float* A, int matrix_size){

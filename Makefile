@@ -12,16 +12,12 @@ t: test_async.cu matmul.cu matmul.cuh utils.cuh
 t2: test_managed.cu matmul.cu matmul.cuh utils.cuh
 	$(NVCC) test_managed.cu matmul.cu $(NVCC_FLAGS) $(LIBS) -o ./t2
 
-debug: debug_p2p.cu matmul.cu matmul.cuh
-	$(NVCC) debug_p2p.cu matmul.cu $(NVCC_FLAGS) $(LIBS) -o ./debug
 
 test_time: test_time.cu matmul.cu matmul.cuh utils.cuh
 	$(NVCC) test_time.cu matmul.cu $(NVCC_FLAGS) $(LIBS) -o ./test_time
-# Default target
-
 
 # Clean rule
 clean:
-	rm -f t t2 debug
+	rm -f t t2 
 
 .PHONY: clean 
