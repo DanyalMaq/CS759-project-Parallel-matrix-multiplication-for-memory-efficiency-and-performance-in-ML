@@ -1,6 +1,5 @@
 1. Square matrices (nxn)
-2^5 ... 2^20 (or up to whatever is feasible)
-
+2^5...2^20 (or up to whatever is feasible)
 
 2. Increasing number of GPUs
 Fixed matrix size (wherever the square matrix plot time spikes up)
@@ -15,6 +14,8 @@ All of the above run for:
 Managed kernel
 Manual Allocation kernel
 Async allocation kernel
+
+Measure both time taken and FLOP usage
 
 4. MLP tests
 First Layer 784 x 150
