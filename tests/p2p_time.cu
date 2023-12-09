@@ -18,7 +18,7 @@ __global__ void test_memory(volatile float* arr, int n){
 int main(int argc, char** argv){
     // check n is divisible by num_gpus
     /////////////////// hardcode params for testing ///////////////////
-    int num_gpus = 2, n = 1024;
+    int num_gpus = 2, n = 16384; // 2^14 * 2^14 matrix
     int th_per_block = 1024;
     int nRowsA = n, nColsA = n, nColsB = n; // test square matrices for now
     int matrix_size = num_gpus * nRowsA * nColsA; // Total size of matrix
@@ -34,43 +34,48 @@ int main(int argc, char** argv){
     float* defaultArrA;
     float* deviceArr;
     cudaEvent_t start, stop;
-    cudaEventCreate(&start); cudaEventCreate(&stop);
     float time;
 
     // Use managed for async memcpy
     cudaSetDevice(0);
     CHECK_CUDA_ERROR(cudaMalloc((void**)&defaultArrA, matrix_size  * sizeof(float))); 
-    CHECK_CUDA_ERROR(cudaMalloc((void**)&deviceArr, matrix_size  * sizeof(float)));
     
     // Enable bi-directional peer access
     set_p2p_access(num_gpus);
-    cudaDeviceSynchronize();
     
     // Test access speed from peer device without prefetching
     cudaSetDevice(1);
-    cudaEventRecord(start);
+    // Allocate memory on device 1
+    CHECK_CUDA_ERROR(cudaMalloc((void**)&deviceArr, matrix_size  * sizeof(float)));
+    CHECK_CUDA_ERROR(cudaEventCreate(&start)); CHECK_CUDA_ERROR(cudaEventCreate(&stop));
+    CHECK_CUDA_ERROR(cudaEventRecord(start));
+
     test_memory<<<blocksPerGrid, threadsPerBlock>>>(defaultArrA, matrix_size);
     kernel_err_check();
 
+    // End of timing
     cudaEventRecord(stop);
-    cudaEventSynchronize(stop);
-    cudaEventElapsedTime(&time, start, stop);
+    CHECK_CUDA_ERROR(cudaEventSynchronize(stop));
+    CHECK_CUDA_ERROR(cudaEventElapsedTime(&time, start, stop));
     printf("Time to access peer device memory without prefetching:  %3.1f ms \n", time);
+
+    // Check device id    
+    cudaPointerAttributes attr;
+    CHECK_CUDA_ERROR(cudaPointerGetAttributes(&attr, defaultArrA));
+    printf("Device id of arr before copy: %d\n", attr.device);
 
     // Time p2p memcpy
     cudaEventRecord(start);
-    cudaPointerAttributes attr;
-    CHECK_CUDA_ERROR(cudaPointerGetAttributes(&attr, defaultArrA));
-    printf("Device id before copy: %d\n", attr.device);
-
-    cudaMemcpyPeer(defaultArrA, 0, deviceArr, 1, matrix_size * sizeof(float));
-
-    cudaPointerGetAttributes(&attr, defaultArrA);
-    printf("Device id after copy: %d\n", attr.device);
+    CHECK_CUDA_ERROR(cudaMemcpyPeer(defaultArrA, 0, deviceArr, 1, matrix_size * sizeof(float)));
     cudaEventRecord(stop);
+    
+    // Check device id
+    cudaPointerGetAttributes(&attr, deviceArr);
+    printf("Device id of arr after copy: %d\n", attr.device);
+    // End of timing
     cudaEventSynchronize(stop);
     CHECK_CUDA_ERROR(cudaEventElapsedTime(&time, start, stop));
-    printf("Time to copy %lu bytes from device 1 to device 0:  %3.1f ms \n", matrix_size * sizeof(float), time);
+    printf("Time to cudaMemcpyPeer %lu bytes:  %3.1f ms \n", matrix_size * sizeof(float), time);
     
     // with prefetching
     cudaEventRecord(start);
@@ -82,11 +87,12 @@ int main(int argc, char** argv){
     printf("Time to access peer device memory with prefetching:  %3.1f ms \n", time);
 
     // Finally,test normal copy speed instead of p2p copy
+    set_p2p_access(false);
     cudaEventRecord(start);
     CHECK_CUDA_ERROR(cudaMemcpy(defaultArrA, deviceArr, matrix_size * sizeof(float), cudaMemcpyDeviceToDevice));
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&time, start, stop);
-    printf("Time to copy %lu bytes from device 1 to device 0:  %3.1f ms \n", matrix_size * sizeof(float), time);
+    printf("Time to cudaMemcpy  %lu bytes:  %3.1f ms \n", matrix_size * sizeof(float), time);
 
 }

@@ -1,0 +1,23 @@
+1. Square matrices (nxn)
+2^5...2^20 (or up to whatever is feasible)
+
+2. Increasing number of GPUs
+Fixed matrix size (wherever the square matrix plot time spikes up)
+numGPUs = 1...upto whatever is regularly available on Olvi
+
+3. Rectangular matrices [(n x m) multiplied with (m x n)] 
+n = 2^5 .. 2^20
+m = 3^5 ... 3^20 
+Feel free to change based on feasability
+
+All of the above run for:
+Managed kernel
+Manual Allocation kernel
+Async allocation kernel
+
+Measure both time taken and FLOP usage
+
+4. MLP tests
+First Layer 784 x 150
+Second Layer 150 x 200
+Third Layer 200 x 10

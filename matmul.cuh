@@ -48,26 +48,31 @@ enum class MatrixLayout {
 };
 static constexpr MatrixLayout RM = MatrixLayout::RowMajor;
 static constexpr MatrixLayout CM = MatrixLayout::ColumnMajor;
+
 class GPUMatrix{
     public:
         uint32_t nRows;
         uint32_t nCols;
         float *data;
+        int device = 0;
         MatrixLayout layout;
+    // Default constructor
+    GPUMatrix() : nRows(0), nCols(0), data(nullptr), layout(RM) {}
 
-    GPUMatrix(uint32_t nRows, uint32_t nCols, float* data, MatrixLayout layout=RM){
-        this->nRows = nRows;
-        this->nCols = nCols;
-        this->data = data;
-        this->layout = layout;
-    }
-
-    GPUMatrix(uint32_t nRows, uint32_t nCols, MatrixLayout layout=RM, cudaStream_t stream=nullptr){
-        this->nRows = nRows;
-        this->nCols = nCols;
-        this->layout = layout;
-        cudaMallocAsync(&data, nRows * nCols * sizeof(float), stream);
-    }
+    // Constructor with data
+    GPUMatrix(uint32_t nRows, uint32_t nCols, float* data, MatrixLayout layout=RM)
+        : nRows(nRows), nCols(nCols), data(data), layout(layout) {}
+    
+    // Constructor without data
+    GPUMatrix(uint32_t nRows, uint32_t nCols, MatrixLayout layout=RM, cudaStream_t stream=nullptr)
+        : nRows(nRows), nCols(nCols), layout(layout) {
+            cudaMallocAsync(&data, nRows * nCols * sizeof(float), stream);
+            // get device
+            cudaPointerAttributes attr;
+            cudaPointerGetAttributes(&attr, data);
+            device = attr.device;
+        }
+        
 
     ~GPUMatrix(){
         cudaFree(data);
@@ -95,116 +100,133 @@ class GPUMatrix{
         return data[i * nCols + j];
     }
     
+
     GPUMatrix& operator=(const GPUMatrix& other){
+        // Handle cuda array data
+
         if (this != &other){
+            // No data, just assign
+            if (data == nullptr){
+                data = other.data;
+            } else if (data != other.data){
+                // Data exists and not the same
+                
+                // Free old data
+                cudaFreeAsync(data, nullptr);
+
+                // Handle different sizes
+                if (nRows != other.nRows || nCols != other.nCols){
+                    printf("Warning: assigning to a matrix with different dimensions\n");
+                }
+                
+                // Handle different devices
+                if (device != other.device){
+                    // copy new data to old device
+                    cudaMallocAsync(&data, other.nRows * other.nCols * sizeof(float), nullptr);
+                    // check if p2p is on
+                    int canAccessPeer;
+                    cudaDeviceCanAccessPeer(&canAccessPeer, device, other.device);
+                    if (canAccessPeer)
+                        cudaMemcpyPeerAsync(data, device, other.data, other.device, other.nRows * other.nCols * sizeof(float), nullptr);
+                    else
+                        cudaMemcpyAsync(data, other.data, other.nRows * other.nCols * sizeof(float), cudaMemcpyDeviceToDevice, nullptr);
+                }                   
+            }else{
+                // Same data, do nothing
+                return *this;
+            }
+
+            // Assign other attributes
             nRows = other.nRows;
             nCols = other.nCols;
             layout = other.layout;
-            
-            if (data != nullptr && data != other.data){
-                // check if they are on the same device
-                cudaPointerAttributes attr1, attr2;
-                cudaPointerGetAttributes(&attr1, data);
-                cudaPointerGetAttributes(&attr2, other.data);
-                if (attr1.device != attr2.device){
-                    cudaFree(data);
-                    cudaMallocAsync(&data, nRows * nCols * sizeof(float), nullptr);
-                    // check if p2p is on
-                    int canAccessPeer;
-                    cudaDeviceCanAccessPeer(&canAccessPeer, attr1.device, attr2.device);
-                    if (canAccessPeer)
-                        cudaMemcpyPeerAsync(data, attr1.device, other.data, attr2.device, nRows * nCols * sizeof(float), nullptr);
-                    else
-                        cudaMemcpyAsync(data, other.data, nRows * nCols * sizeof(float), cudaMemcpyDeviceToDevice, nullptr);
-
-                }else{
-                    data = other.data;
-                }
-
-            }
+            device = other.device;
+            layout = other.layout;
         }
         return *this;
     }
+};
 
+
+struct LayerDim {
+    uint32_t nRows;
+    uint32_t nCols;
 };
 
 
 class MLP{
 public:
     uint32_t num_layers;
-    GPUMatrix* weights;
     uint32_t num_devices;
-    GPUMatrix* device_weights;
+    uint32_t in_dim;
     bool tp_enabled = false;
+
+    LayerDim* layer_dims;
+    GPUMatrix* weights;
+    GPUMatrix* device_weights;
     GPUMatrix* device_middle_buffers;
     
+    // Default constructor
+    MLP() : num_layers(0), layer_dims(nullptr), num_devices(0), in_dim(0), weights(nullptr) {}
+
     // No weight constructor
-    MLP(uint32_t num_layers, std::tuple<uint32_t, uint32_t>* layer_sizes, uint32_t num_devices){
-        this->num_layers = num_layers;
-        this->layer_sizes = layer_sizes;
-        this->num_devices = num_devices;
-        weights = new GPUMatrix*[num_layers];
+    MLP(uint32_t num_layers, LayerDim* layer_dims, uint32_t num_devices, uint32_t in_dim = 784)
+       : num_layers(num_layers), layer_dims(layer_dims), num_devices(num_devices), in_dim(in_dim)
+        {
+            weights = new GPUMatrix[num_layers];
+            uint32_t last_nCols = in_dim;
+            for (int i = 0; i < num_layers; i++){
+                uint32_t nRows = layer_dims[i].nRows;
+                uint32_t nCols = layer_dims[i].nCols;
 
-        uint32_t last_nCols;
-        for (int i = 0; i < num_layers; i++){
-            uint32_t nRows = std::get<0>(layer_sizes[i]);
-            uint32_t nCols = std::get<1>(layer_sizes[i]);
-
-            // layer dim check
-            if (i !=0 && nRows != last_nCols)
-                throw std::invalid_argument("Invalid weight dimensions: nCols (" + to_string(last_nCols) 
-                    ") from last layer does not match nRows (" + + to_string(nRows) + ") of layer" + to_string(i));
-            else
+                // layer dim check
+                if (nRows != last_nCols)
+                    throw std::invalid_argument("Invalid weight dimensions: nCols (" + to_string(last_nCols) +
+                        ") from last layer does not match nRows (" + to_string(nRows) + ") of layer" + to_string(i));
                 last_nCols = nCols;
 
-            weights[i] = new GPUMatrix(nRows, nCols, RM);
+                weights[i] = *(new GPUMatrix(nRows, nCols, RM));
+            }
         }
-    }
 
     // Weight constructor
-    MLP(uint32_t num_layers, std::tuple<uint32_t, uint32_t>* layer_sizes, uint32_t num_devices, float** weights){
-        this->num_layers = num_layers;
-        this->layer_sizes = layer_sizes;
-        this->num_devices = num_devices;
-        this->weights = new GPUMatrix*[num_layers];
-        
-        uint32_t last_nCols; 
-        for (int i = 0; i < num_layers; i++){
-            uint32_t nRows = std::get<0>(layer_sizes[i]);
-            uint32_t nCols = std::get<1>(layer_sizes[i]);
+    MLP(uint32_t num_layers, LayerDim* layer_dims, uint32_t num_devices, float** mat_weights, uint32_t in_dim = 784)
+        : num_layers(num_layers), layer_dims(layer_dims), num_devices(num_devices), in_dim(in_dim)
+        {
+            weights = new GPUMatrix[num_layers];
+            uint32_t last_nCols = in_dim;
+            for (int i = 0; i < num_layers; i++){
+                uint32_t nRows = layer_dims[i].nRows;
+                uint32_t nCols = layer_dims[i].nCols;
 
-            // layer dim check
-            if (i !=0 && nRows != last_nCols)
-                throw std::invalid_argument("Invalid weight dimensions: nCols (" + to_string(last_nCols) 
-                    ") from last layer does not match nRows (" + + to_string(nRows) + ") of layer" + to_string(i));
-            else
+                // layer dim check
+                if (nRows != last_nCols)
+                    throw std::invalid_argument("Invalid weight dimensions: nCols (" + to_string(last_nCols) +
+                        ") from last layer does not match nRows (" + to_string(nRows) + ") of layer" + to_string(i));
                 last_nCols = nCols;
 
-            this->weights[i] = new GPUMatrix(nRows, nCols, weights[i], RM);
+                weights[i] = *(new GPUMatrix(nRows, nCols, mat_weights[i], RM));
+            }
         }
-    }
+    
 
     ~MLP(){
-        for (int i = 0; i < num_layers; i++){
-            delete weights[i];
-        }
         delete[] weights;
     }
 
     // Enabling tensor parallelism
     void enable_tp(){
         tp_enabled = true;
-        weights[0]->T(); // the first matrix needs to be split row-wise
+        weights[0].T(); // the first matrix needs to be split row-wise
 
         // Split 1st weight matrix row-wise, 2nd column-wise and 3rd layer row-wise
         // Then alloc device arrays on each device and do p2p copy1
-
+        device_weights = new GPUMatrix[num_devices];
         for (int i = 0; i < num_devices; i++){
-            device_weights[i] = new GPUMatrix*[num_layers];
             // TODO: handle non-divisible case
-            device_weights[i][0] = new GPUMatrix(weights[0]->nRows / num_devices, weights[0]->nCols, RM);
-            device_weights[i][1] = new GPUMatrix(weights[1]->nRows, weights[1]->nCols / num_devices, CM);
-            device_weights[i][2] = new GPUMatrix(weights[2]->nRows / num_devices, weights[2]->nCols, RM);
+            device_weights[i] = *(new GPUMatrix(weights[0]->nRows / num_devices, weights[0]->nCols, RM));
+            device_weights[i] = *(new GPUMatrix(weights[1]->nRows, weights[1]->nCols / num_devices, CM));
+            device_weights[i] = *(new GPUMatrix(weights[2]->nRows / num_devices, weights[2]->nCols, RM));
         }
         
         // TODO: Init NCCL context & group
