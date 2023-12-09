@@ -89,6 +89,19 @@ __host__ void matmul(float *A, float *B, float *C,
     kernel_err_check();
 }
 
+// function overload ? No timing version
+__host__ void matmul(float* A, float* B, float* C,
+                    int nRowsA, int nColsA, int nColsB, cudaStream_t stream)
+{
+    dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);
+    dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);
+    
+    // cudaStreamSynchronize(stream);
+    // run and time the kernel 
+    matmul_rect<<<dimGrid, dimBlock>>>(A, B, C, nRowsA, nColsA, nColsB);
+    kernel_err_check();
+}
+
 
 // Transpose a given matrix
 void transpose(float *output, const float *input, int nRows, int nCols) {
