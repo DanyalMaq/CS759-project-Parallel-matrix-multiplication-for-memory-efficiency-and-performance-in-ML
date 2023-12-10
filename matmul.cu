@@ -132,22 +132,3 @@ void columns(float *output, const float *input, int rows, int columns, int start
                 output, rows);
 }
 
-///////////////////// Activations //////////////////////
-template <typename T>
-__host__ __device__ T relu(T val) {
-	return (T)max((float)val, 0.0f);
-}
-
-
-// TODO: upgrade to online softmax
-template <uint32_t N>
-__host__ __device__ inline float softmax(const float vals[N], uint32_t idx) {
-    
-	float total = 0;
-
-	for (uint32_t i = 0; i < N; ++i) {
-		total += expf(vals[i]);
-	}
-
-	return expf(vals[idx]) / total;
-}

@@ -4,6 +4,7 @@
 #include <curand_kernel.h>
 #include <cstdio>
 
+
 // Fill an array with random integers in [min, max]
 __global__ void  GPU_fill_rand(float* A, const int n, float min, float max) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -44,16 +45,28 @@ __host__ void printMatrix(float* array, int n, int m)
 __host__ void set_p2p_access(int num_gpus, bool enable = true){
     // Get current device
     int current_device;
-    CHECK_CUDA_ERROR(cudaGetDevice(&current_device));
+    cudaGetDevice(&current_device);
     for (int i = 0; i < num_gpus; i++){
         cudaSetDevice(i);
 
-        for (int j = 0; j < num_gpus; j++)
-            if (i != j)
+        for (int j = 0; j < num_gpus; j++){
+
+            if (i != j){
+                
+                // Check if accessible
+                int canAccess;
+                cudaDeviceCanAccessPeer(&canAccess, i, j);
+                if (!canAccess) {
+                    printf("WARNING: Device %d can't access peer %d\n", i, j);
+                    continue;
+                }
+                // Set access
                 if (enable)
-                    CHECK_CUDA_ERROR(cudaDeviceEnablePeerAccess(j, 0));
+                    cudaDeviceEnablePeerAccess(j, 0);
                 else
-                    CHECK_CUDA_ERROR(cudaDeviceDisablePeerAccess(j));
+                    cudaDeviceDisablePeerAccess(j);
+            }
+        }
     }
     cudaSetDevice(current_device);
 }

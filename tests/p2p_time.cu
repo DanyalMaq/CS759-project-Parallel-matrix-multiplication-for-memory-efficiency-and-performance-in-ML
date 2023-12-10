@@ -6,6 +6,7 @@
 #include <string>
 #include "../matmul.cuh"
 #include "../utils.cuh"
+#include "../network.cuh"
 using namespace std;
 
 __global__ void test_memory(volatile float* arr, int n){
@@ -33,6 +34,8 @@ int main(int argc, char** argv){
     // Set up operands and result on device 0 
     float* defaultArrA;
     float* deviceArr;
+    float* hostArr = (float*)malloc(100 * sizeof(float));
+
     cudaEvent_t start, stop;
     float time;
 
@@ -63,6 +66,8 @@ int main(int argc, char** argv){
     cudaPointerAttributes attr;
     CHECK_CUDA_ERROR(cudaPointerGetAttributes(&attr, defaultArrA));
     printf("Device id of arr before copy: %d\n", attr.device);
+    CHECK_CUDA_ERROR(cudaPointerGetAttributes(&attr, hostArr));
+    printf("Device id of host array: %d\n", attr.device);
 
     // Time p2p memcpy
     cudaEventRecord(start);
