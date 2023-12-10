@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include "../matmul.cuh"
+#include "matmul.cuh"
 #include "../utils.cuh"
 #include "../network.cuh"
 using namespace std;

@@ -12,6 +12,7 @@
 #include <string>
 #include "matmul.cuh"
 #include "utils.cuh"
+// #include "network.cuh"
 // #include "cnpy.h"
 using namespace std;
 

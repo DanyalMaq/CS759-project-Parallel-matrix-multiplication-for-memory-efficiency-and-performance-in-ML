@@ -18,17 +18,30 @@ void check(T err, const char* const func, const char* const file,
         std::exit(EXIT_FAILURE);
     }
 }
+__host__ __device__ inline float softmax(const float* vals, uint32_t idx, uint32_t N);
+__host__ __device__ inline float softmax(const float* vals, uint32_t idx, uint32_t N);
 
 const unsigned int TILE_WIDTH = 32; // Tile size of shared memory
 
+__global__ void matmul_rect_softmax(float *A, float *B, float *C,
+                                     int nRowsA, int nColsA, int nColsB
+                                    );
+__global__ void matmul_rect_relu(float *A, float *B, float *C,
+                                     int nRowsA, int nColsA, int nColsB
+                                    );
+                                    
 __host__ void matmul(float *A, float *B, float *C,
                     int nRowsA, int nColsA, int nColsB, 
                     cudaEvent_t start = nullptr, cudaEvent_t stop = nullptr, cudaStream_t stream = nullptr);
+// No timing version
 __host__ void matmul(float* A, float* B, float* C,
                     int nRowsA, int nColsA, int nColsB, cudaStream_t stream = nullptr);
+
+
+__host__ void matmul_relu(float* A, float* B, float* C,
+                    int nRowsA, int nColsA, int nColsB, cudaStream_t stream = nullptr);
+
 void kernel_err_check();
-
-
 
 __global__ void matmul_rect(float *A, float *B, float *C,
                                         int nRowsA, int nColsA, int nColsB);
