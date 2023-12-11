@@ -87,7 +87,106 @@ __global__ void matmul_rect(float *A, float *B, float *C,
     // }
 }
 
+__global__ void matmul_rect_relu(float *A, float *B, float *C,
+                                     int nRowsA, int nColsA, int nColsB
+                                    ) {
+    __shared__ float sA[TILE_WIDTH][TILE_WIDTH];   // Tile size of 32x32
+    __shared__ float sB[TILE_WIDTH][TILE_WIDTH];
+    int bx = blockIdx.x;
+    int by = blockIdx.y;
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
     
+    int nRowsB = nColsA;
+    int rowBeginA = by * TILE_WIDTH + ty;
+    int colBeginB = bx * TILE_WIDTH + tx;
+
+    float Ctile = 0.0;
+
+    // stride over the tiles along columns of A and rows of B
+    for (int step = 0; step < nColsA; step += TILE_WIDTH) {
+        // load A's tiles into shared memory
+        if (rowBeginA < nRowsA && tx + step < nColsA)
+            sA[ty][tx] = A[rowBeginA * nColsA + tx + step];
+        else
+            sA[ty][tx] = 0.0;
+        // load B's tiles into shared memory
+        if (colBeginB < nColsB && ty + step < nRowsB)
+            sB[ty][tx] = B[(ty + step) * nColsB + colBeginB];
+        else
+            sB[ty][tx] = 0.0;
+
+        __syncthreads();
+
+        for (int j = 0; j < TILE_WIDTH; ++j) {
+            Ctile += sA[ty][j] * sB[j][tx];
+        }
+
+        __syncthreads();
+    }
+    if (rowBeginA < nRowsA && colBeginB < nColsB) {
+        C[rowBeginA * nColsB + colBeginB] = relu(Ctile);
+        // printf("C[%d][%d] = %.1f\n", nRowsA, nColsB, C[rowBeginA * nColsB + colBeginB]);
+    }
+}
+    
+__global__ void matmul_rect_softmax(float *A, float *B, float *C,
+                                     int nRowsA, int nColsA, int nColsB
+                                    ) {
+    __shared__ float sA[TILE_WIDTH][TILE_WIDTH];   // Tile size of 32x32
+    __shared__ float sB[TILE_WIDTH][TILE_WIDTH];
+    __shared__ float rowSum[TILE_WIDTH];
+    int bx = blockIdx.x;
+    int by = blockIdx.y;
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+    
+    int nRowsB = nColsA;
+    int rowBeginA = by * TILE_WIDTH + ty;
+    int colBeginB = bx * TILE_WIDTH + tx;
+
+    float Ctile = 0.0;
+
+    // stride over the tiles along columns of A and rows of B
+    for (int step = 0; step < nColsA; step += TILE_WIDTH) {
+        // load A's tiles into shared memory
+        if (rowBeginA < nRowsA && tx + step < nColsA)
+            sA[ty][tx] = A[rowBeginA * nColsA + tx + step];
+        else
+            sA[ty][tx] = 0.0;
+        // load B's tiles into shared memory
+        if (colBeginB < nColsB && ty + step < nRowsB)
+            sB[ty][tx] = B[(ty + step) * nColsB + colBeginB];
+        else
+            sB[ty][tx] = 0.0;
+
+        __syncthreads();
+
+        for (int j = 0; j < TILE_WIDTH; ++j) {
+            Ctile += sA[ty][j] * sB[j][tx];
+        }
+
+        __syncthreads();
+    }
+    // if (rowBeginA < nRowsA && colBeginB < nColsB) {
+        // C[rowBeginA * nColsB + colBeginB] = Ctile;
+    // }
+
+    // Softmax
+    __shared__ float rowVals[TILE_WIDTH];
+    if (rowBeginA < nRowsA && colBeginB < nColsB) {
+        rowVals[tx] = Ctile;
+    }else{
+        rowVals[tx] = 0.0;
+    }
+    __syncthreads();
+
+    float softmax_val = softmax(rowVals, tx, nColsB);
+    if (rowBeginA < nRowsA && colBeginB < nColsB) {
+        C[rowBeginA * nColsB + colBeginB] = softmax_val;
+    }
+}
+
 
 __host__ void matmul(float *A, float *B, float *C,
                     int nRowsA, int nColsA, int nColsB, 

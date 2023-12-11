@@ -2,13 +2,9 @@
 
 # pragma once
 #include <iostream>
-const unsigned int TILE_WIDTH = 32; // Tile size of shared memory
+using namespace std;
 
-__host__ void matmul(float *A, float *B, float *C,
-                    int nRowsA, int nColsA, int nColsB, 
-                    cudaEvent_t start = nullptr, cudaEvent_t stop = nullptr, cudaStream_t stream = nullptr);
 
-void kernel_err_check();
 #define CHECK_CUDA_ERROR(val) check((val), #val, __FILE__, __LINE__)
 template <typename T>
 void check(T err, const char* const func, const char* const file,
@@ -22,7 +18,30 @@ void check(T err, const char* const func, const char* const file,
         std::exit(EXIT_FAILURE);
     }
 }
+__host__ __device__ inline float softmax(const float* vals, uint32_t idx, uint32_t N);
+__host__ __device__ inline float softmax(const float* vals, uint32_t idx, uint32_t N);
 
+const unsigned int TILE_WIDTH = 32; // Tile size of shared memory
+
+__global__ void matmul_rect_softmax(float *A, float *B, float *C,
+                                     int nRowsA, int nColsA, int nColsB
+                                    );
+__global__ void matmul_rect_relu(float *A, float *B, float *C,
+                                     int nRowsA, int nColsA, int nColsB
+                                    );
+                                    
+__host__ void matmul(float *A, float *B, float *C,
+                    int nRowsA, int nColsA, int nColsB, 
+                    cudaEvent_t start = nullptr, cudaEvent_t stop = nullptr, cudaStream_t stream = nullptr);
+// No timing version
+__host__ void matmul(float* A, float* B, float* C,
+                    int nRowsA, int nColsA, int nColsB, cudaStream_t stream = nullptr);
+
+
+__host__ void matmul_relu(float* A, float* B, float* C,
+                    int nRowsA, int nColsA, int nColsB, cudaStream_t stream = nullptr);
+
+void kernel_err_check();
 
 __global__ void matmul_rect(float *A, float *B, float *C,
                                         int nRowsA, int nColsA, int nColsB);
@@ -38,84 +57,4 @@ __host__ void transpose(float *output, const float *input, int nRows, int nCols)
 // Get the the specified columns of a matrix
 void columns(float *output, const float *input, int rows, int columns, int start_col, int end_col);
 
-////////////////////// header-only  //////////////////////
-enum class MatrixLayout {
-	RowMajor = 0,
-	ColumnMajor = 1,
-};
-static constexpr MatrixLayout RM = MatrixLayout::RowMajor;
-static constexpr MatrixLayout CM = MatrixLayout::ColumnMajor;
-class GPUMatrix{
-    public:
-        uint32_t nRows;
-        uint32_t nCols;
-        float *data;
-        MatrixLayout layout;
 
-    GPUMatrix(uint32_t nRows, uint32_t nCols, float* data, MatrixLayout layout=RM){
-        this->nRows = nRows;
-        this->nCols = nCols;
-        this->data = data;
-        this->layout = layout;
-    }
-
-    GPUMatrix(uint32_t nRows, uint32_t nCols, MatrixLayout layout=RM, cudaStream_t stream=nullptr){
-        this->nRows = nRows;
-        this->nCols = nCols;
-        this->layout = layout;
-        cudaMallocAsync(&data, nRows * nCols * sizeof(float), stream);
-    }
-
-    ~GPUMatrix(){
-        cudaFree(data);
-    }   
-    
-    void T(){
-        transpose(data, data, nRows, nCols);
-        // swap nRows and nCols and reverse layout
-        std::swap(nRows, nCols);
-        layout = (layout == RM) ? CM : RM; 
-    }
-        
-    
-    // Override operators
-    float& operator()(uint32_t i, uint32_t j){
-        if (i >= nRows || j >= nCols)
-            throw std::out_of_range("Index out of range");
-        return data[i * nCols + j];
-    }
-
-    const float& operator()(uint32_t i, uint32_t j) const{
-        if (i >= nRows || j >= nCols)
-            throw std::out_of_range("Index out of range");
-        return data[i * nCols + j];
-    }
-    
-    GPUMatrix& operator=(const GPUMatrix& other){
-        if (this != &other){
-            nRows = other.nRows;
-            nCols = other.nCols;
-            layout = other.layout;
-            
-            if (data != nullptr && data != other.data){
-                // check if they are on the same device
-                cudaPointerAttributes attr1, attr2;
-                cudaPointerGetAttributes(&attr1, data);
-                cudaPointerGetAttributes(&attr2, other.data);
-                if (attr1.device != attr2.device){
-                    cudaFree(data);
-                    cudaMallocAsync(&data, nRows * nCols * sizeof(float), nullptr);
-                }else{
-                    data = other.data;
-                }
-
-
-
-            }
-        }
-        return *this;
-    }
-
-};
-
-    
