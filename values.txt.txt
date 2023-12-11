@@ -1,0 +1,904 @@
+
+test_manual.cu(32): warning #177-D: variable "duration_sec" was declared but never referenced
+
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=32, nColsA=32, nColsA=32 num_gpus=2
+Launching 4 blocks of 1024 threads each
+Time taken for single GPU = 0.009216
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=16, lastnRowsA=16
+Launching 2 blocks of 1024 threads each
+Launching 2 blocks of 1024 threads each
+
+Matrix sizes 32 x 32 and 32 x 32
+Elapsed time on device 0: 0.033792 ms
+Elapsed time on device 1: 0.172032 ms
+Time taken for single GPU using CPU time = 0.030630
+Time taken for 2 GPUs using CPU time = 2.559583
+---------------------------------------------
+First value output: 32.000000
+Middle value output: 32.000000
+Last value output: 32.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=32, nColsA=32, nColsA=32 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=16, lastnRowsA=16, nColsA=32
+Launching 2 blocks of 1024 threads each
+Launching 2 blocks of 1024 threads each
+Elapsed time on device 0: 0.033792 ms
+Elapsed time on device 1: 0.009216 ms
+---------------------------------------------
+First value output: 32.000000
+Middle value output: 32.000000
+Last value output: 32.000000
+---------------------------------------------
+Running on one GPU
+Launching 4 blocks of 1024 threads each
+Time taken for single GPU = 0.012288
+---------------------------------------------
+First value output: 32.000000
+Middle value output: 32.000000
+Last value output: 32.000000
+Distributed matmul with async overlapping
+n = 32, num_gpus = 2
+Per-device chunk size: 32 * 32 = 1024
+Launching 4 blocks of 1024 threads each
+Launching 4 blocks of 1024 threads each
+Elasped time on GPU 0: 0.036864 ms
+Elasped time on GPU 1: 1.418624 ms
+Matmul First value output: 32.000000
+ Middle value output: 32.000000
+ Last value output: 32.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=64, nColsA=64, nColsA=64 num_gpus=2
+Launching 9 blocks of 1024 threads each
+Time taken for single GPU = 0.015360
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=32, lastnRowsA=32
+Launching 6 blocks of 1024 threads each
+Launching 6 blocks of 1024 threads each
+
+Matrix sizes 64 x 64 and 64 x 64
+Elapsed time on device 0: 0.038912 ms
+Elapsed time on device 1: 0.265216 ms
+Time taken for single GPU using CPU time = 0.030250
+Time taken for 2 GPUs using CPU time = 2.659383
+---------------------------------------------
+First value output: 64.000000
+Middle value output: 64.000000
+Last value output: 64.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=64, nColsA=64, nColsA=64 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=32, lastnRowsA=32, nColsA=64
+Launching 6 blocks of 1024 threads each
+Launching 6 blocks of 1024 threads each
+Elapsed time on device 0: 0.038912 ms
+Elapsed time on device 1: 0.010240 ms
+---------------------------------------------
+First value output: 64.000000
+Middle value output: 64.000000
+Last value output: 64.000000
+---------------------------------------------
+Running on one GPU
+Launching 9 blocks of 1024 threads each
+Time taken for single GPU = 0.013312
+---------------------------------------------
+First value output: 64.000000
+Middle value output: 64.000000
+Last value output: 64.000000
+Distributed matmul with async overlapping
+n = 64, num_gpus = 2
+Per-device chunk size: 64 * 64 = 4096
+Launching 9 blocks of 1024 threads each
+Launching 9 blocks of 1024 threads each
+Elasped time on GPU 0: 0.038912 ms
+Elasped time on GPU 1: 1.769920 ms
+Matmul First value output: 64.000000
+ Middle value output: 64.000000
+ Last value output: 64.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=128, nColsA=128, nColsA=128 num_gpus=2
+Launching 25 blocks of 1024 threads each
+Time taken for single GPU = 0.022528
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=64, lastnRowsA=64
+Launching 15 blocks of 1024 threads each
+Launching 15 blocks of 1024 threads each
+
+Matrix sizes 128 x 128 and 128 x 128
+Elapsed time on device 0: 0.041984 ms
+Elapsed time on device 1: 0.484352 ms
+Time taken for single GPU using CPU time = 0.036430
+Time taken for 2 GPUs using CPU time = 2.875791
+---------------------------------------------
+First value output: 128.000000
+Middle value output: 128.000000
+Last value output: 128.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=128, nColsA=128, nColsA=128 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=64, lastnRowsA=64, nColsA=128
+Launching 15 blocks of 1024 threads each
+Launching 15 blocks of 1024 threads each
+Elapsed time on device 0: 0.043008 ms
+Elapsed time on device 1: 0.014336 ms
+---------------------------------------------
+First value output: 128.000000
+Middle value output: 128.000000
+Last value output: 128.000000
+---------------------------------------------
+Running on one GPU
+Launching 25 blocks of 1024 threads each
+Time taken for single GPU = 0.017408
+---------------------------------------------
+First value output: 128.000000
+Middle value output: 128.000000
+Last value output: 128.000000
+Distributed matmul with async overlapping
+n = 128, num_gpus = 2
+Per-device chunk size: 128 * 128 = 16384
+Launching 25 blocks of 1024 threads each
+Launching 25 blocks of 1024 threads each
+Elasped time on GPU 0: 0.043008 ms
+Elasped time on GPU 1: 1.799648 ms
+Matmul First value output: 128.000000
+ Middle value output: 128.000000
+ Last value output: 128.000000
+
+
+test_manual.cu(31): warning #177-D: variable "end_cpu" was declared but never referenced
+
+test_manual.cu(32): warning #177-D: variable "duration_sec" was declared but never referenced
+
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=256, nColsA=256, nColsA=256 num_gpus=2
+Launching 81 blocks of 1024 threads each
+Time taken for single GPU = 0.027648
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=128, lastnRowsA=128
+Launching 45 blocks of 1024 threads each
+Launching 45 blocks of 1024 threads each
+
+Matrix sizes 256 x 256 and 256 x 256
+Elapsed time on device 0: 0.026624 ms
+Elapsed time on device 1: 0.769024 ms
+Time taken for single GPU using CPU time = 0.036160
+Time taken for 2 GPUs using CPU time = 3.848466
+---------------------------------------------
+First value output: 256.000000
+Middle value output: 256.000000
+Last value output: 256.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=256, nColsA=256, nColsA=256 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=128, lastnRowsA=128, nColsA=256
+Launching 45 blocks of 1024 threads each
+Launching 45 blocks of 1024 threads each
+Elapsed time on device 0: 1.115200 ms
+Elapsed time on device 1: 1.828480 ms
+---------------------------------------------
+First value output: 256.000000
+Middle value output: 256.000000
+Last value output: 256.000000
+---------------------------------------------
+Running on one GPU
+Launching 81 blocks of 1024 threads each
+Time taken for single GPU = 1.592448
+---------------------------------------------
+First value output: 256.000000
+Middle value output: 256.000000
+Last value output: 256.000000
+Distributed matmul with async overlapping
+n = 256, num_gpus = 2
+Per-device chunk size: 256 * 256 = 65536
+Launching 81 blocks of 1024 threads each
+Launching 81 blocks of 1024 threads each
+Elasped time on GPU 0: 0.026624 ms
+Elasped time on GPU 1: 2.557952 ms
+Matmul First value output: 256.000000
+ Middle value output: 256.000000
+ Last value output: 256.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=512, nColsA=512, nColsA=512 num_gpus=2
+Launching 289 blocks of 1024 threads each
+Time taken for single GPU = 0.075776
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=256, lastnRowsA=256
+Launching 153 blocks of 1024 threads each
+Launching 153 blocks of 1024 threads each
+
+Matrix sizes 512 x 512 and 512 x 512
+Elapsed time on device 0: 0.072704 ms
+Elapsed time on device 1: 1.958912 ms
+Time taken for single GPU using CPU time = 0.029550
+Time taken for 2 GPUs using CPU time = 4.354092
+---------------------------------------------
+First value output: 512.000000
+Middle value output: 512.000000
+Last value output: 512.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=512, nColsA=512, nColsA=512 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=256, lastnRowsA=256, nColsA=512
+Launching 153 blocks of 1024 threads each
+Launching 153 blocks of 1024 threads each
+Elapsed time on device 0: 0.075776 ms
+Elapsed time on device 1: 1.077536 ms
+---------------------------------------------
+First value output: 512.000000
+Middle value output: 512.000000
+Last value output: 512.000000
+---------------------------------------------
+Running on one GPU
+Launching 289 blocks of 1024 threads each
+Time taken for single GPU = 0.080416
+---------------------------------------------
+First value output: 512.000000
+Middle value output: 512.000000
+Last value output: 512.000000
+Distributed matmul with async overlapping
+n = 512, num_gpus = 2
+Per-device chunk size: 512 * 512 = 262144
+Launching 289 blocks of 1024 threads each
+Launching 289 blocks of 1024 threads each
+Elasped time on GPU 0: 0.133120 ms
+Elasped time on GPU 1: 2.436032 ms
+Matmul First value output: 512.000000
+ Middle value output: 512.000000
+ Last value output: 512.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=1024, nColsA=1024, nColsA=1024 num_gpus=2
+Launching 1089 blocks of 1024 threads each
+Time taken for single GPU = 0.656384
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=512, lastnRowsA=512
+Launching 561 blocks of 1024 threads each
+Launching 561 blocks of 1024 threads each
+
+Matrix sizes 1024 x 1024 and 1024 x 1024
+Elapsed time on device 0: 0.380928 ms
+Elapsed time on device 1: 13.563904 ms
+Time taken for single GPU using CPU time = 0.029940
+Time taken for 2 GPUs using CPU time = 15.953348
+---------------------------------------------
+First value output: 1024.000000
+Middle value output: 1024.000000
+Last value output: 1024.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=1024, nColsA=1024, nColsA=1024 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=512, lastnRowsA=512, nColsA=1024
+Launching 561 blocks of 1024 threads each
+Launching 561 blocks of 1024 threads each
+Elapsed time on device 0: 0.391232 ms
+Elapsed time on device 1: 1.463392 ms
+---------------------------------------------
+First value output: 1024.000000
+Middle value output: 1024.000000
+Last value output: 1024.000000
+---------------------------------------------
+Running on one GPU
+Launching 1089 blocks of 1024 threads each
+Time taken for single GPU = 0.663232
+---------------------------------------------
+First value output: 1024.000000
+Middle value output: 1024.000000
+Last value output: 1024.000000
+Distributed matmul with async overlapping
+n = 1024, num_gpus = 2
+Per-device chunk size: 1024 * 1024 = 1048576
+Launching 1089 blocks of 1024 threads each
+Launching 1089 blocks of 1024 threads each
+Elasped time on GPU 0: 0.743424 ms
+Elasped time on GPU 1: 2.807296 ms
+Matmul First value output: 1024.000000
+ Middle value output: 1024.000000
+ Last value output: 1024.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=2048, nColsA=2048, nColsA=2048 num_gpus=2
+Launching 4225 blocks of 1024 threads each
+Time taken for single GPU = 4.626432
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=1024, lastnRowsA=1024
+Launching 2145 blocks of 1024 threads each
+Launching 2145 blocks of 1024 threads each
+
+Matrix sizes 2048 x 2048 and 2048 x 2048
+Elapsed time on device 0: 2.365440 ms
+Elapsed time on device 1: 55.507969 ms
+Time taken for single GPU using CPU time = 0.030539
+Time taken for 2 GPUs using CPU time = 57.903529
+---------------------------------------------
+First value output: 2048.000000
+Middle value output: 2048.000000
+Last value output: 2048.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=2048, nColsA=2048, nColsA=2048 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=1024, lastnRowsA=1024, nColsA=2048
+Launching 2145 blocks of 1024 threads each
+Launching 2145 blocks of 1024 threads each
+Elapsed time on device 0: 2.317408 ms
+Elapsed time on device 1: 2.659616 ms
+---------------------------------------------
+First value output: 2048.000000
+Middle value output: 2048.000000
+Last value output: 2048.000000
+---------------------------------------------
+Running on one GPU
+Launching 4225 blocks of 1024 threads each
+Time taken for single GPU = 4.515456
+---------------------------------------------
+First value output: 2048.000000
+Middle value output: 2048.000000
+Last value output: 2048.000000
+Distributed matmul with async overlapping
+n = 2048, num_gpus = 2
+Per-device chunk size: 2048 * 2048 = 4194304
+Launching 4225 blocks of 1024 threads each
+Launching 4225 blocks of 1024 threads each
+Elasped time on GPU 0: 4.504576 ms
+Elasped time on GPU 1: 9.565536 ms
+Matmul First value output: 2048.000000
+ Middle value output: 2048.000000
+ Last value output: 2048.000000
+
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=32, nColsA=32, nColsA=32 num_gpus=2
+Launching 4 blocks of 1024 threads each
+Time taken for single GPU = 0.012288
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=16, lastnRowsA=16
+Launching 2 blocks of 1024 threads each
+Launching 2 blocks of 1024 threads each
+
+Matrix sizes 32 x 32 and 32 x 32
+Elapsed time on device 0: 0.025600 ms
+Elapsed time on device 1: 0.434176 ms
+Time taken for single GPU using CPU time = 0.032530
+Time taken for 2 GPUs using CPU time = 0.507277
+---------------------------------------------
+First value output: 32.000000
+Middle value output: 32.000000
+Last value output: 32.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=32, nColsA=32, nColsA=32 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=16, lastnRowsA=16, nColsA=32
+Launching 2 blocks of 1024 threads each
+Launching 2 blocks of 1024 threads each
+Elapsed time on device 0: 0.025600 ms
+Elapsed time on device 1: 0.011264 ms
+---------------------------------------------
+First value output: 32.000000
+Middle value output: 32.000000
+Last value output: 32.000000
+---------------------------------------------
+Running on one GPU
+Launching 4 blocks of 1024 threads each
+Time taken for single GPU = 0.013312
+---------------------------------------------
+First value output: 32.000000
+Middle value output: 32.000000
+Last value output: 32.000000
+Distributed matmul with async overlapping
+n = 32, num_gpus = 2
+Per-device chunk size: 32 * 32 = 1024
+Launching 4 blocks of 1024 threads each
+Launching 4 blocks of 1024 threads each
+Elasped time on GPU 0: 0.028672 ms
+Elasped time on GPU 1: 0.017984 ms
+Matmul First value output: 32.000000
+ Middle value output: 32.000000
+ Last value output: 32.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=64, nColsA=64, nColsA=64 num_gpus=2
+Launching 9 blocks of 1024 threads each
+Time taken for single GPU = 0.015360
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=32, lastnRowsA=32
+Launching 6 blocks of 1024 threads each
+Launching 6 blocks of 1024 threads each
+
+Matrix sizes 64 x 64 and 64 x 64
+Elapsed time on device 0: 0.030720 ms
+Elapsed time on device 1: 0.330752 ms
+Time taken for single GPU using CPU time = 0.036250
+Time taken for 2 GPUs using CPU time = 0.409468
+---------------------------------------------
+First value output: 64.000000
+Middle value output: 64.000000
+Last value output: 64.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=64, nColsA=64, nColsA=64 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=32, lastnRowsA=32, nColsA=64
+Launching 6 blocks of 1024 threads each
+Launching 6 blocks of 1024 threads each
+Elapsed time on device 0: 0.031744 ms
+Elapsed time on device 1: 0.016384 ms
+---------------------------------------------
+First value output: 64.000000
+Middle value output: 64.000000
+Last value output: 64.000000
+---------------------------------------------
+Running on one GPU
+Launching 9 blocks of 1024 threads each
+Time taken for single GPU = 0.017408
+---------------------------------------------
+First value output: 64.000000
+Middle value output: 64.000000
+Last value output: 64.000000
+Distributed matmul with async overlapping
+n = 64, num_gpus = 2
+Per-device chunk size: 64 * 64 = 4096
+Launching 9 blocks of 1024 threads each
+Launching 9 blocks of 1024 threads each
+Elasped time on GPU 0: 0.041984 ms
+Elasped time on GPU 1: 0.020704 ms
+Matmul First value output: 64.000000
+ Middle value output: 64.000000
+ Last value output: 64.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=128, nColsA=128, nColsA=128 num_gpus=2
+Launching 25 blocks of 1024 threads each
+Time taken for single GPU = 0.018432
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=64, lastnRowsA=64
+Launching 15 blocks of 1024 threads each
+Launching 15 blocks of 1024 threads each
+
+Matrix sizes 128 x 128 and 128 x 128
+Elapsed time on device 0: 0.030720 ms
+Elapsed time on device 1: 0.525312 ms
+Time taken for single GPU using CPU time = 0.027900
+Time taken for 2 GPUs using CPU time = 0.598636
+---------------------------------------------
+First value output: 128.000000
+Middle value output: 128.000000
+Last value output: 128.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=128, nColsA=128, nColsA=128 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=64, lastnRowsA=64, nColsA=128
+Launching 15 blocks of 1024 threads each
+Launching 15 blocks of 1024 threads each
+Elapsed time on device 0: 0.035840 ms
+Elapsed time on device 1: 0.022528 ms
+---------------------------------------------
+First value output: 128.000000
+Middle value output: 128.000000
+Last value output: 128.000000
+---------------------------------------------
+Running on one GPU
+Launching 25 blocks of 1024 threads each
+Time taken for single GPU = 0.020480
+---------------------------------------------
+First value output: 128.000000
+Middle value output: 128.000000
+Last value output: 128.000000
+Distributed matmul with async overlapping
+n = 128, num_gpus = 2
+Per-device chunk size: 128 * 128 = 16384
+Launching 25 blocks of 1024 threads each
+Launching 25 blocks of 1024 threads each
+Elasped time on GPU 0: 0.036864 ms
+Elasped time on GPU 1: 0.027776 ms
+Matmul First value output: 128.000000
+ Middle value output: 128.000000
+ Last value output: 128.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=256, nColsA=256, nColsA=256 num_gpus=2
+Launching 81 blocks of 1024 threads each
+Time taken for single GPU = 0.035840
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=128, lastnRowsA=128
+Launching 45 blocks of 1024 threads each
+Launching 45 blocks of 1024 threads each
+
+Matrix sizes 256 x 256 and 256 x 256
+Elapsed time on device 0: 0.054272 ms
+Elapsed time on device 1: 1.229824 ms
+Time taken for single GPU using CPU time = 0.030680
+Time taken for 2 GPUs using CPU time = 1.328412
+---------------------------------------------
+First value output: 256.000000
+Middle value output: 256.000000
+Last value output: 256.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=256, nColsA=256, nColsA=256 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=128, lastnRowsA=128, nColsA=256
+Launching 45 blocks of 1024 threads each
+Launching 45 blocks of 1024 threads each
+Elapsed time on device 0: 0.053312 ms
+Elapsed time on device 1: 0.033472 ms
+---------------------------------------------
+First value output: 256.000000
+Middle value output: 256.000000
+Last value output: 256.000000
+---------------------------------------------
+Running on one GPU
+Launching 81 blocks of 1024 threads each
+Time taken for single GPU = 0.037568
+---------------------------------------------
+First value output: 256.000000
+Middle value output: 256.000000
+Last value output: 256.000000
+Distributed matmul with async overlapping
+n = 256, num_gpus = 2
+Per-device chunk size: 256 * 256 = 65536
+Launching 81 blocks of 1024 threads each
+Launching 81 blocks of 1024 threads each
+Elasped time on GPU 0: 0.051200 ms
+Elasped time on GPU 1: 0.035872 ms
+Matmul First value output: 256.000000
+ Middle value output: 256.000000
+ Last value output: 256.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=512, nColsA=512, nColsA=512 num_gpus=2
+Launching 289 blocks of 1024 threads each
+Time taken for single GPU = 0.136192
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=256, lastnRowsA=256
+Launching 153 blocks of 1024 threads each
+Launching 153 blocks of 1024 threads each
+
+Matrix sizes 512 x 512 and 512 x 512
+Elapsed time on device 0: 0.104448 ms
+Elapsed time on device 1: 3.373056 ms
+Time taken for single GPU using CPU time = 0.036119
+Time taken for 2 GPUs using CPU time = 3.447509
+---------------------------------------------
+First value output: 512.000000
+Middle value output: 512.000000
+Last value output: 512.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=512, nColsA=512, nColsA=512 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=256, lastnRowsA=256, nColsA=512
+Launching 153 blocks of 1024 threads each
+Launching 153 blocks of 1024 threads each
+Elapsed time on device 0: 0.114976 ms
+Elapsed time on device 1: 0.096704 ms
+---------------------------------------------
+First value output: 512.000000
+Middle value output: 512.000000
+Last value output: 512.000000
+---------------------------------------------
+Running on one GPU
+Launching 289 blocks of 1024 threads each
+Time taken for single GPU = 0.143424
+---------------------------------------------
+First value output: 512.000000
+Middle value output: 512.000000
+Last value output: 512.000000
+Distributed matmul with async overlapping
+n = 512, num_gpus = 2
+Per-device chunk size: 512 * 512 = 262144
+Launching 289 blocks of 1024 threads each
+Launching 289 blocks of 1024 threads each
+Elasped time on GPU 0: 0.133120 ms
+Elasped time on GPU 1: 0.152032 ms
+Matmul First value output: 512.000000
+ Middle value output: 512.000000
+ Last value output: 512.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=1024, nColsA=1024, nColsA=1024 num_gpus=2
+Launching 1089 blocks of 1024 threads each
+Time taken for single GPU = 0.870400
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=512, lastnRowsA=512
+Launching 561 blocks of 1024 threads each
+Launching 561 blocks of 1024 threads each
+
+Matrix sizes 1024 x 1024 and 1024 x 1024
+Elapsed time on device 0: 0.494592 ms
+Elapsed time on device 1: 6.446080 ms
+Time taken for single GPU using CPU time = 0.032200
+Time taken for 2 GPUs using CPU time = 6.520100
+---------------------------------------------
+First value output: 1024.000000
+Middle value output: 1024.000000
+Last value output: 1024.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=1024, nColsA=1024, nColsA=1024 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=512, lastnRowsA=512, nColsA=1024
+Launching 561 blocks of 1024 threads each
+Launching 561 blocks of 1024 threads each
+Elapsed time on device 0: 0.501824 ms
+Elapsed time on device 1: 0.492608 ms
+---------------------------------------------
+First value output: 1024.000000
+Middle value output: 1024.000000
+Last value output: 1024.000000
+---------------------------------------------
+Running on one GPU
+Launching 1089 blocks of 1024 threads each
+Time taken for single GPU = 0.877792
+---------------------------------------------
+First value output: 1024.000000
+Middle value output: 1024.000000
+Last value output: 1024.000000
+Distributed matmul with async overlapping
+n = 1024, num_gpus = 2
+Per-device chunk size: 1024 * 1024 = 1048576
+Launching 1089 blocks of 1024 threads each
+Launching 1089 blocks of 1024 threads each
+Elasped time on GPU 0: 0.875520 ms
+Elasped time on GPU 1: 0.881952 ms
+Matmul First value output: 1024.000000
+ Middle value output: 1024.000000
+ Last value output: 1024.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=2048, nColsA=2048, nColsA=2048 num_gpus=2
+Launching 4225 blocks of 1024 threads each
+Time taken for single GPU = 6.250496
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=1024, lastnRowsA=1024
+Launching 2145 blocks of 1024 threads each
+Launching 2145 blocks of 1024 threads each
+
+Matrix sizes 2048 x 2048 and 2048 x 2048
+Elapsed time on device 0: 9.523200 ms
+Elapsed time on device 1: 24.620031 ms
+Time taken for single GPU using CPU time = 0.036390
+Time taken for 2 GPUs using CPU time = 24.701598
+---------------------------------------------
+First value output: 2048.000000
+Middle value output: 2048.000000
+Last value output: 2048.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=2048, nColsA=2048, nColsA=2048 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=1024, lastnRowsA=1024, nColsA=2048
+Launching 2145 blocks of 1024 threads each
+Launching 2145 blocks of 1024 threads each
+Elapsed time on device 0: 2.870976 ms
+Elapsed time on device 1: 3.165856 ms
+---------------------------------------------
+First value output: 2048.000000
+Middle value output: 2048.000000
+Last value output: 2048.000000
+---------------------------------------------
+Running on one GPU
+Launching 4225 blocks of 1024 threads each
+Time taken for single GPU = 5.611616
+---------------------------------------------
+First value output: 2048.000000
+Middle value output: 2048.000000
+Last value output: 2048.000000
+Distributed matmul with async overlapping
+n = 2048, num_gpus = 2
+Per-device chunk size: 2048 * 2048 = 4194304
+Launching 4225 blocks of 1024 threads each
+Launching 4225 blocks of 1024 threads each
+Elasped time on GPU 0: 6.251520 ms
+Elasped time on GPU 1: 6.271840 ms
+Matmul First value output: 2048.000000
+ Middle value output: 2048.000000
+ Last value output: 2048.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=4096, nColsA=4096, nColsA=4096 num_gpus=2
+Launching 16641 blocks of 1024 threads each
+Time taken for single GPU = 27.681791
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=2048, lastnRowsA=2048
+Launching 8385 blocks of 1024 threads each
+Launching 8385 blocks of 1024 threads each
+
+Matrix sizes 4096 x 4096 and 4096 x 4096
+Elapsed time on device 0: 842.564636 ms
+Elapsed time on device 1: 869.336060 ms
+Time taken for single GPU using CPU time = 0.031120
+Time taken for 2 GPUs using CPU time = 869.422738
+---------------------------------------------
+First value output: 4096.000000
+Middle value output: 4096.000000
+Last value output: 4096.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=4096, nColsA=4096, nColsA=4096 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=2048, lastnRowsA=2048, nColsA=4096
+Launching 8385 blocks of 1024 threads each
+Launching 8385 blocks of 1024 threads each
+Elapsed time on device 0: 13.582720 ms
+Elapsed time on device 1: 13.548640 ms
+---------------------------------------------
+First value output: 4096.000000
+Middle value output: 4096.000000
+Last value output: 4096.000000
+---------------------------------------------
+Running on one GPU
+Launching 16641 blocks of 1024 threads each
+Time taken for single GPU = 26.849119
+---------------------------------------------
+First value output: 4096.000000
+Middle value output: 4096.000000
+Last value output: 4096.000000
+Distributed matmul with async overlapping
+n = 4096, num_gpus = 2
+Per-device chunk size: 4096 * 4096 = 16777216
+Launching 16641 blocks of 1024 threads each
+Launching 16641 blocks of 1024 threads each
+Elasped time on GPU 0: 27.729919 ms
+Elasped time on GPU 1: 41.518017 ms
+Matmul First value output: 4096.000000
+ Middle value output: 4096.000000
+ Last value output: 4096.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=8192, nColsA=8192, nColsA=8192 num_gpus=2
+Launching 66049 blocks of 1024 threads each
+Time taken for single GPU = 223.667206
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=4096, lastnRowsA=4096
+Launching 33153 blocks of 1024 threads each
+Launching 33153 blocks of 1024 threads each
+
+Matrix sizes 8192 x 8192 and 8192 x 8192
+Elapsed time on device 0: 17340.900391 ms
+Elapsed time on device 1: 17365.339844 ms
+Time taken for single GPU using CPU time = 0.032440
+Time taken for 2 GPUs using CPU time = 17365.469588
+---------------------------------------------
+First value output: 8192.000000
+Middle value output: 8192.000000
+Last value output: 8192.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=8192, nColsA=8192, nColsA=8192 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=4096, lastnRowsA=4096, nColsA=8192
+Launching 33153 blocks of 1024 threads each
+Launching 33153 blocks of 1024 threads each
+Elapsed time on device 0: 106.267006 ms
+Elapsed time on device 1: 106.268227 ms
+---------------------------------------------
+First value output: 8192.000000
+Middle value output: 8192.000000
+Last value output: 8192.000000
+---------------------------------------------
+Running on one GPU
+Launching 66049 blocks of 1024 threads each
+Time taken for single GPU = 223.520035
+---------------------------------------------
+First value output: 8192.000000
+Middle value output: 8192.000000
+Last value output: 8192.000000
+Distributed matmul with async overlapping
+n = 8192, num_gpus = 2
+Per-device chunk size: 8192 * 8192 = 67108864
+Launching 66049 blocks of 1024 threads each
+Launching 66049 blocks of 1024 threads each
+Elasped time on GPU 0: 223.314941 ms
+Elasped time on GPU 1: 299.005463 ms
+Matmul First value output: 8192.000000
+ Middle value output: 8192.000000
+ Last value output: 8192.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=16384, nColsA=16384, nColsA=16384 num_gpus=2
+Launching 263169 blocks of 1024 threads each
+Time taken for single GPU = 1772.868652
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=8192, lastnRowsA=8192
+Launching 131841 blocks of 1024 threads each
+Launching 131841 blocks of 1024 threads each
+
+Matrix sizes 16384 x 16384 and 16384 x 16384
+Elapsed time on device 0: 139037.875000 ms
+Elapsed time on device 1: 138992.703125 ms
+Time taken for single GPU using CPU time = 0.052650
+Time taken for 2 GPUs using CPU time = 139038.366738
+---------------------------------------------
+First value output: 16384.000000
+Middle value output: 16384.000000
+Last value output: 16384.000000
+Distributed matmul with manually allocated memory
+Params for testing:
+nRowsA=16384, nColsA=16384, nColsA=16384 num_gpus=2
+---------------------------------------------
+Running only using manually allocated memory
+nRowsA_per_GPU=8192, lastnRowsA=8192, nColsA=16384
+Launching 131841 blocks of 1024 threads each
+Launching 131841 blocks of 1024 threads each
+Elapsed time on device 0: 972.633606 ms
+Elapsed time on device 1: 935.173828 ms
+---------------------------------------------
+First value output: 16384.000000
+Middle value output: 16384.000000
+Last value output: 16384.000000
+---------------------------------------------
+Running on one GPU
+Launching 263169 blocks of 1024 threads each
+Time taken for single GPU = 1791.958740
+---------------------------------------------
+First value output: 16384.000000
+Middle value output: 16384.000000
+Last value output: 16384.000000
+Distributed matmul with async overlapping
+n = 16384, num_gpus = 2
+Per-device chunk size: 16384 * 16384 = 268435456
+Launching 263169 blocks of 1024 threads each
+Launching 263169 blocks of 1024 threads each
+Elasped time on GPU 0: 1790.228516 ms
+Elasped time on GPU 1: 1889.017334 ms
+Matmul First value output: 16384.000000
+ Middle value output: 16384.000000
+ Last value output: 16384.000000
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=32768, nColsA=32768, nColsA=32768 num_gpus=2
+Launching 1050625 blocks of 1024 threads each
+Time taken for single GPU = 14297.179688
+---------------------------------------------
+Splitting one matrix (the first one)
+nRowsA_per_GPU=16384, lastnRowsA=16384
+Launching 525825 blocks of 1024 threads each
+Launching 525825 blocks of 1024 threads each
