@@ -19,16 +19,14 @@ void check(T err, const char* const func, const char* const file,
     }
 }
 __host__ __device__ inline float softmax(const float* vals, uint32_t idx, uint32_t N);
-__host__ __device__ inline float softmax(const float* vals, uint32_t idx, uint32_t N);
+__host__ __device__ __forceinline__ float relu(float val);
 
 const unsigned int TILE_WIDTH = 32; // Tile size of shared memory
 
 __global__ void matmul_rect_softmax(float *A, float *B, float *C,
-                                     int nRowsA, int nColsA, int nColsB
-                                    );
+                                     int nRowsA, int nColsA, int nColsB, cudaStream_t stream = nullptr);
 __global__ void matmul_rect_relu(float *A, float *B, float *C,
-                                     int nRowsA, int nColsA, int nColsB
-                                    );
+                                     int nRowsA, int nColsA, int nColsB, cudaStream_t stream = nullptr);
                                     
 __host__ void matmul(float *A, float *B, float *C,
                     int nRowsA, int nColsA, int nColsB, 
