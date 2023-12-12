@@ -1,0 +1,129 @@
+Distributed matmul with managed memory
+nRowsA=32, nColsA=32, nColsA=32 num_gpus=2
+Time taken for single GPU = 0.009216
+Elapsed time on device 0: 0.033792 ms
+Elapsed time on device 1: 0.172032 ms
+Distributed matmul with manually allocated memory
+Elapsed time on device 0: 0.033792 ms
+Elapsed time on device 1: 0.009216 ms
+Time taken for single GPU = 0.012288
+Distributed matmul with async overlapping
+Elasped time on GPU 0: 0.036864 ms
+Elasped time on GPU 1: 1.418624 ms
+
+Distributed matmul with managed memory
+nRowsA=64, nColsA=64, nColsA=64 num_gpus=2
+Time taken for single GPU = 0.015360
+Elapsed time on device 0: 0.038912 ms
+Elapsed time on device 1: 0.265216 ms
+Distributed matmul with manually allocated memory
+Elapsed time on device 0: 0.038912 ms
+Elapsed time on device 1: 0.010240 ms
+Time taken for single GPU = 0.013312
+Distributed matmul with async overlapping
+Elasped time on GPU 0: 0.038912 ms
+Elasped time on GPU 1: 1.769920 ms
+
+Distributed matmul with managed memory
+nRowsA=128, nColsA=128, nColsA=128 num_gpus=2
+Time taken for single GPU = 0.022528
+Elapsed time on device 0: 0.041984 ms
+Elapsed time on device 1: 0.484352 ms
+Distributed matmul with manually allocated memory
+Elapsed time on device 0: 0.043008 ms
+Elapsed time on device 1: 0.014336 ms
+Time taken for single GPU = 0.017408
+Distributed matmul with async overlapping
+Elasped time on GPU 0: 0.043008 ms
+Elasped time on GPU 1: 1.799648 ms
+
+Distributed matmul with managed memory
+nRowsA=256, nColsA=256, nColsA=256 num_gpus=2
+Time taken for single GPU = 0.027648
+Elapsed time on device 0: 0.026624 ms
+Elapsed time on device 1: 0.769024 ms
+Distributed matmul with manually allocated memory
+Elapsed time on device 0: 1.115200 ms
+Elapsed time on device 1: 1.828480 ms
+Time taken for single GPU = 1.592448
+Distributed matmul with async overlapping
+Elasped time on GPU 0: 0.026624 ms
+Elasped time on GPU 1: 2.557952 ms
+
+Distributed matmul with managed memory
+nRowsA=512, nColsA=512, nColsA=512 num_gpus=2
+Time taken for single GPU = 0.075776
+Elapsed time on device 0: 0.072704 ms
+Elapsed time on device 1: 1.958912 ms
+Distributed matmul with manually allocated memory
+Elapsed time on device 0: 0.075776 ms
+Elapsed time on device 1: 1.077536 ms
+Time taken for single GPU = 0.080416
+Distributed matmul with async overlapping
+Elasped time on GPU 0: 0.133120 ms
+Elasped time on GPU 1: 2.436032 ms
+
+Distributed matmul with managed memory
+nRowsA=1024, nColsA=1024, nColsA=1024 num_gpus=2
+Time taken for single GPU = 0.656384
+Elapsed time on device 0: 0.380928 ms
+Elapsed time on device 1: 13.563904 ms
+Distributed matmul with manually allocated memory
+Elapsed time on device 0: 0.391232 ms
+Elapsed time on device 1: 1.463392 ms
+Time taken for single GPU = 0.663232
+Distributed matmul with async overlapping
+Elasped time on GPU 0: 0.743424 ms
+Elasped time on GPU 1: 2.807296 ms
+
+Distributed matmul with managed memory
+nRowsA=2048, nColsA=2048, nColsA=2048 num_gpus=2
+Time taken for single GPU = 4.626432
+Elapsed time on device 0: 2.365440 ms
+Elapsed time on device 1: 55.507969 ms
+Distributed matmul with manually allocated memory
+Elapsed time on device 0: 2.317408 ms
+Elapsed time on device 1: 2.659616 ms
+Time taken for single GPU = 4.515456
+Distributed matmul with async overlapping
+Elasped time on GPU 0: 4.504576 ms
+Elasped time on GPU 1: 9.565536 ms
+
+Distributed matmul with managed memory
+nRowsA=4096, nColsA=4096, nColsA=4096 num_gpus=2
+Time taken for single GPU = 27.681791
+Elapsed time on device 0: 842.564636 ms
+Elapsed time on device 1: 869.336060 ms
+Distributed matmul with manually allocated memory
+Elapsed time on device 0: 13.582720 ms
+Elapsed time on device 1: 13.548640 ms
+Time taken for single GPU = 26.849119
+Distributed matmul with async overlapping
+Elasped time on GPU 0: 27.729919 ms
+Elasped time on GPU 1: 41.518017 ms
+
+Distributed matmul with managed memory
+nRowsA=8192, nColsA=8192, nColsA=8192 num_gpus=2
+Time taken for single GPU = 223.667206
+Elapsed time on device 0: 17340.900391 ms
+Elapsed time on device 1: 17365.339844 ms
+Distributed matmul with manually allocated memory
+Elapsed time on device 0: 106.267006 ms
+Elapsed time on device 1: 106.268227 ms
+Time taken for single GPU = 223.520035
+Distributed matmul with async overlapping
+Elasped time on GPU 0: 223.314941 ms
+Elasped time on GPU 1: 299.005463 ms
+
+Distributed matmul with managed memory
+nRowsA=16384, nColsA=16384, nColsA=16384 num_gpus=2
+Time taken for single GPU = 1772.868652
+Elapsed time on device 0: 139037.875000 ms
+Elapsed time on device 1: 138992.703125 ms
+Distributed matmul with manually allocated memory
+Elapsed time on device 0: 972.633606 ms
+Elapsed time on device 1: 935.173828 ms
+Time taken for single GPU = 1791.958740
+Distributed matmul with async overlapping
+Elasped time on GPU 0: 1790.228516 ms
+Elasped time on GPU 1: 1889.017334 ms
