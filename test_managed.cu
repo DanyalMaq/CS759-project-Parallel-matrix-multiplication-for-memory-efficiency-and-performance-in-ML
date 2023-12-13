@@ -18,7 +18,7 @@ int main(int argc, char** argv){
     printf("----------------------------------------\n")
     printf("Distributed matmul with managed memory\n");
     if (argc != 3){
-        printf("Usage: ./t <matrix size> <num_gpus>\n");
+        printf("Usage: %s <matrix size> <num_gpus>\n", argv[0]);
         return 0;    
     }
 

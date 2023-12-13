@@ -1,9 +1,9 @@
 # Compiler settings
 NVCC = nvcc
 NVCC_FLAGS = -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17 
-LIBS = -lcurand -lcublas #-lcnpy -lz
+LIBS = -lcurand -lcublas -lcnpy -lz
 
-all: async managed manual
+all: async managed manual test_mlp
 
 # Executables
 ./async: test_async.cu matmul.cu matmul.cuh utils.cuh

@@ -23,6 +23,17 @@ struct __align__(8) MD
     float d;
 };
 
+__device__ __forceinline__ MD reduce_md_op(MD a, MD b)
+{
+    bool a_bigger = (a.m > b.m);
+    MD bigger_m = a_bigger ? a : b;
+    MD smaller_m = a_bigger ? b : a;
+    MD res;
+    res.d = bigger_m.d + smaller_m.d * __expf(smaller_m.m - bigger_m.m);
+    res.m = bigger_m.m;
+    return res;
+}
+
 template<int THREADBLOCK_SIZE>
 __launch_bounds__(THREADBLOCK_SIZE)
 __global__ void online_softmax(
@@ -367,7 +378,8 @@ public:
         // Restore device context
         cudaSetDevice(current_context);
     }
-
+    
+    //////////////////////// Constructors ////////////////////////
     // Default constructor
     MLP() : num_layers(0), full_layer_dims(nullptr), num_devices(0), in_dim(0) {}
     
@@ -474,15 +486,17 @@ public:
         NCCLCHECK(ncclGroupStart());
         // Malloc receive buffer on default device
         // All-reduce (see https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/examples.html)
+        int recv_rank = 0;
         for (int dev = 1; dev < num_devices; ++dev)
         {
             const void* send_buff = (const void*)dev_activations[0][layer].data;
             void* recv_buff = (void*)dev_activations[dev][layer].data;
             uint32_t size = dev_activations[dev][layer].nRows * dev_activations[dev][layer].nCols;
+            
             if (all_reduce)
                 NCCLCHECK(ncclAllReduce(send_buff, recv_buff, size, ncclFloat, ncclSum, nccl_comm[dev], nccl_streams[dev]));
             else
-                NCCLCHECK(ncclReduce(send_buff, recv_buff, size, ncclFloat, ncclSum, nccl_comm[dev], nccl_streams[dev]));
+                NCCLCHECK(ncclReduce(send_buff, recv_buff, size, ncclFloat, ncclSum, recv_rank, nccl_comm[dev], nccl_streams[dev]));
         }
 
         // Sync and wait for reduction results
@@ -534,7 +548,7 @@ public:
     }
 
     
-    void forward_tp(GPUMatrix& input, const GPUMatrix& output, cudaStream_t stream=nullptr, const uint32_t batch_size=32){
+    void forward_tp(const GPUMatrix& input,  GPUMatrix& output, cudaStream_t stream=nullptr, const uint32_t batch_size=32){
         // check that num layers = 3
         if (num_layers != 3){
             throw std::invalid_argument("Tensor parallelism is only supported for 3-layer MLPs\n");
@@ -549,14 +563,14 @@ public:
 
         // Set up buffers and NCCL for tensor parallelism
         if (tp_enabled == false)
-            enable_tp(stream);
+            enable_tp(batch_size, stream);
         
         //First layer
         uint32_t in_dim = input.nCols;
         uint32_t out_dim = dev_weights[1][0].nCols; // scattered dim on non-default devices
         for (int dev = 0; dev < num_devices; dev++){
             cudaSetDevice(dev);
-            matmul_rect_relu(input.data, dev_weights[dev][0], input.data, 
+            matmul_rect_relu(input.data, dev_weights[dev][0].data, input.data, 
                 batch_size, in_dim, out_dim, stream);
         }
 
@@ -565,7 +579,7 @@ public:
         out_dim = dev_weights[1][1].nCols;
         for (int dev = 0; dev < num_devices; dev++){
             cudaSetDevice(dev);
-            matmul_rect_relu(dev_activations[dev][0].data, dev_weights[dev][1], dev_activations[dev][1].data 
+            matmul_rect_relu(dev_activations[dev][0].data, dev_weights[dev][1].data, dev_activations[dev][1].data,
                 batch_size, in_dim, out_dim, stream);
         }
         reduce_activations(1);
@@ -590,12 +604,12 @@ public:
         // Third layer
         for (int dev = 0; dev < num_devices; dev++){
             cudaSetDevice(dev);
-            matmul(dev_activations[dev][1].data, dev_weights[dev][2], dev_activations[dev][2].data,
-                batch_size, in_dim, out_dim, stream);
+            matmul(dev_activations[dev][1].data, dev_weights[dev][2].data, dev_activations[dev][2].data,
+                batch_size, in_dim, out_dim, static_cast<cudaStream_t>(stream));
         }
         // Reduce and softmax
         reduce_activations(2);
-        call_softmax(dev_activations[0][2].data, output.data, output.nCols, batch_size, stream);
+        call_softmax(dev_activations[0][2].data, output.data, output.nCols, batch_size, static_cast<cudaStream_t>(stream));
 
         cudaSetDevice(0);
         output = dev_activations[0][2];

@@ -20,7 +20,7 @@ void check(T err, const char* const func, const char* const file,
         std::exit(EXIT_FAILURE);
     }
 }
-__host__ __device__ inline float softmax(const float* vals, uint32_t idx, uint32_t N);
+__host__ __device__ __forceinline__ float naive_softmax(const float* vals, uint32_t idx, uint32_t N);
 __host__ __device__ __forceinline__ float relu(float val);
 
 const unsigned int TILE_WIDTH = 32; // Tile size of shared memory
@@ -49,7 +49,7 @@ template <typename T>
 __host__ __device__ T relu(T val);
 
 template <uint32_t N>
-__host__ __device__ inline float softmax(const float vals[N], uint32_t idx);
+__host__ __device__ inline float naive_softmax(const float vals[N], uint32_t idx);
 
 // Transpose a given matrix
 __host__ void transpose(float *output, const float *input, int nRows, int nCols);

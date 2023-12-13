@@ -18,7 +18,7 @@ __host__ __device__ __forceinline__ float relu(float val) {
 }
 
 // TODO: upgrade to online softmax
-__host__ __device__ __forceinline__ float softmax(const float* vals, uint32_t idx, uint32_t N) {
+__host__ __device__ __forceinline__ float naive_softmax(const float* vals, uint32_t idx, uint32_t N) {
     
 	float total = 0;
 	for (uint32_t i = 0; i < N; ++i) {
@@ -180,7 +180,7 @@ __global__ void matmul_rect_softmax_(float *A, float *B, float *C,
     }
     __syncthreads();
 
-    float softmax_val = softmax(rowVals, tx, nColsB);
+    float softmax_val = naive_softmax(rowVals, tx, nColsB);
     if (rowBeginA < nRowsA && colBeginB < nColsB) {
         C[rowBeginA * nColsB + colBeginB] = softmax_val;
     }

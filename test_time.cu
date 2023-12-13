@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
     printf("---------------------------------------------\n");
     printf("Distributed matmul with managed memory\n");
     if (argc != 5){
-        printf("Usage: ./t <nRowsA> <nColsA> <nColsB> <num_gpus>\n");
+        printf("Usage: %s <nRowsA> <nColsA> <nColsB> <num_gpus>\n", argv[0]);
         return 0;    
     }
 

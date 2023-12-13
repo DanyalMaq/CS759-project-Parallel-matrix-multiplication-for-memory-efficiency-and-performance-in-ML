@@ -12,7 +12,7 @@
 
 int main()
 {
-    MatrixDims* layer_dims = new MatrixDims[3]
+    MatrixDims* layer_dims = new MatrixDims[3];
 
     // Simple test network
     // layer_dims[0] = MatrixDims(100, 100);
@@ -25,13 +25,14 @@ int main()
     layer_dims[2] = MatrixDims(200, 10);
 
     float** mat_weights = new float*[3];
-    string load_path = {"./data/data/linear_0.weight.npy", "./data/data/linear_1.weight.npy", "./data/data/linear_2.weight.npy"};
+    string load_path[] = {"./data/data/linear_0.weight.npy", "./data/data/linear_1.weight.npy", "./data/data/linear_2.weight.npy"};
 
     for (int i = 0; i < 3; i++){
         mat_weights[i] = new float[layer_dims[i].nRows * layer_dims[i].nCols];
         cnpy::NpyArray arr = cnpy::npy_load(load_path[i]);
         mat_weights[i] = arr.data<float>();
     }
-
-    MLP network = MLP(3, layer_dims, 2, 2, mat_weights);
+    uint32_t num_devices = 2;
+    uint32_t num_layers = 3;
+    MLP network(num_layers, layer_dims, num_devices, mat_weights);
 }
