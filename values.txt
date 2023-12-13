@@ -127,3 +127,123 @@ Time taken for single GPU = 1791.958740
 Distributed matmul with async overlapping
 Elasped time on GPU 0: 1790.228516 ms
 Elasped time on GPU 1: 1889.017334 ms
+
+---------------------------------------------
+Distributed matmul with managed memory
+Params for testing:
+nRowsA=32, nColsA=32, nColsA=96 num_gpus=2
+Launching 8 blocks of 1024 threads each
+Time taken for single GPU = 0.011264
+Launching 4 blocks of 1024 threads each
+Launching 4 blocks of 1024 threads each
+Elapsed time on device 0: 0.027648 ms
+Elapsed time on device 1: 0.471040 ms
+---------------------------------------------
+Distributed matmul with manually allocated memory
+Elapsed time on device 0: 0.370849 ms
+Elapsed time on device 1: 0.113470 ms
+Launching 8 blocks of 1024 threads each
+Time taken for single GPU = 0.010240
+----------------------------------------
+Distributed matmul with async overlapping
+Launching 4 blocks of 1024 threads each
+Launching 4 blocks of 1024 threads each
+Elasped time on GPU 0: 0.025600 ms
+Elasped time on GPU 1: 0.018688 ms
+Matmul First value output: 32.000000
+ Middle value output: 32.000000
+ Last value output: 32.000000
+root@69826f4019a0:/fly# bash timming.sh
+----------------------------------------
+Distributed matmul with async overlapping
+Launching 4 blocks of 1024 threads each
+Launching 4 blocks of 1024 threads each
+Elasped time on GPU 0: 0.027648 ms
+Elasped time on GPU 1: 0.019584 ms
+Matmul First value output: 32.000000
+ Middle value output: 32.000000
+ Last value output: 32.000000
+----------------------------------------
+Distributed matmul with async overlapping
+Launching 9 blocks of 1024 threads each
+Launching 9 blocks of 1024 threads each
+Elasped time on GPU 0: 0.040960 ms
+Elasped time on GPU 1: 0.025088 ms
+Matmul First value output: 64.000000
+ Middle value output: 64.000000
+ Last value output: 64.000000
+----------------------------------------
+Distributed matmul with async overlapping
+Launching 25 blocks of 1024 threads each
+Launching 25 blocks of 1024 threads each
+Elasped time on GPU 0: 0.035840 ms
+Elasped time on GPU 1: 0.025728 ms
+Matmul First value output: 128.000000
+ Middle value output: 128.000000
+ Last value output: 128.000000
+----------------------------------------
+Distributed matmul with async overlapping
+Launching 81 blocks of 1024 threads each
+Launching 81 blocks of 1024 threads each
+Elasped time on GPU 0: 0.058368 ms
+Elasped time on GPU 1: 0.046720 ms
+Matmul First value output: 256.000000
+ Middle value output: 256.000000
+ Last value output: 256.000000
+----------------------------------------
+Distributed matmul with async overlapping
+Launching 289 blocks of 1024 threads each
+Launching 289 blocks of 1024 threads each
+Elasped time on GPU 0: 0.133120 ms
+Elasped time on GPU 1: 0.142368 ms
+Matmul First value output: 512.000000
+ Middle value output: 512.000000
+ Last value output: 512.000000
+----------------------------------------
+Distributed matmul with async overlapping
+Launching 1089 blocks of 1024 threads each
+Launching 1089 blocks of 1024 threads each
+Elasped time on GPU 0: 0.875520 ms
+Elasped time on GPU 1: 0.886112 ms
+Matmul First value output: 1024.000000
+ Middle value output: 1024.000000
+ Last value output: 1024.000000
+----------------------------------------
+Distributed matmul with async overlapping
+Launching 4225 blocks of 1024 threads each
+Launching 4225 blocks of 1024 threads each
+Elasped time on GPU 0: 6.257664 ms
+Elasped time on GPU 1: 6.267264 ms
+Matmul First value output: 2048.000000
+ Middle value output: 2048.000000
+ Last value output: 2048.000000
+----------------------------------------
+Distributed matmul with async overlapping
+Launching 16641 blocks of 1024 threads each
+Launching 16641 blocks of 1024 threads each
+Elasped time on GPU 0: 27.486208 ms
+Elasped time on GPU 1: 49.505791 ms
+Matmul First value output: 4096.000000
+ Middle value output: 4096.000000
+ Last value output: 4096.000000
+----------------------------------------
+Distributed matmul with async overlapping
+Launching 66049 blocks of 1024 threads each
+Launching 66049 blocks of 1024 threads each
+Elasped time on GPU 0: 225.467392 ms
+Elasped time on GPU 1: 322.628235 ms
+Matmul First value output: 8192.000000
+ Middle value output: 8192.000000
+ Last value output: 8192.000000
+----------------------------------------
+Distributed matmul with async overlapping
+Launching 263169 blocks of 1024 threads each
+Launching 263169 blocks of 1024 threads each
+Elasped time on GPU 0: 1795.524658 ms
+Elasped time on GPU 1: 1859.319702 ms
+Matmul First value output: 16384.000000
+ Middle value output: 16384.000000
+ Last value output: 16384.000000
+----------------------------------------
+Distributed matmul with async overlapping
+CUDA Runtime Error at: test_async.cu:52
