@@ -15,6 +15,7 @@
 using namespace std;
 
 int main(int argc, char** argv){
+    printf("----------------------------------------\n")
     printf("Distributed matmul with managed memory\n");
     if (argc != 3){
         printf("Usage: ./t <matrix size> <num_gpus>\n");

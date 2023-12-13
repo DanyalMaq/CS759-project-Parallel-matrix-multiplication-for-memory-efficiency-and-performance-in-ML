@@ -17,6 +17,7 @@
 using namespace std;
 
 int main(int argc, char** argv){
+    printf("----------------------------------------\n");
     printf("Distributed matmul with async overlapping\n");
     if (argc != 3){
         printf("Usage: %s <matrix size> <num_gpus>\n", argv[0]);
@@ -33,15 +34,14 @@ int main(int argc, char** argv){
         return 0;    
     }
 
-    /////////////////// hardcode params for testing ///////////////////
     int nRowsA = n, nColsA = n, nColsB = n; // test square matrices for now
     int matrix_size = num_gpus * nRowsA * nColsA; // Total size of matrix
     int chunk_size = matrix_size / num_gpus; // Chunk going on each GPU
     int def_device = 0; // default device
     
     cudaStream_t def_stream = nullptr; // device-wide default stream
-    printf("n = %d, num_gpus = %d\n", n, num_gpus);
-    printf("Per-device chunk size: %d * %d = %d\n", nRowsA, nColsA, chunk_size);
+    // printf("n = %d, num_gpus = %d\n", n, num_gpus);
+    // printf("Per-device chunk size: %d * %d = %d\n", nRowsA, nColsA, chunk_size);
 
     // Set up operands and result buffers on device 0 
     float* defaultArrA;
@@ -80,9 +80,9 @@ int main(int argc, char** argv){
         // alloc chunks on each GPU
         if (i != 0){
             // async malloc for overlapping computation
-            cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), def_stream);
-            cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), def_stream);
-            cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), def_stream);
+            CHECK_CUDA_ERROR(cudaMallocAsync((void**)&deviceArraysA[i - 1], chunk_size * sizeof(float), def_stream));
+            CHECK_CUDA_ERROR(cudaMallocAsync((void**)&deviceArraysB[i - 1], chunk_size * sizeof(float), def_stream));
+            CHECK_CUDA_ERROR(cudaMallocAsync((void**)&deviceArraysC[i - 1], chunk_size * sizeof(float), def_stream));
         }
  
     }
@@ -90,6 +90,8 @@ int main(int argc, char** argv){
     // Copy chunks to each GPU
     for (int i = 1; i < num_gpus; ++i) {
         int start = i * chunk_size;
+        cudaSetDevice(i);
+        // CHECK_CUDA_ERROR(cudaEventRecord(start_events[i], def_stream)); // Time both the kernel and memcpy
         CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + start), def_device, chunk_size * sizeof(float), def_stream));
         CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + start), def_device, chunk_size * sizeof(float), def_stream));
         // cudaStreamSynchronize(def_stream);
@@ -102,19 +104,15 @@ int main(int argc, char** argv){
 
         if (i == 0){
             matmul(defaultArrA, defaultArrB, defaultArrC,
-                    nRowsA, nColsA, nColsB,
-                    start_events[i], end_events[i]
-                );
+                    nRowsA, nColsA, nColsB, start_events[i], end_events[i], def_stream);
         }
         else{
             matmul(deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1],
-                    nRowsA, nColsA, nColsB,
-                    start_events[i], end_events[i]
-                );
+                    nRowsA, nColsA, nColsB,  start_events[i], end_events[i], def_stream);
             // all-gather to default device
             CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(defaultArrC + start, def_device, deviceArraysC[i - 1], i, chunk_size * sizeof(float), def_stream));
         }
-            
+        // CHECK_CUDA_ERROR(cudaEventRecord(end_events[i], 0));    
     }
  
     // wait for results
@@ -122,7 +120,6 @@ int main(int argc, char** argv){
     for (int i = 0; i < num_gpus; ++i) {
         cudaSetDevice(i);
         cudaStreamSynchronize(0);
-        
         cudaEventElapsedTime(&time, start_events[i], end_events[i]);
         printf("Elasped time on GPU %d: %f ms\n", i, time);
     }

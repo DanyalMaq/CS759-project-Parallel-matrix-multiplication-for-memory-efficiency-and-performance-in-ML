@@ -15,6 +15,7 @@ using std::chrono::high_resolution_clock;
 using std::chrono::duration;
 
 int main(int argc, char** argv) {
+    printf("---------------------------------------------\n");
     printf("Distributed matmul with managed memory\n");
     if (argc != 5){
         printf("Usage: ./t <nRowsA> <nColsA> <nColsB> <num_gpus>\n");
@@ -90,12 +91,11 @@ int main(int argc, char** argv) {
     printf("Time taken for single GPU = %f\n", ms_single);
 
     ////////////////////// Splitting one matrix (the first one) /////////////////////////
-    printf("---------------------------------------------\n");
-    printf("Splitting one matrix (the first one)\n");
-    int nRowsA_per_GPU = (nRowsA + num_gpus - 1)/num_gpus;
-    int lastnRowsA = nRowsA - nRowsA_per_GPU*(num_gpus-1);
-    lastnRowsA = (lastnRowsA <= 0 ? nRowsA_per_GPU : lastnRowsA);
-    printf("nRowsA_per_GPU=%d, lastnRowsA=%d\n", nRowsA_per_GPU, lastnRowsA);
+    // printf("---------------------------------------------\n");
+    // printf("Splitting one matrix (the first one)\n");
+    int nRowsA_per_GPU = nRowsA / num_gpus;
+    int lastnRowsA = (nRowsA % num_gpus == 0) ? nRowsA_per_GPU : nRowsA_per_GPU + nRowsA % num_gpus;
+    // printf("nRowsA_per_GPU=%d, lastnRowsA=%d\n", nRowsA_per_GPU, lastnRowsA);
     // int nColsB_per_GPU = (nColsB + num_gpus - 1)/num_gpus;
 
     // Launch kernel on each GPU with appropriate configurations
@@ -141,7 +141,7 @@ int main(int argc, char** argv) {
     duration_sec = std::chrono::duration_cast<duration<double, std::milli>>(end_cpu - start_cpu);
     double ms_multiple_cpu = duration_sec.count(); 
 
-    printf("\nMatrix sizes %d x %d and %d x %d\n", nRowsA, nColsA, nColsA, nColsB);
+    // printf("\nMatrix sizes %d x %d and %d x %d\n", nRowsA, nColsA, nColsA, nColsB);
     // Get time taken by each GPU
     for(int i = 0; i < num_gpus; i++)
     {
@@ -150,8 +150,8 @@ int main(int argc, char** argv) {
         printf("Elapsed time on device %d: %f ms\n", i, time_in_ms);
     }
 
-    printf("Time taken for single GPU using CPU time = %lf\n", ms_single_cpu);
-    printf("Time taken for %d GPUs using CPU time = %lf\n", num_gpus, ms_multiple_cpu);
+    // printf("Time taken for single GPU using CPU time = %lf\n", ms_single_cpu);
+    // printf("Time taken for %d GPUs using CPU time = %lf\n", num_gpus, ms_multiple_cpu);
     
     //Print the result
     // printf("\nA\n");
@@ -160,9 +160,9 @@ int main(int argc, char** argv) {
     // printMatrix(defaultArrB, nColsA, nColsB);
     // printf("\nC\n");
     // printMatrix(defaultArrC, nRowsA, nColsB);
-    printf("---------------------------------------------\n");
-    printf("First value output: %f\nMiddle value output: %f\n", defaultArrC[0], defaultArrC[matrix_size_C/2-1]);
-    printf("Last value output: %f\n", defaultArrC[matrix_size_C - 1]);
+    // printf("---------------------------------------------\n");
+    // printf("First value output: %f\nMiddle value output: %f\n", defaultArrC[0], defaultArrC[matrix_size_C/2-1]);
+    // printf("Last value output: %f\n", defaultArrC[matrix_size_C - 1]);
 
      
 

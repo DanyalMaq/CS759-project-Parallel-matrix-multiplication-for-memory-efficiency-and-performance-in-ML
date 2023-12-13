@@ -4,10 +4,10 @@
 
 # Just make so you don't recompile every time
 make 
-for ((power = 5; power <= 11; power++)); do
+for ((power = 5; power <= 15; power++)); do
     argument=$((2**power))
-    argumentwo=$((3**power))
+    argumentwo=$((3*$argument))
     ./managed $argument $argument $argumentwo 2
     ./manual $argument $argument $argumentwo 2
-    # ./async $argument 2
+    ./async $argument 2
 done
