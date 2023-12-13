@@ -80,11 +80,11 @@ int main(int argc, char** argv){
     
         if (i == 0)
         {
-            matmul(defaultArrA, defaultArrB, defaultArrC, nRowsA, nColsA, nColsB, nullptr);
+            matmul(defaultArrA, defaultArrB, defaultArrC, nRowsA, nColsA, nColsB, static_cast<cudaStream_t>(nullptr));
         }
         else
         {
-            matmul((defaultArrA+start), (defaultArrB+start), (defaultArrC+start), nRowsA, nColsA, nColsB, nullptr);
+            matmul((defaultArrA+start), (defaultArrB+start), (defaultArrC+start), nRowsA, nColsA, nColsB, static_cast<cudaStream_t>(nullptr));
         }
     }
  
