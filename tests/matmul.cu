@@ -187,7 +187,6 @@ __global__ void matmul_rect_softmax(float *A, float *B, float *C,
     }
 }
 
-
 __host__ void matmul(float *A, float *B, float *C,
                     int nRowsA, int nColsA, int nColsB, 
                     cudaEvent_t start, cudaEvent_t stop, cudaStream_t stream)

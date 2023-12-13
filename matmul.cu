@@ -126,7 +126,6 @@ __global__ void matmul_rect_relu_(float *A, float *B, float *C,
     }
     if (rowBeginA < nRowsA && colBeginB < nColsB) {
         C[rowBeginA * nColsB + colBeginB] = relu(Ctile);
-        // printf("C[%d][%d] = %.1f\n", nRowsA, nColsB, C[rowBeginA * nColsB + colBeginB]);
     }
 }
     
@@ -189,7 +188,7 @@ __global__ void matmul_rect_softmax_(float *A, float *B, float *C,
 
 ///////////////////// Kernel wrappers ///////////////////////
 __host__ void matmul_rect_relu(float *A, float *B, float *C,
-                                int nRowsA, int nColsA, int nColsB, cudaStream_t stream = nullptr){
+                                int nRowsA, int nColsA, int nColsB, cudaStream_t stream){
     dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);
     dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);
     matmul_rect_relu_<<<dimGrid, dimBlock, 0, stream>>>(A, B, C, nRowsA, nColsA, nColsB);
@@ -197,7 +196,7 @@ __host__ void matmul_rect_relu(float *A, float *B, float *C,
 }
 
 __host__ void matmul_rect_softmax(float *A, float *B, float *C,
-                                int nRowsA, int nColsA, int nColsB, cudaStream_t stream = nullptr){
+                                int nRowsA, int nColsA, int nColsB, cudaStream_t stream){
     dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);
     dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);
     matmul_rect_softmax_<<<dimGrid, dimBlock, 0, stream>>>(A, B, C, nRowsA, nColsA, nColsB);
@@ -212,14 +211,12 @@ __host__ void matmul(float *A, float *B, float *C,
     dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);
     printf("Launching %d blocks of %d threads each\n", dimGrid.x * dimGrid.y, dimBlock.x * dimBlock.y);
     
-    // cudaStreamSynchronize(stream);
     // run and time the kernel 
     cudaEventRecord(start, stream);
     matmul_rect<<<dimGrid, dimBlock, 0, stream>>>(A, B, C, nRowsA, nColsA, nColsB);
-    cudaEventRecord(stop, stream);
     kernel_err_check();
+    cudaEventRecord(stop, stream);
 }
-
 // function overload ? No timing version
 __host__ void matmul(float* A, float* B, float* C,
                     int nRowsA, int nColsA, int nColsB, cudaStream_t stream)
@@ -246,6 +243,7 @@ void transpose(float *output, const float *input, int nRows, int nCols) {
                 input, nRows, &b, nullptr, nRows,
                 output, nRows);
 }
+
 
 // Get the the specified columns of a matrix
 void columns(float *output, const float *input, int rows, int columns, int start_col, int end_col) {

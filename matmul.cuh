@@ -2,6 +2,8 @@
 
 # pragma once
 #include <iostream>
+#include <cub/cub.cuh>
+
 using namespace std;
 
 
@@ -23,11 +25,11 @@ __host__ __device__ __forceinline__ float relu(float val);
 
 const unsigned int TILE_WIDTH = 32; // Tile size of shared memory
 
-__global__ void matmul_rect_softmax(float *A, float *B, float *C,
+__host__ void matmul_rect_softmax(float *A, float *B, float *C,
                                      int nRowsA, int nColsA, int nColsB, cudaStream_t stream = nullptr);
-__global__ void matmul_rect_relu(float *A, float *B, float *C,
+__host__ void matmul_rect_relu(float *A, float *B, float *C,
                                      int nRowsA, int nColsA, int nColsB, cudaStream_t stream = nullptr);
-                                    
+
 __host__ void matmul(float *A, float *B, float *C,
                     int nRowsA, int nColsA, int nColsB, 
                     cudaEvent_t start = nullptr, cudaEvent_t stop = nullptr, cudaStream_t stream = nullptr);
@@ -54,5 +56,7 @@ __host__ void transpose(float *output, const float *input, int nRows, int nCols)
 
 // Get the the specified columns of a matrix
 void columns(float *output, const float *input, int rows, int columns, int start_col, int end_col);
+
+
 
 

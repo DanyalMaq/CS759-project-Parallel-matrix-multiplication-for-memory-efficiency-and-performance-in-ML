@@ -74,7 +74,6 @@ int main(int argc, char** argv){
     for (int i = 0; i < num_gpus; ++i) {
         cudaSetDevice(i);
         
-        
         // create events for timing
         cudaEventCreate(&start_events[i]);
         cudaEventCreate(&end_events[i]);
@@ -102,18 +101,12 @@ int main(int argc, char** argv){
         int start = i * chunk_size;
 
         if (i == 0){
-            // matmul_rect<<<matmulGrid, matmulBlock>>>(
-            //     defaultArrA, defaultArrB, defaultArrC, nRowsA, nColsA, nColsB
-            // );
             matmul(defaultArrA, defaultArrB, defaultArrC,
                     nRowsA, nColsA, nColsB,
                     start_events[i], end_events[i]
                 );
         }
         else{
-            // matmul_rect<<<matmulGrid, matmulBlock>>>(
-            //     deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1], nRowsA, nColsA, nColsB
-            // );
             matmul(deviceArraysA[i - 1], deviceArraysB[i - 1], deviceArraysC[i - 1],
                     nRowsA, nColsA, nColsB,
                     start_events[i], end_events[i]
