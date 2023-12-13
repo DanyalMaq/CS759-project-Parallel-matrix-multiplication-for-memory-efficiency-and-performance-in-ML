@@ -100,21 +100,21 @@ int main(int argc, char** argv) {
     {
         cudaSetDevice(i);
         matmul(devA[i], devB[i], devC[i],
-            nRowsA_per_GPU, nColsA, nColsB, static_cast<cudaStream_t>(0));
-        CHECK_CUDA_ERROR(cudaEventRecord(end_events[i])); // End timing
+            nRowsA_per_GPU, nColsA, nColsB, start_events[i], end_events[i]);
+        // CHECK_CUDA_ERROR(cudaEventRecord(end_events[i])); // End timing
     }
     for (int i = 0; i < num_gpus; ++i) {
         CHECK_CUDA_ERROR(cudaSetDevice(i));
-        // CHECK_CUDA_ERROR(cudaEventSynchronize(end_events[i]));
+        CHECK_CUDA_ERROR(cudaEventSynchronize(end_events[i]));
         CHECK_CUDA_ERROR(cudaStreamSynchronize(0));
     }
     // Get time taken by each GPU
     for(int i = 0; i < num_gpus; i++)
     {
         float time_in_ms;
-        // CHECK_CUDA_ERROR(cudaEventElapsedTime(&time_in_ms, start_events[i], end_events[i]));
-        end_cpus[i] = high_resolution_clock::now();
-        time_in_ms = duration_cast<duration<double, std::milli>>(end_cpus[i] - start_cpus[i]).count();
+        CHECK_CUDA_ERROR(cudaEventElapsedTime(&time_in_ms, start_events[i], end_events[i]));
+        // end_cpus[i] = high_resolution_clock::now();
+        // time_in_ms = duration_cast<duration<double, std::milli>>(end_cpus[i] - start_cpus[i]).count();
         printf("Elapsed time on device %d: %f ms\n", i, time_in_ms);
     }
 
@@ -154,8 +154,6 @@ int main(int argc, char** argv) {
         start, stop
         );
     cudaEventSynchronize(stop);
-    cudaDeviceSynchronize();
-
     cudaMemcpy(hostC, devCFull, matrix_size_C * sizeof(float), cudaMemcpyDeviceToHost);
 
     float ms_single;

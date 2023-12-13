@@ -7,7 +7,8 @@ make
 for ((power = 5; power <= 15; power++)); do
     argument=$((2**power))
     argumentwo=$((3*$argument))
-    ./managed $argument $argument $argumentwo 2
-    ./manual $argument $argument $argumentwo 2
+    ./managed $argument $argument $argument 2
+    ./manual $argument $argument $argument 2
     ./async $argument 2
+    # echo -e "\n\n"
 done

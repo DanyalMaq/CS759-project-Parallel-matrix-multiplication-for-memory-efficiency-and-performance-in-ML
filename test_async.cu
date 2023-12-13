@@ -119,7 +119,7 @@ int main(int argc, char** argv){
     float time = 0.0f;
     for (int i = 0; i < num_gpus; ++i) {
         cudaSetDevice(i);
-        cudaStreamSynchronize(0);
+        cudaStreamSynchronize(def_stream);
         cudaEventElapsedTime(&time, start_events[i], end_events[i]);
         printf("Elasped time on GPU %d: %f ms\n", i, time);
     }

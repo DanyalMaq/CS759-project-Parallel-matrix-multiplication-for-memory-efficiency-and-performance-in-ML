@@ -16,8 +16,8 @@ all: async managed manual
 # test_time: test_time.cu matmul.cu matmul.cuh utils.cuh
 #	 $(NVCC) test_time.cu matmul.cu $(NVCC_FLAGS) $(LIBS) -o ./test_time
 
-# test_mlp: test_mlp.cu matmul.cu matmul.cuh utils.cuh network.cuh
-#	 $(NVCC) test_mlp.cu matmul.cu $(NVCC_FLAGS) $(LIBS) -o ./test_mlp
+test_mlp: test_mlp.cu matmul.cu matmul.cuh utils.cuh network.cuh
+	 $(NVCC) test_mlp.cu matmul.cu $(NVCC_FLAGS) $(LIBS) -o ./test_mlp
 # Clean rule
 clean:
 	rm -f t t2 

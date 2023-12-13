@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
     // wait for results
     for (int i = 0; i < num_gpus; ++i) {
         cudaSetDevice(i);
-        cudaDeviceSynchronize();
+        cudaStreamSynchronize(0);
     }
 
     end_cpu = high_resolution_clock::now();

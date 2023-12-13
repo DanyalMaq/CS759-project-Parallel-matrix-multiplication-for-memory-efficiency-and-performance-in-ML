@@ -356,7 +356,7 @@ public:
                     device_data[dev].emplace_back(nRows, nCols, (*src_data)[j].data + offset, (*src_data)[j].layout, stream, dev);
                     
                     if (device_data[dev][j].layout == CM)
-                        device_data[dev][j].T() // Transpose back the scattered weight to row-major 
+                        device_data[dev][j].T(); // Transpose back the scattered weight to row-major 
 
                 // No data, just allocate
                 } else {
@@ -466,7 +466,7 @@ public:
     }
 
 
-    void reduce_activations(int layer){
+    void reduce_activations(int layer, bool all_reduce=false){
         // Save device context
         int context;
         cudaGetDevice(&context);
@@ -479,8 +479,10 @@ public:
             const void* send_buff = (const void*)dev_activations[0][layer].data;
             void* recv_buff = (void*)dev_activations[dev][layer].data;
             uint32_t size = dev_activations[dev][layer].nRows * dev_activations[dev][layer].nCols;
-
-            NCCLCHECK(ncclReduce(send_buff, recv_buff, size, ncclFloat, ncclSum, nccl_comm[dev], nccl_streams[dev]));
+            if (all_reduce)
+                NCCLCHECK(ncclAllReduce(send_buff, recv_buff, size, ncclFloat, ncclSum, nccl_comm[dev], nccl_streams[dev]));
+            else
+                NCCLCHECK(ncclReduce(send_buff, recv_buff, size, ncclFloat, ncclSum, nccl_comm[dev], nccl_streams[dev]));
         }
 
         // Sync and wait for reduction results
