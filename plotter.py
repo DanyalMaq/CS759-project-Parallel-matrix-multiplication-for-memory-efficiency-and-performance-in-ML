@@ -26,28 +26,38 @@ manual_single = [n[0] for n in manual]
 manual_multi = [n[1] for n in manual]
 
 # PLots Times
-# plt.plot(x, managed_single, marker='o', linestyle='-', color='blue', label='Managed (Single GPU)')
-# plt.plot(x, managed_multi, marker='o', linestyle='--', color='blue', label='Managed (max time on a GPU)')
-# plt.plot(x, manual_single, marker='s', linestyle='-', color='green', label='Manual (Single GPU)')
-# plt.plot(x, manual_multi, marker='s', linestyle='--', color='green', label='Manual (max time on a GPU)')
-# plt.plot(x, asy, marker='^', linestyle='--', color='red', label='Async (max time on a GPU)')
+plt.plot(x, managed_single, marker='o', linestyle='-', color='blue', label='Managed (Single GPU)')
+plt.plot(x, managed_multi, marker='o', linestyle='--', color='blue', label='Managed (max time on a GPU)')
+plt.plot(x, manual_single, marker='s', linestyle='-', color='green', label='Manual (Single GPU)')
+plt.plot(x, manual_multi, marker='s', linestyle='--', color='green', label='Manual (max time on a GPU)')
+plt.plot(x, asy, marker='^', linestyle='--', color='red', label='Async (max time on a GPU)')
 
-# plt.xlabel('Powers of 2')
-# plt.ylabel('Logarithmic time (ms)')
-# plt.title('Matmul performance with\n Managed, Manual, and Asynchronously allocated Arrays')
-# plt.xscale('log', base=2) 
-# plt.yscale('log', base=10)
-# plt.legend()
-
-# plt.savefig("results.png")
-
-# Plots increasing GPUs
-plt.plot([2, 3, 4], [112.67, 119, 116], marker='s', linestyle='-', color='blue', label='Time taken on a single GPU')
-plt.plot([2, 3, 4], [62.3, 41.3, 31.66], marker='o', linestyle='--', color='green', label='Max time on a GPU among multiple GPUs')
-
-plt.xlabel('Number of GPUs')
-plt.ylabel('Time (ms)')
-plt.title('Matmul performance with multiple GPUs')
+plt.xlabel('Array size (Powers of 2)')
+plt.ylabel('Logarithmic time (ms)')
+plt.title('Matmul performance with\n Managed, Manual, and Asynchronously allocated Arrays')
+plt.xscale('log', base=2) 
+plt.yscale('log', base=2)
 plt.legend()
 
-plt.savefig("all_gpu.png")
+plt.savefig("results.png")
+
+# # Plots increasing GPUs
+# plt.plot([2, 3, 4], [112.67, 119, 116], marker='s', linestyle='-', color='blue', label='Time taken on a single GPU')
+# plt.plot([2, 3, 4], [62.3, 41.3, 31.66], marker='o', linestyle='--', color='green', label='Max time on a GPU among multiple GPUs')
+
+# plt.xlabel('Number of GPUs')
+# plt.ylabel('Time (ms)')
+# plt.title('Matmul performance with multiple GPUs')
+# plt.legend()
+
+# plt.savefig("all_gpu.png")
+
+# print(manual_single)
+# print(manual_multi)
+
+# def flops(nRowsA, nColsA, nColsB, time):
+#     return ((2.0 * nRowsA * nColsA * nColsB) * 1000) / time
+
+# for xval, s, m in zip(x, manual_single, manual_multi):
+# 	print(f"Single GPU: {round(flops(xval, xval, xval, s)/1000000000, 3)} GFLOPS/s for square matrices of size {xval} x {xval}")
+# 	print(f"Multi-GPU {round(flops(xval, xval, xval, m)/1000000000, 3)} GFLOPS/s for square matrices of size {xval} x {xval}")
