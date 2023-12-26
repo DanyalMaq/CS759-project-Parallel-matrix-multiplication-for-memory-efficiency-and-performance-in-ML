@@ -6,8 +6,8 @@
 #include <string>
 #include <ctime>
 #include <chrono>
-#include "matmul.cuh"
-#include "utils.cuh"
+#include "include/matmul.cuh"
+#include "include/utils.cuh"
 using namespace std;
 
 using std::cout;
@@ -26,7 +26,6 @@ int main(int argc, char** argv) {
     int nRowsA = std::stoi(argv[1]);
     int nColsA = std::stoi(argv[2]);
     int nColsB = std::stoi(argv[3]);
-    int threads_per_block = 1024;
     int num_gpus = stoi(argv[4]);
 
     high_resolution_clock::time_point start_cpu;
@@ -59,7 +58,6 @@ int main(int argc, char** argv) {
     // printf("Running only using manually allocated memory\n");
     int nRowsA_per_GPU = nRowsA / num_gpus;
     int lastnRowsA = (nRowsA % num_gpus == 0) ? nRowsA_per_GPU : nRowsA_per_GPU + nRowsA % num_gpus;
-    // printf("nRowsA_per_GPU=%d, lastnRowsA=%d, nColsA=%d\n", nRowsA_per_GPU, lastnRowsA, nColsA);
 
     float* hostA = new float[matrix_size_A];
     float* hostB = new float[matrix_size_B];

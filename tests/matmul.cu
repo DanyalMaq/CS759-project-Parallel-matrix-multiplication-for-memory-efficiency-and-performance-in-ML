@@ -1,4 +1,4 @@
-#include "matmul.cuh"
+#include "../include/matmul.cuh"
 #include <cuda.h>
 #include <stdio.h>
 #include <iostream>

@@ -129,62 +129,6 @@ __global__ void matmul_rect_relu_(float *A, float *B, float *C,
     }
 }
     
-__global__ void matmul_rect_softmax_(float *A, float *B, float *C,
-                                     int nRowsA, int nColsA, int nColsB
-                                    ) {
-    __shared__ float sA[TILE_WIDTH][TILE_WIDTH];   // Tile size of 32x32
-    __shared__ float sB[TILE_WIDTH][TILE_WIDTH];
-    __shared__ float rowSum[TILE_WIDTH];
-    int bx = blockIdx.x;
-    int by = blockIdx.y;
-    int tx = threadIdx.x;
-    int ty = threadIdx.y;
-    
-    int nRowsB = nColsA;
-    int rowBeginA = by * TILE_WIDTH + ty;
-    int colBeginB = bx * TILE_WIDTH + tx;
-
-    float Ctile = 0.0;
-
-    // stride over the tiles along columns of A and rows of B
-    for (int step = 0; step < nColsA; step += TILE_WIDTH) {
-        // load A's tiles into shared memory
-        if (rowBeginA < nRowsA && tx + step < nColsA)
-            sA[ty][tx] = A[rowBeginA * nColsA + tx + step];
-        else
-            sA[ty][tx] = 0.0;
-        // load B's tiles into shared memory
-        if (colBeginB < nColsB && ty + step < nRowsB)
-            sB[ty][tx] = B[(ty + step) * nColsB + colBeginB];
-        else
-            sB[ty][tx] = 0.0;
-
-        __syncthreads();
-
-        for (int j = 0; j < TILE_WIDTH; ++j) {
-            Ctile += sA[ty][j] * sB[j][tx];
-        }
-
-        __syncthreads();
-    }
-    // if (rowBeginA < nRowsA && colBeginB < nColsB) {
-        // C[rowBeginA * nColsB + colBeginB] = Ctile;
-    // }
-
-    // Softmax
-    __shared__ float rowVals[TILE_WIDTH];
-    if (rowBeginA < nRowsA && colBeginB < nColsB) {
-        rowVals[tx] = Ctile;
-    }else{
-        rowVals[tx] = 0.0;
-    }
-    __syncthreads();
-
-    float softmax_val = naive_softmax(rowVals, tx, nColsB);
-    if (rowBeginA < nRowsA && colBeginB < nColsB) {
-        C[rowBeginA * nColsB + colBeginB] = softmax_val;
-    }
-}
 
 ///////////////////// Kernel wrappers ///////////////////////
 __host__ void matmul_rect_relu(float *A, float *B, float *C,
@@ -192,14 +136,6 @@ __host__ void matmul_rect_relu(float *A, float *B, float *C,
     dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);
     dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);
     matmul_rect_relu_<<<dimGrid, dimBlock, 0, stream>>>(A, B, C, nRowsA, nColsA, nColsB);
-    kernel_err_check();
-}
-
-__host__ void matmul_rect_softmax(float *A, float *B, float *C,
-                                int nRowsA, int nColsA, int nColsB, cudaStream_t stream){
-    dim3 dimBlock(TILE_WIDTH, TILE_WIDTH);
-    dim3 dimGrid((nColsB / TILE_WIDTH) + 1, (nRowsA / TILE_WIDTH) + 1);
-    matmul_rect_softmax_<<<dimGrid, dimBlock, 0, stream>>>(A, B, C, nRowsA, nColsA, nColsB);
     kernel_err_check();
 }
 

@@ -1,9 +1,0 @@
-/fly/build_cnpy/CMakeFiles/cnpy.dir
-/fly/build_cnpy/CMakeFiles/cnpy-static.dir
-/fly/build_cnpy/CMakeFiles/example1.dir
-/fly/build_cnpy/CMakeFiles/edit_cache.dir
-/fly/build_cnpy/CMakeFiles/rebuild_cache.dir
-/fly/build_cnpy/CMakeFiles/list_install_components.dir
-/fly/build_cnpy/CMakeFiles/install.dir
-/fly/build_cnpy/CMakeFiles/install/local.dir
-/fly/build_cnpy/CMakeFiles/install/strip.dir

@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include "matmul.cuh"
-#include "utils.cuh"
+#include "include/matmul.cuh"
+#include "include/utils.cuh"
 #include<complex>
-#include "network.cuh"
+#include "include/network.cuh"
 #include "cnpy.h"
 
 int main()
@@ -32,7 +32,10 @@ int main()
         cnpy::NpyArray arr = cnpy::npy_load(load_path[i]);
         mat_weights[i] = arr.data<float>();
     }
+    
     uint32_t num_devices = 2;
     uint32_t num_layers = 3;
+    uint32_t batch_size = 32;
     MLP network(num_layers, layer_dims, num_devices, mat_weights);
+    network.enable_tp(batch_size);
 }

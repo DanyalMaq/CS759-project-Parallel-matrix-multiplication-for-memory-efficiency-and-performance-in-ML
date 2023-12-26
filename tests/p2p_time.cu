@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include "matmul.cuh"
-#include "../utils.cuh"
-#include "../network.cuh"
+#include "../include/matmul.cuh"
+#include "../include/utils.cuh"
+#include "../include/network.cuh"
 using namespace std;
 
 __global__ void test_memory(volatile float* arr, int n){
@@ -21,7 +21,7 @@ int main(int argc, char** argv){
     /////////////////// hardcode params for testing ///////////////////
     int num_gpus = 2, n = 16384; // 2^14 * 2^14 matrix
     int th_per_block = 1024;
-    int nRowsA = n, nColsA = n, nColsB = n; // test square matrices for now
+    int nRowsA = n, nColsA = n; // test square matrices for now
     int matrix_size = num_gpus * nRowsA * nColsA; // Total size of matrix
 
     printf("Hardcoding params for testing\n");

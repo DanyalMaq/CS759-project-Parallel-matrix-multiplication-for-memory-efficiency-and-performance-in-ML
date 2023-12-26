@@ -25,8 +25,6 @@ __host__ __device__ __forceinline__ float relu(float val);
 
 const unsigned int TILE_WIDTH = 32; // Tile size of shared memory
 
-__host__ void matmul_rect_softmax(float *A, float *B, float *C,
-                                     int nRowsA, int nColsA, int nColsB, cudaStream_t stream = nullptr);
 __host__ void matmul_rect_relu(float *A, float *B, float *C,
                                      int nRowsA, int nColsA, int nColsB, cudaStream_t stream = nullptr);
 

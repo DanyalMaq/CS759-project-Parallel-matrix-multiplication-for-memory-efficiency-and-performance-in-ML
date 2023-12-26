@@ -9,8 +9,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include "matmul.cuh"
-#include "utils.cuh"
+#include "include/matmul.cuh"
+#include "include/utils.cuh"
 #include <string>
 #include <cublas_v2.h>
 

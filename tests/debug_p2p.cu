@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include "../matmul.cuh"
-#include "../utils.cuh"
+#include "../include/matmul.cuh"
+#include "../include/utils.cuh"
 using namespace std;
 
 void __global__ check_matrix(float* A, int matrix_size){
@@ -20,7 +20,7 @@ int main(int argc, char** argv){
     /////////////////// hardcode params for testing ///////////////////
     int num_gpus = 3, n = 32;
     int th_per_block = 1024;
-    int nRowsA = n, nColsA = n, nColsB = n; // test square matrices for now
+    int nRowsA = n, nColsA = n; // test square matrices for now
     int matrix_size = num_gpus * nRowsA * nColsA; // Total size of matrix
     int chunk_size = matrix_size / num_gpus; // Chunk going on each GPU
 
@@ -54,9 +54,7 @@ int main(int argc, char** argv){
     // randomly init and rescale the array on GPU
     cudaDeviceSynchronize();
     // printf("First value input: %f\nLast value input: %f\n", defaultArrA[0], defaultArrA[matrix_size-1]);
-    
-    cudaStream_t streams[num_gpus]; // Create a stream for each GPU for overlapping
-    cudaEvent_t mem_events[num_gpus]; // For malloc
+
     float* deviceArraysA[num_gpus - 1];
     float* deviceArraysB[num_gpus - 1];
     float* deviceArraysC[num_gpus - 1];
@@ -76,7 +74,6 @@ int main(int argc, char** argv){
     // TODO: malloc only one chunk on device 0; use as buffer for all others
     // cudaSetDevice(0);
     for (int i = 1; i < num_gpus; ++i) {
-        int start = i * chunk_size;
         cudaSetDevice(i); // must switch to memcpy target device
         CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysA[i - 1], i, (defaultArrA + 0), 0, chunk_size * sizeof(float), 0));
         CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(deviceArraysB[i - 1], i, (defaultArrB + 0), 0, chunk_size * sizeof(float), 0));

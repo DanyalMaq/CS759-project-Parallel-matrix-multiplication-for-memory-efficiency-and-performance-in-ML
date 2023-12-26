@@ -2,7 +2,7 @@
 #include <iostream>
 #include "nccl.h"
 #include "matmul.cuh"
-#include <cuda_runtime.h>
+#include "cuda_runtime.h"
 #include <cub/cub.cuh>
 
 using namespace std;
@@ -289,7 +289,6 @@ public:
     // model config
     uint32_t num_layers;
     uint32_t num_devices;
-    uint32_t in_dim;
     bool tp_enabled = false;
 
     // Matrix data
@@ -306,7 +305,7 @@ public:
         full_activation_dims = new MatrixDims[num_layers];
         
         // Compute full dims
-        for (int i = 0; i < num_layers; i++){
+        for (uint32_t i = 0; i < num_layers; i++){
             full_activation_dims[i].nRows = batch_size;
             full_activation_dims[i].nCols = full_layer_dims[i].nCols;
         }
@@ -315,11 +314,11 @@ public:
         cudaGetDevice(&context);
 
         dev_activations.resize(num_devices); 
-        for (int dev = 0; dev < num_devices; dev++){
+        for (uint32_t dev = 0; dev < num_devices; dev++){
             cudaSetDevice(dev);
 
             dev_activations[dev].reserve(num_layers); 
-            for (int i = 0; i < num_layers; i++){
+            for (uint32_t i = 0; i < num_layers; i++){
                 
                 // Reuses the pre-computed dims of scattered device weights
                 uint32_t nRows = batch_size;
@@ -344,10 +343,10 @@ public:
         cudaGetDevice(&current_context);
 
         // Allocate buffers on each device
-        for (int dev = 0; dev < num_devices; dev++) {
+        for (uint32_t dev = 0; dev < num_devices; dev++) {
             device_data[dev].reserve(num_layers);
 
-            for (int j = 0; j < num_layers; j++) {
+            for (uint32_t j = 0; j < num_layers; j++) {
                 cudaSetDevice(dev);
             
                 // Allocate splitted buffers on device but reserve space for the full data on the default device 0 
@@ -381,7 +380,7 @@ public:
     
     //////////////////////// Constructors ////////////////////////
     // Default constructor
-    MLP() : num_layers(0), full_layer_dims(nullptr), num_devices(0), in_dim(0) {}
+    MLP() : num_layers(0), full_layer_dims(nullptr), num_devices(0) {}
     
     // No weight constructor
     MLP(uint32_t num_layers, MatrixDims* full_layer_dims, uint32_t num_devices)
@@ -389,10 +388,10 @@ public:
         {
             dev_weights.resize(1); 
             dev_weights[0].reserve(num_layers); // Pre-allocate but avoid default-construction
-            uint32_t last_nCols = in_dim;
+            uint32_t last_nCols = full_layer_dims[0].nCols;
 
             // Allocate mem for the whole model on device 0
-            for (int i = 0; i < num_layers; i++){
+            for (uint32_t i = 0; i < num_layers; i++){
                 uint32_t nRows = full_layer_dims[i].nRows;
                 uint32_t nCols = full_layer_dims[i].nCols;
 
@@ -409,13 +408,13 @@ public:
 
     // Constructor with weights
     MLP(uint32_t num_layers, MatrixDims* full_layer_dims, uint32_t num_devices, float** mat_weights)
-        : num_layers(num_layers), full_layer_dims(full_layer_dims), num_devices(num_devices), in_dim(in_dim)
+        : num_layers(num_layers), full_layer_dims(full_layer_dims), num_devices(num_devices)
         {
             dev_weights.resize(1); 
             dev_weights[0].reserve(num_layers); // Pre-allocate but avoid default-construction
 
-            uint32_t last_nCols = in_dim;
-            for (int i = 0; i < num_layers; i++){
+            uint32_t last_nCols = full_layer_dims[0].nCols; 
+            for (uint32_t i = 0; i < num_layers; i++){
                 uint32_t nRows = full_layer_dims[i].nRows;
                 uint32_t nCols = full_layer_dims[i].nCols;
 
@@ -451,7 +450,7 @@ public:
 
         //Init NCCL context & group & streams
         int device_ids[num_devices];
-        for (int i = 0; i < num_devices; i++){
+        for (uint32_t i = 0; i < num_devices; i++){
             device_ids[i] = i;
             cudaSetDevice(i);
             cudaStreamCreate(&nccl_streams[i]);
@@ -467,12 +466,12 @@ public:
         tp_enabled = false;
 
         dev_weights[0][0].T(); // Transpose back
-        for (int dev = 1; dev < num_devices; dev++){
+        for (uint32_t dev = 1; dev < num_devices; dev++){
                 dev_weights[dev].clear();
                 dev_activations[dev].clear();
         }
         
-        for (int i = 0; i < num_devices; i++){
+        for (uint32_t i = 0; i < num_devices; i++){
             cudaStreamDestroy(nccl_streams[i]);
         }
     }
@@ -487,7 +486,7 @@ public:
         // Malloc receive buffer on default device
         // All-reduce (see https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/examples.html)
         int recv_rank = 0;
-        for (int dev = 1; dev < num_devices; ++dev)
+        for (uint32_t dev = 1; dev < num_devices; ++dev)
         {
             const void* send_buff = (const void*)dev_activations[0][layer].data;
             void* recv_buff = (void*)dev_activations[dev][layer].data;
@@ -500,7 +499,7 @@ public:
         }
 
         // Sync and wait for reduction results
-        for (int dev = 0; dev < num_devices; ++dev)
+        for (uint32_t dev = 0; dev < num_devices; ++dev)
         {
             cudaSetDevice(dev);
             cudaStreamSynchronize(nccl_streams[dev]);
@@ -529,7 +528,7 @@ public:
         matmul_rect_relu(input.data, dev_weights[dev][0].data, dev_activations[dev][0].data,
                 batch_size, in_dim, out_dim, stream);
 
-        int i;
+        uint32_t i;
         for (i = 1; i < num_layers - 1; i++){
             // TODO: must use kernel call wrapper for this 
             in_dim = out_dim;
@@ -568,7 +567,7 @@ public:
         //First layer
         uint32_t in_dim = input.nCols;
         uint32_t out_dim = dev_weights[1][0].nCols; // scattered dim on non-default devices
-        for (int dev = 0; dev < num_devices; dev++){
+        for (uint32_t dev = 0; dev < num_devices; dev++){
             cudaSetDevice(dev);
             matmul_rect_relu(input.data, dev_weights[dev][0].data, input.data, 
                 batch_size, in_dim, out_dim, stream);
@@ -577,7 +576,7 @@ public:
         //Second layer
         in_dim = out_dim;
         out_dim = dev_weights[1][1].nCols;
-        for (int dev = 0; dev < num_devices; dev++){
+        for (uint32_t dev = 0; dev < num_devices; dev++){
             cudaSetDevice(dev);
             matmul_rect_relu(dev_activations[dev][0].data, dev_weights[dev][1].data, dev_activations[dev][1].data,
                 batch_size, in_dim, out_dim, stream);
@@ -590,19 +589,18 @@ public:
         in_dim = out_dim;
         out_dim = dev_weights[1][2].nCols;
         dev_activations[0][1].T(); // -> (out_dim, batch_size)
-        for (int dev = 1; dev < num_devices; dev++ ){
+        for (uint32_t dev = 1; dev < num_devices; dev++ ){
             uint32_t nRows = dev_activations[dev][1].nRows;
             uint32_t nCols = dev_activations[dev][1].nCols;
             uint32_t offset = dev * nCols * nRows;
             nRows += (dev == num_devices - 1) ? dev_activations[0][1].nRows % num_devices : 0; // Handle non-divisible case
-            uint32_t size = nCols * nRows;
             
             dev_activations[dev][1] = GPUMatrix(nRows, nCols, dev_activations[0][1].data + offset, CM, stream, dev); // Async copy (nCols, nRows) from (out_dim, batch_size)
             dev_activations[dev][1].T(); // -> (nRows, nCols)
         }
         
         // Third layer
-        for (int dev = 0; dev < num_devices; dev++){
+        for (uint32_t dev = 0; dev < num_devices; dev++){
             cudaSetDevice(dev);
             matmul(dev_activations[dev][1].data, dev_weights[dev][2].data, dev_activations[dev][2].data,
                 batch_size, in_dim, out_dim, static_cast<cudaStream_t>(stream));
