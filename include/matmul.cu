@@ -176,8 +176,11 @@ void transpose(float *output, const float *input, int nRows, int nCols) {
     const float a = 1.0f;
     const float b = 0.0f;
     cublasSgeam(handle, CUBLAS_OP_T, CUBLAS_OP_T, nRows, nCols, &a,
-                input, nRows, &b, nullptr, nRows,
-                output, nRows);
+            input, nCols, // lda is nCols because cublas assumes col-major 
+            &b, input, nCols, // ldb can be anything, B is not used
+            output, nCols); // ldc is nCols, the leading dimension of output
+
+    cublasDestroy(handle);
 }
 
 

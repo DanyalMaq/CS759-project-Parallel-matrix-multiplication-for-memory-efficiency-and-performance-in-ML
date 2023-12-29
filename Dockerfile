@@ -143,3 +143,4 @@ RUN git clone https://github.com/rogersce/cnpy.git /cnpy
 WORKDIR /build 
 RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local/cuda/bin/../targets/x86_64-linux/ /cnpy && make && make install
 RUN rm -rf /build /cnpy
+RUN pip install jupyterlab==4.0.3

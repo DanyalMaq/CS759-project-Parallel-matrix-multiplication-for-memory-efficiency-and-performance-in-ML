@@ -6,7 +6,7 @@
 #include <cub/cub.cuh>
 
 using namespace std;
-
+#define str(s) to_string(s)
 #define NCCLCHECK(cmd) do {                         \
   ncclResult_t res = cmd;                           \
   if (res != ncclSuccess) {                         \
@@ -34,6 +34,10 @@ __device__ __forceinline__ MD reduce_md_op(MD a, MD b)
     return res;
 }
 
+/**
+ * @brief Softmax kernel with online calculation of normalization term.
+ * See https://arxiv.org/pdf/1805.02867.pdf
+*/
 template<int THREADBLOCK_SIZE>
 __launch_bounds__(THREADBLOCK_SIZE)
 __global__ void online_softmax(
@@ -89,7 +93,7 @@ void call_softmax(const float* x, float* y, uint32_t nCols, uint32_t batch_size,
 }
 
 
-//////////////////////// Matrix //////////////////////////
+////////////////////////////// Matrix //////////////////////////////
 enum class MatrixLayout {
 	RowMajor = 0,
 	ColumnMajor = 1,
@@ -121,7 +125,7 @@ class GPUMatrix{
         float *data;
         MatrixLayout layout;
 
-        // Default constructor
+        //Default constructor
         GPUMatrix() : nRows(0), nCols(0), data(nullptr), layout(RM) {}
 
         // Constructor with device array data
@@ -143,7 +147,7 @@ class GPUMatrix{
                 cudaPointerGetAttributes(&attr, new_data);
                 
                 // Case 1: data is a host array
-                if (attr.type == cudaMemoryTypeHost){
+                if (attr.type == cudaMemoryTypeHost || attr.type == cudaMemoryTypeUnregistered){ // Unregistered is normal new-allocated array
                     cudaMallocAsync(&data, nRows * nCols * sizeof(float), stream);
                     cudaMemcpyAsync(new_data, data, nRows * nCols * sizeof(float), cudaMemcpyHostToDevice, stream);
                 }
@@ -250,8 +254,8 @@ class GPUMatrix{
 
                     // You should make sure sizes match before assigning
                     if (nRows != other.nRows || nCols != other.nCols){
-                        string message = "Can't assign when matrix dimensions don't match: (" + to_string(nRows) + ", " + to_string(nCols)
-                            + ") vs (" + to_string(other.nRows) + ", " + to_string(other.nCols) + ")";
+                        string message = "Can't assign when matrix dimensions don't match: (" + str(nRows) + ", " + str(nCols)
+                            + ") vs (" + str(other.nRows) + ", " + str(other.nCols) + ")";
                         throw std::invalid_argument(message);
                     }
                     
@@ -300,7 +304,9 @@ public:
     ncclComm_t* nccl_comm;
     cudaStream_t* nccl_streams;
 
-    // Get the activation dims based on the weight dims
+    /**
+     * @brief Get the activation dims based on weight dims and alloc buffers
+    */
     void make_activation_buffers(uint32_t batch_size, uint32_t num_devices){
         full_activation_dims = new MatrixDims[num_layers];
         
@@ -333,7 +339,9 @@ public:
     }
     
 
-    // Allocate on and scatter chunks from device 0 to each device 
+    /**
+     * @brief Allocate and scatter weight chunks from device 0 to each device 
+    */
     void scatter_to_devices(vector<vector<GPUMatrix>>& device_data, MatrixDims* data_dims, vector<GPUMatrix>* src_data = nullptr, cudaStream_t stream = nullptr) {
         // Pre-allocate memory for device_data vectors
         device_data.resize(num_devices); 
@@ -379,10 +387,14 @@ public:
     }
     
     //////////////////////// Constructors ////////////////////////
-    // Default constructor
+    /**
+     * @brief Default constructor
+    */
     MLP() : num_layers(0), full_layer_dims(nullptr), num_devices(0) {}
     
-    // No weight constructor
+    /**
+     * @brief No weight constructor
+    */
     MLP(uint32_t num_layers, MatrixDims* full_layer_dims, uint32_t num_devices)
        : num_layers(num_layers), full_layer_dims(full_layer_dims), num_devices(num_devices)
         {
@@ -397,8 +409,8 @@ public:
 
                 // layer dim check
                 if (nRows != last_nCols)
-                    throw std::invalid_argument("Invalid weight dimensions: nCols (" + to_string(last_nCols) +
-                        ") from last layer does not match nRows (" + to_string(nRows) + ") of layer" + to_string(i));
+                    throw invalid_argument(string(__FILE__) + ":" + str(__LINE__) + ": 'Invalid weight dimensions: nCols (" + str(last_nCols) +
+                        ") from last layer does not match nRows (" + str(nRows) + ") of layer' " + str(i));
 
                 last_nCols = nCols;
                 dev_weights[0].emplace_back(nRows, nCols, RM);
@@ -406,7 +418,9 @@ public:
 
         }
 
-    // Constructor with weights
+    /**
+    * @brief Construct a new MLP object with weights
+    */
     MLP(uint32_t num_layers, MatrixDims* full_layer_dims, uint32_t num_devices, float** mat_weights)
         : num_layers(num_layers), full_layer_dims(full_layer_dims), num_devices(num_devices)
         {
@@ -414,14 +428,14 @@ public:
             dev_weights[0].reserve(num_layers); // Pre-allocate but avoid default-construction
 
             uint32_t last_nCols = full_layer_dims[0].nCols; 
-            for (uint32_t i = 0; i < num_layers; i++){
+            for (uint32_t i = 1; i < num_layers; i++){
                 uint32_t nRows = full_layer_dims[i].nRows;
                 uint32_t nCols = full_layer_dims[i].nCols;
 
                 // layer dim check
                 if (nRows != last_nCols)
-                    throw std::invalid_argument("Invalid weight dimensions: nCols (" + to_string(last_nCols) +
-                        ") from last layer does not match nRows (" + to_string(nRows) + ") of layer" + to_string(i));
+                    throw invalid_argument(string(__FILE__) + ":" + str(__LINE__) + ": Invalid weight dimensions: nCols (" + str(last_nCols) +
+                        ") from last layer does not match nRows (" + str(nRows) + ") of layer " + str(i));
                 last_nCols = nCols;
                 dev_weights[0].emplace_back(nRows, nCols, mat_weights[i], RM);
             }
@@ -436,9 +450,12 @@ public:
 
     }
 
-    // Enabling tensor parallelism
-    // Recipe for tensor parallel: 
-    // Split 1st weight matrix column-wise, 2nd row-wise and 3rd layer and input x row-wise
+    /** 
+    * @brief Enabling tensor parallelism
+    * Recipe for tensor parallel: 
+    * Split 1st weight matrix column-wise, 2nd row-wise and 3rd layer and input x row-wise
+    * Our way of transpose->scatter is the same as Megatron-LM: see https://github.com/NVIDIA/Megatron-LM/blob/2bc6cd307a11423928c675f741e79e03df23e721/megatron/core/tensor_parallel/utils.py#L11
+    **/
     void enable_tp(int batch_size, cudaStream_t stream=nullptr){
         tp_enabled = true;
         int context;
@@ -550,10 +567,10 @@ public:
     void forward_tp(const GPUMatrix& input,  GPUMatrix& output, cudaStream_t stream=nullptr, const uint32_t batch_size=32){
         // check that num layers = 3
         if (num_layers != 3){
-            throw std::invalid_argument("Tensor parallelism is only supported for 3-layer MLPs\n");
+            throw invalid_argument(string(__FILE__) + ":" + str(__LINE__) + ": Tensor parallelism is only supported for 3-layer MLPs\n");
         }
         if (num_devices < 2){
-            throw std::invalid_argument("Tensor parallelism requires at least 2 devices\n");
+            throw invalid_argument(string(__FILE__) + ":" + str(__LINE__) + ": Tensor parallelism requires at least 2 devices\n");
         }
 
         // Save device context

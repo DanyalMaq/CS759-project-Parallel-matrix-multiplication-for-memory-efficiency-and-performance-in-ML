@@ -26,6 +26,6 @@ services:
     ipc: host
     shm_size: '1g'
     container_name: '759'
-    # ports:
-    #   - "5050:5050"
+    ports:
+      - "8888:8888"
       
