@@ -168,19 +168,15 @@ __host__ void matmul(float* A, float* B, float* C,
 
 
 // Transpose a given matrix
-void transpose(float *output, const float *input, int nRows, int nCols) {
-    cublasHandle_t handle;
-    cublasCreate(&handle);
+void transpose(float *output, const float *input, int nRows, int nCols, cublasHandle_t handle) {
     
     // Use cublasSgeam to extract the specified range of nCols
     const float a = 1.0f;
     const float b = 0.0f;
-    cublasSgeam(handle, CUBLAS_OP_T, CUBLAS_OP_T, nRows, nCols, &a,
+    cublasSgeam(handle, CUBLAS_OP_T, CUBLAS_OP_N, nRows, nCols, &a,
             input, nCols, // lda is nCols because cublas assumes col-major 
-            &b, input, nCols, // ldb can be anything, B is not used
-            output, nCols); // ldc is nCols, the leading dimension of output
-
-    cublasDestroy(handle);
+            &b, input, nRows, // ldb can be anything, B is not used
+            output, nRows); // ldc is nCols, the leading dimension of output
 }
 
 
@@ -188,7 +184,7 @@ void transpose(float *output, const float *input, int nRows, int nCols) {
 void columns(float *output, const float *input, int rows, int columns, int start_col, int end_col) {
     cublasHandle_t handle;
     cublasCreate(&handle);
-
+ 
     // Calculate the number of columns to extract
     int num_cols_to_extract = end_col - start_col;
 

@@ -6,7 +6,7 @@
 #include <string>
 #include "include/matmul.cuh"
 #include "include/utils.cuh"
-#include<complex>
+#include <complex>
 #include "include/network.cuh"
 #include "cnpy.h"
 

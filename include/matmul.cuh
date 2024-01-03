@@ -3,6 +3,7 @@
 # pragma once
 #include <iostream>
 #include <cub/cub.cuh>
+#include <cublas_v2.h>
 
 using namespace std;
 
@@ -50,7 +51,7 @@ template <uint32_t N>
 __host__ __device__ inline float naive_softmax(const float vals[N], uint32_t idx);
 
 // Transpose a given matrix
-__host__ void transpose(float *output, const float *input, int nRows, int nCols);
+__host__ void transpose(float *output, const float *input, int nRows, int nCols, cublasHandle_t handle);
 
 // Get the the specified columns of a matrix
 void columns(float *output, const float *input, int rows, int columns, int start_col, int end_col);

@@ -4,6 +4,7 @@
 #include "matmul.cuh"
 #include "cuda_runtime.h"
 #include <cub/cub.cuh>
+#include <cublas_v2.h>
 
 using namespace std;
 #define str(s) to_string(s)
@@ -12,6 +13,15 @@ using namespace std;
   if (res != ncclSuccess) {                         \
     printf("Failed, NCCL error %s:%d '%s'\n",       \
         __FILE__,__LINE__,ncclGetErrorString(res)); \
+    exit(EXIT_FAILURE);                             \
+  }                                                 \
+} while(0)
+
+#define CUBLASCHECK(cmd) do {                       \
+  cublasStatus_t res = cmd;                         \
+  if (res != CUBLAS_STATUS_SUCCESS) {               \
+    printf("Failed, CUBLAS error %s:%d '%s'\n",     \
+        __FILE__,__LINE__,cublasGetErrorString(res)); \
     exit(EXIT_FAILURE);                             \
   }                                                 \
 } while(0)
@@ -89,6 +99,11 @@ void call_softmax(const float* x, float* y, uint32_t nCols, uint32_t batch_size,
         online_softmax<64><<<batch_size, 64, 0, stream>>>(x, y, nCols);
     else if (THREADBLOCK_SIZE >= 32)
         online_softmax<32><<<batch_size, 32, 0, stream>>>(x, y, nCols);
+    
+    // Check for errors
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) 
+        printf("Error: %s\n", cudaGetErrorString(err));
 
 }
 
@@ -109,9 +124,9 @@ void device_copy(T* src, T* dst, uint32_t n, int src_device, int dst_device, cud
     // (https://stackoverflow.com/questions/22694518/what-is-the-difference-between-cudamemcpy-and-cudamemcpypeer-for-p2p-copy) 
     // Otherwise we have to specify them using MemcpyPeer
     if (canAccessPeer)
-        cudaMemcpyPeerAsync(dst, dst_device, src, src_device, n * sizeof(T), stream);
+        CHECK_CUDA_ERROR(cudaMemcpyPeerAsync(dst, dst_device, src, src_device, n * sizeof(T), stream));
     else
-        cudaMemcpyAsync(dst, src, n * sizeof(T), cudaMemcpyDeviceToDevice, stream);
+        CHECK_CUDA_ERROR(cudaMemcpyAsync(dst, src, n * sizeof(T), cudaMemcpyDeviceToDevice, stream));
 }
 
 
@@ -134,13 +149,13 @@ class GPUMatrix{
             : nRows(nRows), nCols(nCols), layout(layout), device(device) {
                 // Set to the current device if not specified
                 int context;
-                cudaGetDevice(&context);
+                CHECK_CUDA_ERROR(cudaGetDevice(&context));
 
-                if (device == -1)
-                    cudaGetDevice(&device);
+                if (this->device == -1) // Not specified
+                    CHECK_CUDA_ERROR(cudaGetDevice(&this->device));
                 // Switch to target device to allocate memory
-                if (device != context)
-                    cudaSetDevice(device);
+                if (this->device != context)
+                    CHECK_CUDA_ERROR(cudaSetDevice(this->device));
 
                 // Check if data is a device array
                 cudaPointerAttributes attr;
@@ -148,12 +163,12 @@ class GPUMatrix{
                 
                 // Case 1: data is a host array
                 if (attr.type == cudaMemoryTypeHost || attr.type == cudaMemoryTypeUnregistered){ // Unregistered is normal new-allocated array
-                    cudaMallocAsync(&data, nRows * nCols * sizeof(float), stream);
-                    cudaMemcpyAsync(new_data, data, nRows * nCols * sizeof(float), cudaMemcpyHostToDevice, stream);
+                    CHECK_CUDA_ERROR(cudaMallocAsync(&data, nRows * nCols * sizeof(float), stream));
+                    CHECK_CUDA_ERROR(cudaMemcpyAsync(data, new_data, nRows * nCols * sizeof(float), cudaMemcpyHostToDevice, stream));
                 }
                 // case 2: data is on a different device
                 else if (attr.device != device){
-                    cudaMallocAsync(&data, nRows * nCols * sizeof(float), stream);
+                    CHECK_CUDA_ERROR(cudaMallocAsync(&data, nRows * nCols * sizeof(float), stream));
                     device_copy(new_data, data, nRows * nCols, attr.device, device, stream);
                 }
                 // Case 3: data is on the same device
@@ -162,40 +177,39 @@ class GPUMatrix{
                 }
 
                 // Restore device context
-                cudaSetDevice(context);
+                CHECK_CUDA_ERROR(cudaSetDevice(context));
             }
         
         // Constructor without data
         GPUMatrix(uint32_t nRows, uint32_t nCols, MatrixLayout layout=RM, cudaStream_t stream=nullptr, int device=-1)
             : nRows(nRows), nCols(nCols), layout(layout), device(device) {
-                cudaMallocAsync(&data, nRows * nCols * sizeof(float), stream);
-                // Set to current context's device if not specified
-                if (device == -1)
-                    cudaGetDevice(&device);
+                CHECK_CUDA_ERROR(cudaMallocAsync(&data, nRows * nCols * sizeof(float), stream));
+                // Set to current device if not specified
+                if (this->device == -1)
+                    CHECK_CUDA_ERROR(cudaGetDevice(&this->device));
             }
-            
 
         ~GPUMatrix(){
-            cudaFree(data);
+            CHECK_CUDA_ERROR(cudaFree(data));
             data = nullptr;
         }   
         
         // Transpose the matrix in-place
-        void T(){
+        void T(cublasHandle_t handle){
             // Check if data and context are on the same device
             int context;
-            cudaGetDevice(&context);
+            CHECK_CUDA_ERROR(cudaGetDevice(&context));
             if (context != device)
-                cudaSetDevice(device);
+                CHECK_CUDA_ERROR(cudaSetDevice(device));
 
-            transpose(data, data, nRows, nCols); // Transpose 
+            transpose(data, data, nRows, nCols, handle); // Transpose 
             // Reverse layout
             std::swap(nRows, nCols);
             layout = (layout == RM) ? CM : RM; 
 
             // Restore device context
             if (context != device)
-                cudaSetDevice(context);
+                CHECK_CUDA_ERROR(cudaSetDevice(context));
         }
         
         ///////////////// Setters and getters /////////////////
@@ -211,19 +225,19 @@ class GPUMatrix{
         void set_device(int new_device, cudaStream_t stream=nullptr){
             if (new_device != device){
                 // Save device context like stack
-                int current_context;
-                cudaGetDevice(&current_context);
-                cudaSetDevice(new_device);
+                int context;
+                CHECK_CUDA_ERROR(cudaGetDevice(&context));
+                CHECK_CUDA_ERROR(cudaSetDevice(new_device));
 
                 // Malloc on new device and copy data
                 float *new_data;
-                cudaMallocAsync(&new_data, nRows * nCols * sizeof(float), stream);
+                CHECK_CUDA_ERROR(cudaMallocAsync(&new_data, nRows * nCols * sizeof(float), stream));
                 device_copy(data, new_data, nRows * nCols, device, new_device, stream);
-                cudaFreeAsync(data, stream);
+                CHECK_CUDA_ERROR(cudaFreeAsync(data, stream));
                 data = new_data;
 
                 // Restore device context
-                cudaSetDevice(current_context);
+                CHECK_CUDA_ERROR(cudaSetDevice(context));
 
             }
         }
@@ -300,92 +314,11 @@ public:
     MatrixDims* full_activation_dims;
     vector<vector <GPUMatrix> > dev_weights;
     vector<vector <GPUMatrix> > dev_activations;
-    // NCCL
+    // NCCL & cublas
     ncclComm_t* nccl_comm;
     cudaStream_t* nccl_streams;
+    std::map <int, cublasHandle_t> device_handles;
 
-    /**
-     * @brief Get the activation dims based on weight dims and alloc buffers
-    */
-    void make_activation_buffers(uint32_t batch_size, uint32_t num_devices){
-        full_activation_dims = new MatrixDims[num_layers];
-        
-        // Compute full dims
-        for (uint32_t i = 0; i < num_layers; i++){
-            full_activation_dims[i].nRows = batch_size;
-            full_activation_dims[i].nCols = full_layer_dims[i].nCols;
-        }
-        // Allocate buffers
-        int context;
-        cudaGetDevice(&context);
-
-        dev_activations.resize(num_devices); 
-        for (uint32_t dev = 0; dev < num_devices; dev++){
-            cudaSetDevice(dev);
-
-            dev_activations[dev].reserve(num_layers); 
-            for (uint32_t i = 0; i < num_layers; i++){
-                
-                // Reuses the pre-computed dims of scattered device weights
-                uint32_t nRows = batch_size;
-                uint32_t nCols = dev_weights[dev][i].nCols;
-                // Allocate buffers
-                dev_activations[dev].emplace_back(nRows, nCols, RM, nullptr, dev);
-            }
-        }
-       
-        // Restore device context
-        cudaSetDevice(context);
-    }
-    
-
-    /**
-     * @brief Allocate and scatter weight chunks from device 0 to each device 
-    */
-    void scatter_to_devices(vector<vector<GPUMatrix>>& device_data, MatrixDims* data_dims, vector<GPUMatrix>* src_data = nullptr, cudaStream_t stream = nullptr) {
-        // Pre-allocate memory for device_data vectors
-        device_data.resize(num_devices); 
-
-        // Save device context
-        int current_context;
-        cudaGetDevice(&current_context);
-
-        // Allocate buffers on each device
-        for (uint32_t dev = 0; dev < num_devices; dev++) {
-            device_data[dev].reserve(num_layers);
-
-            for (uint32_t j = 0; j < num_layers; j++) {
-                cudaSetDevice(dev);
-            
-                // Allocate splitted buffers on device but reserve space for the full data on the default device 0 
-                // Compute and update in-place buffer dimensions
-                uint32_t nRows = data_dims[j].nRows;
-                uint32_t nCols = data_dims[j].nCols;
-                // Scatter dims to devices
-                if (dev != 0){
-                    // Handle non-divisible case: last device gets the remainder
-                    nRows = nRows / num_devices + (dev == num_devices - 1) ? nRows % num_devices : 0; 
-                    nCols = nCols / num_devices;
-                }
-                    
-                // If source data is provided, scatter it to each device
-                if (src_data != nullptr && (*src_data)[j].has_data()) {
-                    uint32_t offset = dev * nCols;
-                    device_data[dev].emplace_back(nRows, nCols, (*src_data)[j].data + offset, (*src_data)[j].layout, stream, dev);
-                    
-                    if (device_data[dev][j].layout == CM)
-                        device_data[dev][j].T(); // Transpose back the scattered weight to row-major 
-
-                // No data, just allocate
-                } else {
-                    device_data[dev - 1].emplace_back(nRows, nCols, RM, stream, dev);
-                }
-            }
-        }
-        // Restore device context
-        cudaSetDevice(current_context);
-    }
-    
     //////////////////////// Constructors ////////////////////////
     /**
      * @brief Default constructor
@@ -425,10 +358,10 @@ public:
         : num_layers(num_layers), full_layer_dims(full_layer_dims), num_devices(num_devices)
         {
             dev_weights.resize(1); 
-            dev_weights[0].reserve(num_layers); // Pre-allocate but avoid default-construction
+            dev_weights[0].reserve(num_layers); // Pre-allocate 
 
-            uint32_t last_nCols = full_layer_dims[0].nCols; 
-            for (uint32_t i = 1; i < num_layers; i++){
+            uint32_t last_nCols = full_layer_dims[0].nRows; 
+            for (uint32_t i = 0; i < num_layers; i++){
                 uint32_t nRows = full_layer_dims[i].nRows;
                 uint32_t nCols = full_layer_dims[i].nCols;
 
@@ -447,86 +380,12 @@ public:
         delete[] nccl_comm;
         dev_weights.clear();
         dev_activations.clear();
+        // destroy handles
+        for (auto& [device, handle] : device_handles){
+            cublasDestroy(handle);
+        }
 
     }
-
-    /** 
-    * @brief Enabling tensor parallelism
-    * Recipe for tensor parallel: 
-    * Split 1st weight matrix column-wise, 2nd row-wise and 3rd layer and input x row-wise
-    * Our way of transpose->scatter is the same as Megatron-LM: see https://github.com/NVIDIA/Megatron-LM/blob/2bc6cd307a11423928c675f741e79e03df23e721/megatron/core/tensor_parallel/utils.py#L11
-    **/
-    void enable_tp(int batch_size, cudaStream_t stream=nullptr){
-        tp_enabled = true;
-        int context;
-        cudaGetDevice(&context);
-
-        dev_weights[0][0].T(); // Transpose in-place
-        scatter_to_devices(dev_weights, full_layer_dims, &dev_weights[0], stream); // Scatter weight chunks to each device
-        make_activation_buffers(batch_size, this->num_devices); // Allocate activation buffers on each device
-
-        //Init NCCL context & group & streams
-        int device_ids[num_devices];
-        for (uint32_t i = 0; i < num_devices; i++){
-            device_ids[i] = i;
-            cudaSetDevice(i);
-            cudaStreamCreate(&nccl_streams[i]);
-        }
-        NCCLCHECK(ncclCommInitAll(nccl_comm, num_devices, device_ids));
-        
-        cudaSetDevice(context); // Restore context
-    }
-
-    // Gather the weights but might not be neccesary 
-    // Memcpy from other devices
-    void disable_tp(){
-        tp_enabled = false;
-
-        dev_weights[0][0].T(); // Transpose back
-        for (uint32_t dev = 1; dev < num_devices; dev++){
-                dev_weights[dev].clear();
-                dev_activations[dev].clear();
-        }
-        
-        for (uint32_t i = 0; i < num_devices; i++){
-            cudaStreamDestroy(nccl_streams[i]);
-        }
-    }
-
-
-    void reduce_activations(int layer, bool all_reduce=false){
-        // Save device context
-        int context;
-        cudaGetDevice(&context);
-
-        NCCLCHECK(ncclGroupStart());
-        // Malloc receive buffer on default device
-        // All-reduce (see https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/examples.html)
-        int recv_rank = 0;
-        for (uint32_t dev = 1; dev < num_devices; ++dev)
-        {
-            const void* send_buff = (const void*)dev_activations[0][layer].data;
-            void* recv_buff = (void*)dev_activations[dev][layer].data;
-            uint32_t size = dev_activations[dev][layer].nRows * dev_activations[dev][layer].nCols;
-            
-            if (all_reduce)
-                NCCLCHECK(ncclAllReduce(send_buff, recv_buff, size, ncclFloat, ncclSum, nccl_comm[dev], nccl_streams[dev]));
-            else
-                NCCLCHECK(ncclReduce(send_buff, recv_buff, size, ncclFloat, ncclSum, recv_rank, nccl_comm[dev], nccl_streams[dev]));
-        }
-
-        // Sync and wait for reduction results
-        for (uint32_t dev = 0; dev < num_devices; ++dev)
-        {
-            cudaSetDevice(dev);
-            cudaStreamSynchronize(nccl_streams[dev]);
-        }
-        NCCLCHECK(ncclGroupEnd());
-
-        // Restore device context
-        cudaSetDevice(context);
-    }
-
 
     // Single GPU forward pass
     void forward(GPUMatrix& input, const GPUMatrix& output, cudaStream_t stream=nullptr, const uint32_t batch_size=32){
@@ -534,7 +393,7 @@ public:
         // Use default device
         dev_activations.resize(1); 
         uint32_t dev = 0; 
-        cudaSetDevice(dev);
+        CHECK_CUDA_ERROR(cudaSetDevice(dev));
 
         // Allocate activation buffers
         make_activation_buffers(batch_size, 1);
@@ -563,7 +422,7 @@ public:
         
     }
 
-    
+    // Tensor parallelism forward. Must call enable_tp() first.
     void forward_tp(const GPUMatrix& input,  GPUMatrix& output, cudaStream_t stream=nullptr, const uint32_t batch_size=32){
         // check that num layers = 3
         if (num_layers != 3){
@@ -575,7 +434,7 @@ public:
 
         // Save device context
         int context; 
-        cudaGetDevice(&context);
+        CHECK_CUDA_ERROR(cudaGetDevice(&context));
 
         // Set up buffers and NCCL for tensor parallelism
         if (tp_enabled == false)
@@ -585,7 +444,7 @@ public:
         uint32_t in_dim = input.nCols;
         uint32_t out_dim = dev_weights[1][0].nCols; // scattered dim on non-default devices
         for (uint32_t dev = 0; dev < num_devices; dev++){
-            cudaSetDevice(dev);
+            CHECK_CUDA_ERROR(cudaSetDevice(dev));
             matmul_rect_relu(input.data, dev_weights[dev][0].data, input.data, 
                 batch_size, in_dim, out_dim, stream);
         }
@@ -594,7 +453,7 @@ public:
         in_dim = out_dim;
         out_dim = dev_weights[1][1].nCols;
         for (uint32_t dev = 0; dev < num_devices; dev++){
-            cudaSetDevice(dev);
+            CHECK_CUDA_ERROR(cudaSetDevice(dev));
             matmul_rect_relu(dev_activations[dev][0].data, dev_weights[dev][1].data, dev_activations[dev][1].data,
                 batch_size, in_dim, out_dim, stream);
         }
@@ -605,7 +464,7 @@ public:
         // Here we can split the input and then reduce because the kernel doesn't apply a non-linear activation
         in_dim = out_dim;
         out_dim = dev_weights[1][2].nCols;
-        dev_activations[0][1].T(); // -> (out_dim, batch_size)
+        this->transpose(dev_activations[0][1]); // -> (out_dim, batch_size)
         for (uint32_t dev = 1; dev < num_devices; dev++ ){
             uint32_t nRows = dev_activations[dev][1].nRows;
             uint32_t nCols = dev_activations[dev][1].nCols;
@@ -613,12 +472,12 @@ public:
             nRows += (dev == num_devices - 1) ? dev_activations[0][1].nRows % num_devices : 0; // Handle non-divisible case
             
             dev_activations[dev][1] = GPUMatrix(nRows, nCols, dev_activations[0][1].data + offset, CM, stream, dev); // Async copy (nCols, nRows) from (out_dim, batch_size)
-            dev_activations[dev][1].T(); // -> (nRows, nCols)
+            this->transpose(dev_activations[dev][1]); // -> (nRows, nCols)
         }
         
         // Third layer
         for (uint32_t dev = 0; dev < num_devices; dev++){
-            cudaSetDevice(dev);
+            CHECK_CUDA_ERROR(cudaSetDevice(dev));
             matmul(dev_activations[dev][1].data, dev_weights[dev][2].data, dev_activations[dev][2].data,
                 batch_size, in_dim, out_dim, static_cast<cudaStream_t>(stream));
         }
@@ -630,8 +489,180 @@ public:
         output = dev_activations[0][2];
 
         // Restore device context
-        cudaSetDevice(context);
+        CHECK_CUDA_ERROR(cudaSetDevice(context));
 
     }
+
+    /**
+     * @brief Get the activation dims based on weight dims and alloc buffers
+    */
+    void make_activation_buffers(uint32_t batch_size, uint32_t num_devices){
+        full_activation_dims = new MatrixDims[num_layers];
+        
+        // Compute full dims
+        for (uint32_t i = 0; i < num_layers; i++){
+            full_activation_dims[i].nRows = batch_size;
+            full_activation_dims[i].nCols = full_layer_dims[i].nCols;
+        }
+        // Allocate buffers
+        int context;
+        CHECK_CUDA_ERROR(cudaGetDevice(&context));
+
+        dev_activations.resize(num_devices); 
+        for (uint32_t dev = 0; dev < num_devices; dev++){
+            CHECK_CUDA_ERROR(cudaSetDevice(dev));
+
+            dev_activations[dev].reserve(num_layers); 
+            for (uint32_t i = 0; i < num_layers; i++){
+                
+                // Reuses the pre-computed dims of scattered device weights
+                uint32_t nRows = batch_size;
+                uint32_t nCols = dev_weights[dev][i].nCols;
+                // Allocate buffers
+                dev_activations[dev].emplace_back(nRows, nCols, RM, nullptr, dev);
+            }
+        }
+       
+        // Restore device context
+        CHECK_CUDA_ERROR(cudaSetDevice(context));
+    }
+    
+
+    /**
+     * @brief Allocate and scatter weight chunks from device 0 to each device 
+    */
+    void scatter_to_devices(vector<vector<GPUMatrix>>& device_data, MatrixDims* data_dims, vector<GPUMatrix>* src_data = nullptr, cudaStream_t stream = nullptr) {
+        // Pre-allocate memory for device_data vectors
+        device_data.resize(num_devices); 
+
+        // Save device context
+        int context;
+        CHECK_CUDA_ERROR(cudaGetDevice(&context));
+
+        // Allocate buffers on each device
+        for (uint32_t dev = 0; dev < num_devices; dev++) {
+            device_data[dev].reserve(num_layers);
+
+            for (uint32_t j = 0; j < num_layers; j++) {
+                CHECK_CUDA_ERROR(cudaSetDevice(dev));
+            
+                // Allocate splitted buffers on device but reserve space for the full data on the default device 0 
+                // Compute and update in-place buffer dimensions
+                uint32_t nRows = data_dims[j].nRows;
+                uint32_t nCols = data_dims[j].nCols;
+                // Scatter dims to devices
+                if (dev != 0){
+                    // Handle non-divisible case: last device gets the remainder
+                    nRows = nRows / num_devices + (dev == num_devices - 1) ? nRows % num_devices : 0; 
+                    nCols = nCols / num_devices;
+                }
+                    
+                // If source data is provided, scatter it to each device
+                if (src_data != nullptr && (*src_data)[j].has_data()) {
+                    uint32_t offset = dev * nCols;
+                    device_data[dev].emplace_back(nRows, nCols, (*src_data)[j].data + offset, (*src_data)[j].layout, stream, dev);
+                    
+                    if (device_data[dev][j].layout == CM)
+                        this->transpose(device_data[dev][j]); // Transpose back the scattered weight to row-major 
+
+                // No data, just allocate
+                } else {
+                    device_data[dev - 1].emplace_back(nRows, nCols, RM, stream, dev);
+                }
+            }
+        }
+        // Restore device context
+        CHECK_CUDA_ERROR(cudaSetDevice(context));
+    }
+
+    /** 
+    * @brief Enabling tensor parallelism
+    * Recipe for tensor parallel: 
+    * Split 1st weight matrix column-wise, 2nd row-wise and 3rd layer and input x row-wise
+    * Our way of transpose->scatter is the same as Megatron-LM: see https://github.com/NVIDIA/Megatron-LM/blob/2bc6cd307a11423928c675f741e79e03df23e721/megatron/core/tensor_parallel/utils.py#L11
+    **/
+    void enable_tp(int batch_size, cudaStream_t stream=nullptr){
+        tp_enabled = true;
+        int context;
+        CHECK_CUDA_ERROR(cudaGetDevice(&context));
+        
+        // Transpose in-place
+        this->transpose(dev_weights[0][0]);
+
+        scatter_to_devices(dev_weights, full_layer_dims, &dev_weights[0], stream); // Scatter weight chunks to each device
+        make_activation_buffers(batch_size, this->num_devices); // Allocate activation buffers on each device
+
+        //Init NCCL context & group & streams
+        int device_ids[num_devices];
+        for (uint32_t i = 0; i < num_devices; i++){
+            device_ids[i] = i;
+            CHECK_CUDA_ERROR(cudaSetDevice(i));
+            CHECK_CUDA_ERROR(cudaStreamCreate(&nccl_streams[i]));
+        }
+        NCCLCHECK(ncclCommInitAll(nccl_comm, num_devices, device_ids));
+        
+        CHECK_CUDA_ERROR(cudaSetDevice(context)); // Restore context
+    }
+
+
+    // Gather the weights but might not be neccesary 
+    // Memcpy from other devices
+    void disable_tp(){
+        tp_enabled = false;
+
+        this->transpose(dev_weights[0][0]); // Transpose back
+        // Delete weights on non-default devices
+        for (uint32_t dev = 1; dev < num_devices; dev++){
+                dev_weights[dev].clear();
+                dev_activations[dev].clear();
+        }
+        
+        for (uint32_t i = 0; i < num_devices; i++){
+            CHECK_CUDA_ERROR(cudaStreamDestroy(nccl_streams[i]));
+        }
+    }
+
+
+    // Reduce activations from all devices to device 0
+    void reduce_activations(int layer, bool all_reduce=false){
+        // Save device context
+        int context;
+        CHECK_CUDA_ERROR(cudaGetDevice(&context));
+
+        NCCLCHECK(ncclGroupStart());
+        // Malloc receive buffer on default device
+        // All-reduce (see https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/examples.html)
+        int recv_rank = 0;
+        for (uint32_t dev = 1; dev < num_devices; ++dev)
+        {
+            const void* send_buff = (const void*)dev_activations[0][layer].data;
+            void* recv_buff = (void*)dev_activations[dev][layer].data;
+            uint32_t size = dev_activations[dev][layer].nRows * dev_activations[dev][layer].nCols;
+            
+            if (all_reduce)
+                NCCLCHECK(ncclAllReduce(send_buff, recv_buff, size, ncclFloat, ncclSum, nccl_comm[dev], nccl_streams[dev]));
+            else
+                NCCLCHECK(ncclReduce(send_buff, recv_buff, size, ncclFloat, ncclSum, recv_rank, nccl_comm[dev], nccl_streams[dev]));
+        }
+
+        // Sync and wait for reduction results
+        for (uint32_t dev = 0; dev < num_devices; ++dev)
+        {
+            CHECK_CUDA_ERROR(cudaSetDevice(dev));
+            CHECK_CUDA_ERROR(cudaStreamSynchronize(nccl_streams[dev]));
+        }
+        NCCLCHECK(ncclGroupEnd());
+
+        // Restore device context
+        CHECK_CUDA_ERROR(cudaSetDevice(context));
+    }
+
+    void transpose(GPUMatrix& matrix){
+        if (device_handles.find(matrix.get_device()) == device_handles.end()){
+            cublasCreate(&device_handles[matrix.get_device()]);
+        }
+        matrix.T(device_handles[matrix.get_device()]);   
+    }
+
         
 };
