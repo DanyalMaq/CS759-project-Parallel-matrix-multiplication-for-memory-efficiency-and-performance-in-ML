@@ -1,6 +1,7 @@
 # Compiler settings
 NVCC = nvcc
 NVCC_FLAGS = -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17 
+DEBUG_FLAGS = -Xcompiler -Wall -std=c++17 -g -G
 LIBS = -lcurand -lcublas -lcnpy -lz -lnccl
 
 all: async managed manual test_mlp
@@ -13,8 +14,10 @@ all: async managed manual test_mlp
 ./manual: test_manual.cu include/matmul.cu include/matmul.cuh include/utils.cuh
 	$(NVCC) test_manual.cu include/matmul.cu $(NVCC_FLAGS) $(LIBS) -o ./manual
 
-test_mlp: test_mlp.cu include/matmul.cu include/matmul.cuh include/utils.cuh include/network.cuh
+./test_mlp: test_mlp.cu include/matmul.cu include/matmul.cuh include/utils.cuh include/network.cuh
 	 $(NVCC) test_mlp.cu include/matmul.cu $(NVCC_FLAGS) $(LIBS) -o ./test_mlp
+debug: test_mlp.cu include/matmul.cu include/matmul.cuh include/utils.cuh include/network.cuh
+	 $(NVCC) test_mlp.cu include/matmul.cu $(DEBUG_FLAGS) $(LIBS) -o ./test_mlp
 # Clean rule
 clean:
 	rm -f ./async ./managed ./manual ./test_mlp

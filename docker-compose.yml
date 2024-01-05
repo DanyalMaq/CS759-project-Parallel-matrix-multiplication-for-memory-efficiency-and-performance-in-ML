@@ -6,7 +6,10 @@ services:
       context: .
       dockerfile: Dockerfile
     image: fly:latest
-    
+    dns:
+      - 128.105.1.70
+      - 128.105.1.78
+      - 128.105.1.77
     volumes:
       - .:/fly
     working_dir: /fly

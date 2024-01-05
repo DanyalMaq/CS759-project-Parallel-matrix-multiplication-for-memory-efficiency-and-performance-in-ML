@@ -348,7 +348,6 @@ public:
                 last_nCols = nCols;
                 dev_weights[0].emplace_back(nRows, nCols, RM);
             }
-
         }
 
     /**
