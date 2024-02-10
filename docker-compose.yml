@@ -7,9 +7,9 @@ services:
       dockerfile: Dockerfile
     image: fly:latest
     dns:
-      - 128.105.1.70
-      - 128.105.1.78
-      - 128.105.1.77
+      - 192.168.0.1
+      - 8.8.8.8
+
     volumes:
       - .:/fly
     working_dir: /fly

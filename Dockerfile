@@ -138,9 +138,12 @@ RUN pip install tensorboard seqeval psutil sacrebleu rouge-score tensorflow_data
 RUN pip install scikit-learn tqdm loralib 
 RUN pip install evaluate 
 
-# Build cnpy
+# Build cnpy for loading numpy arr
 RUN git clone https://github.com/rogersce/cnpy.git /cnpy
 WORKDIR /build 
 RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local/cuda/bin/../targets/x86_64-linux/ /cnpy && make && make install
 RUN rm -rf /build /cnpy
 RUN pip install jupyterlab==4.0.3
+# install valgrind
+
+RUN git clone https://sourceware.org/git/valgrind.git; cd valgrind; ./autogen.sh; ./configure; make; make install; cd ..; rm -rf valgrind

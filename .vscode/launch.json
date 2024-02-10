@@ -8,11 +8,8 @@
             "name": "CUDA C++: Launch",
             "type": "cuda-gdb",
             "request": "launch",
-            // nvcc test_async.cu matmul.cu -Xcompiler -O3 -Xcompiler -Wall -Xptxas -O3 -std=c++17  -lcurand -lcublas -o ./t
-            // ./t 1024 2
-            "program": "${workspaceFolder}/t",
-            "args": "[\"1024\", \"2\"]",
-
+            "program": "${workspaceFolder}/async",
+            "args": "2048 2",
         },
         {
             "name": "CUDA C++: Attach",

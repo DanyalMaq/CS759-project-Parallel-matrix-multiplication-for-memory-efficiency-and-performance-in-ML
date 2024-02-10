@@ -10,8 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include "include/matmul.cuh"
-#include "include/utils.cuh"
+#include "src/matmul.cuh"
+#include "src/utils.cuh"
 // #include "network.cuh"
 // #include "cnpy.h"
 using namespace std;
@@ -132,7 +132,7 @@ int main(int argc, char** argv){
         results[0], results[num_gpus * nRowsA * nColsB / 2 + 1], results[num_gpus * nRowsA * nColsB - 1]
     );
     
-
+    
     // Clean up
     set_p2p_access(num_gpus, false);
     cudaFree(defaultArrA);

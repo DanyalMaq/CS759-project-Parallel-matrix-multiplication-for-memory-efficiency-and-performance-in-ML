@@ -6,8 +6,8 @@
 #include <string>
 #include <ctime>
 #include <chrono>
-#include "include/matmul.cuh"
-#include "include/utils.cuh"
+#include "src/matmul.cuh"
+#include "src/utils.cuh"
 using namespace std;
 
 using std::cout;
