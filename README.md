@@ -17,6 +17,6 @@ make
 ### Different memory allocation strategies
 ![mem](data/all_time.png)
 ### Scaling to multiple GPUs
-![Scaling](data/all_time.png)
+![Scaling](data/all_gpu.png)
 ### MFU (maximum FLOPS utilization)
 ![MFU](data/flops.jpg)
