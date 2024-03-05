@@ -21,6 +21,6 @@ all: async managed manual test_mlp
 
 # Clean rule
 clean:
-	rm -f ./async ./managed ./manual ./test_mlp ./test_time 
+	rm -f ./async ./managed ./manual ./test_mlp ./test_time ./test
 
 .PHONY: clean 
