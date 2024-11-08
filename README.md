@@ -1,6 +1,8 @@
 # Parallel matrix multiplication for memory efficiency and performance in ML
 CS 759 course project--Fall 2023 Group Members: Danyal Maqbool & Wenxuan Tan
 
+## [Project report](data/CS759_Final_Project.pdf)
+
 Benchmarks parallel matrix multiplication on NVLink clusters.
 Implements a 3-layer Tensor Parallel MLP in pure CUDA.
 We follow Megatron's design for the first two layers, but split X along rows and 3rd layer's weights along columns before reducing the output.
